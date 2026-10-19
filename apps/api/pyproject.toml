@@ -1,0 +1,62 @@
+[project]
+name = "ets-api"
+version = "0.1.0"
+description = "Backend API for ETS (Employment Targeting System): matches a job post against a candidate's CV with an LLM and returns a smash-or-pass verdict."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.12"
+authors = [
+    { name = "Firas Dabbabi", email = "FirasDabbabi@gmail.com" },
+]
+keywords = [
+    "ai",
+    "llm",
+    "fastapi",
+    "job-search",
+    "resume",
+    "cv-matching",
+    "anti-ats",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Framework :: FastAPI",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "fastapi>=0.146.0",
+    "pydantic-settings>=2.16.0",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/fifolio/ETS"
+Repository = "https://github.com/fifolio/ETS"
+Issues = "https://github.com/fifolio/ETS/issues"
+Author = "https://www.linkedin.com/in/fifolio"
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.1.1",
+    "ruff>=0.17.1",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+markers = [
+    "eval: prompt quality tests that call a real model (run on demand, not on every commit)",
+]
