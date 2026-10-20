@@ -1,0 +1,36 @@
+Maya Chen
+Junior Front-End Developer
+maya.chen@example.test | Portfolio: https://maya-chen.example.test
+
+PROFILE
+Junior front-end developer with hands-on experience building accessible,
+responsive web interfaces. Enjoys turning designs into clear, maintainable
+React components and collaborating with designers and backend developers.
+
+SKILLS
+- JavaScript, TypeScript, React, HTML, CSS
+- Responsive design, CSS Grid, Flexbox, accessibility fundamentals
+- Git, REST APIs, basic testing with Jest and React Testing Library
+- Familiar with Figma and browser developer tools
+
+EXPERIENCE
+Front-End Development Intern | Northstar Learning (fictional) | 2025-2026
+- Built and maintained React and TypeScript components for a learning portal.
+- Implemented responsive layouts from Figma designs using CSS Modules.
+- Added form validation and connected pages to existing REST endpoints.
+- Wrote component tests and fixed issues found during manual accessibility
+  and cross-browser checks.
+- Worked with a designer and two engineers in weekly planning and code review.
+
+PROJECTS
+Community Events Board | Personal project | 2025
+- Created a searchable events app using React, TypeScript, and a public REST API.
+- Added keyboard navigation, mobile-friendly layouts, and saved-favorites state.
+
+EDUCATION
+Diploma in Web Development | Lakeside Technical College (fictional) | 2025
+
+ADDITIONAL
+- One year of professional internship experience.
+- No professional experience with Python, cloud infrastructure, or machine
+  learning.

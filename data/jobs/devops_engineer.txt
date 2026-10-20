@@ -1,0 +1,15 @@
+Senior DevOps Engineer
+Redwood Signal (fictional) | Hybrid, Seattle | Full-time
+
+Redwood Signal is expanding its infrastructure team. This role owns
+infrastructure automation and Kubernetes reliability for a growing SaaS
+platform.
+
+Required qualifications
+- Five years of dedicated DevOps, SRE, or infrastructure engineering.
+- Production ownership of Kubernetes clusters and Terraform modules.
+- Strong AWS networking, IAM, and incident-response experience.
+- Ability to build deployment pipelines and coach product teams.
+
+Responsibilities include 24/7 escalation rotation and planning infrastructure
+capacity. Python or Go scripting is expected. Compensation: $155,000-$190,000.

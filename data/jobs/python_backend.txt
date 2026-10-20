@@ -1,0 +1,22 @@
+Python Backend Engineer
+Juniper Grove Health (fictional) | Hybrid, Boston | Full-time
+
+Juniper Grove builds scheduling and billing software for independent clinics.
+Our six-person engineering team is hiring a backend engineer to improve APIs
+and integrations. This is an individual-contributor role reporting to the
+engineering manager.
+
+Responsibilities
+- Build and maintain Python REST APIs, preferably with FastAPI or Flask.
+- Design PostgreSQL schemas, migrations, and efficient queries.
+- Add automated tests and participate in production support.
+- Collaborate with product and front-end engineers on scoped releases.
+
+Required qualifications
+- Two or more years building and supporting Python web applications.
+- Practical experience with a relational database and API testing.
+- Comfort reading logs and diagnosing service issues.
+- Clear communication and care for data privacy.
+
+Docker or AWS experience is helpful but not required. Compensation:
+$115,000-$145,000 annually. No healthcare-industry experience is required.

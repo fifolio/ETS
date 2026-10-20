@@ -1,0 +1,38 @@
+Jordan Rivera
+Backend Software Developer
+jordan.rivera@example.test | Code samples: https://jrivera.example.test
+
+PROFILE
+Backend developer with five years of experience building and supporting
+Python web services. Focuses on reliable APIs, relational databases, testing,
+and practical cloud deployments.
+
+SKILLS
+- Python, FastAPI, Flask, SQLAlchemy, REST API design
+- PostgreSQL, Redis, database migrations and query optimization
+- Docker, AWS (ECS, S3, RDS), GitHub Actions
+- Pytest, service monitoring, structured logging, code review
+- Working knowledge of JavaScript and HTML
+
+EXPERIENCE
+Backend Software Developer | Harborlight Systems (fictional) | 2023-present
+- Designed and maintained FastAPI services used by a subscription platform.
+- Built REST endpoints and integrations with payment and notification vendors.
+- Improved PostgreSQL query performance and added indexes for high-traffic
+  reporting endpoints.
+- Containerized services with Docker and deployed them to AWS ECS.
+- Added Pytest coverage, CI checks, structured logs, and service alerts.
+- Worked with product managers and front-end engineers in an Agile team.
+
+Software Developer | Cedar Grove Digital (fictional) | 2021-2023
+- Developed Flask APIs and internal tools in Python.
+- Implemented authentication, background tasks, and PostgreSQL data models.
+- Helped troubleshoot production issues and document operational procedures.
+
+EDUCATION
+BSc in Software Engineering | Westbridge University (fictional) | 2021
+
+ADDITIONAL
+- Five years of professional software development experience.
+- Has not led a large engineering organization and has no professional
+  experience with Kubernetes, Terraform, or machine-learning research.

@@ -1,0 +1,20 @@
+Staff Front-End Architect
+Northwind Commerce Group (fictional) | Hybrid, New York | Full-time
+
+Northwind serves millions of retail customers. This senior leadership position
+owns front-end architecture and technical direction across six product teams.
+
+Responsibilities
+- Set a multi-year architecture strategy for a large React platform.
+- Lead migrations used by hundreds of engineers and mentor staff-level peers.
+- Establish engineering-wide quality and performance standards.
+- Partner with directors on hiring, roadmaps, and organization planning.
+
+Required
+- 10+ years of professional front-end development experience, including
+  several years in staff or principal-level roles.
+- Demonstrated ownership of architecture for a large, multi-team product.
+- Deep expertise in React, TypeScript, web performance, and design systems.
+- Experience influencing technical decisions across an organization.
+
+Compensation: $230,000-$275,000 plus annual bonus and equity.

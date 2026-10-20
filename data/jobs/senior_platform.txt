@@ -1,0 +1,21 @@
+Staff Platform Engineer
+Granite Harbor Cloud (fictional) | Remote, US and Canada | Full-time
+
+Granite Harbor operates a multi-region financial data platform. This staff
+role sets technical direction for infrastructure used by several engineering
+teams.
+
+Responsibilities
+- Lead the design of Kubernetes platforms across multiple production regions.
+- Define infrastructure-as-code standards using Terraform.
+- Set reliability strategy, service-level objectives, and incident practices.
+- Mentor senior engineers and influence architecture across the organization.
+
+Required
+- 12+ years of professional infrastructure or platform engineering experience.
+- Deep production expertise with Kubernetes, Terraform, and AWS networking.
+- History of leading multi-team platform initiatives at significant scale.
+- Experience with on-call operations and regulated workloads.
+
+Nice to have: Go, service mesh, and financial-services experience.
+Compensation: $205,000-$250,000 plus equity.

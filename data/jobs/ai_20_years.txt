@@ -1,0 +1,17 @@
+Principal Generative AI Engineer
+OmniMind Solutions (fictional) | On-site, San Francisco | Full-time
+
+OmniMind is hiring a principal engineer to lead the next generation of
+generative AI products.
+
+Required qualifications
+- At least 20 years of professional experience building generative AI systems.
+- At least 15 years delivering production applications with large language
+  models and transformer architectures.
+- A decade of experience with commercial prompt-engineering platforms.
+- Proven record of launching multiple generative AI products before 2010.
+- Expert-level Python, GPU cluster operations, and research publication history.
+
+Responsibilities include model research, API development, customer support,
+mobile application design, and management of a 40-person sales organization.
+Applicants must meet every listed requirement. Compensation: $180,000-$210,000.

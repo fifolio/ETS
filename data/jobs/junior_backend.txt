@@ -1,0 +1,17 @@
+Backend Engineering Intern
+Pebble Street Studio (fictional) | On-site, Austin | Internship
+
+This is a paid, 12-week summer internship for a student seeking a first
+professional software role. Interns pair with a mentor on small, supervised
+tasks in an existing Python service.
+
+Required
+- Currently enrolled in an undergraduate program and returning to classes
+  after the internship.
+- Coursework or personal projects in Python; professional experience is not
+  expected.
+- Available 20 hours per week during the summer term.
+- Willingness to learn Git, basic testing, and API development.
+
+This role does not include production ownership or independent project
+leadership. Compensation: $28 per hour. We cannot sponsor work authorization.

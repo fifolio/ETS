@@ -1,0 +1,16 @@
+Research Data Scientist, Clinical AI
+Meridian Field Labs (fictional) | On-site, Chicago | Full-time
+
+Meridian develops decision-support research tools for hospital networks. This
+role conducts original statistical and machine-learning research, not web
+application development.
+
+Required qualifications
+- PhD in statistics, biostatistics, computer science, or a closely related field.
+- Five years of postdoctoral or equivalent research experience.
+- Published work in clinical prediction or causal inference.
+- Advanced Python with PyTorch or JAX, experimental design, and model evaluation.
+- Experience working with de-identified clinical datasets and research partners.
+
+The successful candidate will design studies, defend methods to a review
+committee, and mentor research analysts. Compensation: $160,000-$195,000.

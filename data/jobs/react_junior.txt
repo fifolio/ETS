@@ -1,0 +1,22 @@
+Junior React Developer
+Brightpath Learning (fictional) | Remote, US | Full-time
+
+Brightpath builds online tools for schools and community learning programs.
+We are looking for a junior developer to help improve the interfaces used by
+students and teachers.
+
+What you will do
+- Build and maintain responsive pages and reusable React components.
+- Work from designs with a product designer and ask questions early.
+- Connect front-end views to existing REST APIs.
+- Write basic component tests and participate in code review.
+
+What we are looking for
+- Around one year of experience through work, internship, or substantial
+  projects using React, JavaScript, or TypeScript.
+- Comfortable with HTML and CSS and interested in accessible interfaces.
+- Familiarity with Git and willingness to learn from feedback.
+- Clear communication and curiosity about how the product is used.
+
+Nice to have: experience with a testing library or education products.
+Compensation: $72,000-$88,000 annually, depending on location and experience.

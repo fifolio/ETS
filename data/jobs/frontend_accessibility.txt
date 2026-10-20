@@ -1,0 +1,20 @@
+Front-End Engineer, Accessibility
+Open Door Civic Tech (fictional) | Remote, US | Full-time
+
+Open Door makes public-service websites easier for everyone to use. Join a
+small product team working on an accessible application portal.
+
+Responsibilities
+- Implement responsive React and TypeScript interfaces from Figma designs.
+- Use semantic HTML and CSS to support keyboard and assistive-technology users.
+- Work with designers and API engineers to deliver tested product improvements.
+- Check interfaces against WCAG guidance and help resolve accessibility issues.
+
+Required
+- Professional, internship, or portfolio experience building React interfaces.
+- Working knowledge of TypeScript or JavaScript, HTML, and CSS.
+- Familiarity with keyboard navigation and accessible form patterns.
+- Ability to communicate clearly and incorporate code-review feedback.
+
+We welcome early-career applicants. Experience with automated accessibility
+testing is a plus, not a requirement. Compensation: $80,000-$105,000.

@@ -1,0 +1,97 @@
+[
+  {
+    "cv": "cvs/frontend_junior.txt",
+    "job": "jobs/react_junior.txt",
+    "expected": "smash"
+  },
+  {
+    "cv": "cvs/frontend_junior.txt",
+    "job": "jobs/ai_20_years.txt",
+    "expected": "pass"
+  },
+  {
+    "cv": "cvs/frontend_junior.txt",
+    "job": "jobs/vague_generalist.txt",
+    "expected": "pass"
+  },
+  {
+    "cv": "cvs/frontend_junior.txt",
+    "job": "jobs/senior_platform.txt",
+    "expected": "pass"
+  },
+  {
+    "cv": "cvs/frontend_junior.txt",
+    "job": "jobs/python_backend.txt",
+    "expected": "pass"
+  },
+  {
+    "cv": "cvs/frontend_junior.txt",
+    "job": "jobs/data_scientist.txt",
+    "expected": "pass"
+  },
+  {
+    "cv": "cvs/frontend_junior.txt",
+    "job": "jobs/frontend_accessibility.txt",
+    "expected": "smash"
+  },
+  {
+    "cv": "cvs/frontend_junior.txt",
+    "job": "jobs/staff_frontend.txt",
+    "expected": "pass"
+  },
+  {
+    "cv": "cvs/frontend_junior.txt",
+    "job": "jobs/product_support.txt",
+    "expected": "pass"
+  },
+  {
+    "cv": "cvs/backend_developer.txt",
+    "job": "jobs/python_backend.txt",
+    "expected": "smash"
+  },
+  {
+    "cv": "cvs/backend_developer.txt",
+    "job": "jobs/fastapi_api.txt",
+    "expected": "smash"
+  },
+  {
+    "cv": "cvs/backend_developer.txt",
+    "job": "jobs/ai_20_years.txt",
+    "expected": "pass"
+  },
+  {
+    "cv": "cvs/backend_developer.txt",
+    "job": "jobs/vague_generalist.txt",
+    "expected": "pass"
+  },
+  {
+    "cv": "cvs/backend_developer.txt",
+    "job": "jobs/senior_platform.txt",
+    "expected": "pass"
+  },
+  {
+    "cv": "cvs/backend_developer.txt",
+    "job": "jobs/react_junior.txt",
+    "expected": "pass"
+  },
+  {
+    "cv": "cvs/backend_developer.txt",
+    "job": "jobs/data_scientist.txt",
+    "expected": "pass"
+  },
+  {
+    "cv": "cvs/backend_developer.txt",
+    "job": "jobs/devops_engineer.txt",
+    "expected": "pass"
+  },
+  {
+    "cv": "cvs/backend_developer.txt",
+    "job": "jobs/junior_backend.txt",
+    "expected": "pass"
+  },
+  {
+    "cv": "cvs/backend_developer.txt",
+    "job": "jobs/product_support.txt",
+    "expected": "pass"
+  }
+]

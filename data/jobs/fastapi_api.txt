@@ -1,0 +1,21 @@
+Backend Engineer, API Integrations
+Mapleline Logistics (fictional) | Remote, US | Full-time
+
+Mapleline provides shipment visibility software for regional distributors.
+The API team needs an engineer to build integrations and improve service
+reliability as new customers come on board.
+
+Responsibilities
+- Develop Python services and REST integrations using FastAPI.
+- Maintain PostgreSQL data models and investigate slow queries.
+- Add Pytest coverage and maintain Docker-based development workflows.
+- Support services deployed on AWS and take part in a shared on-call rotation.
+- Document API behavior for partner engineering teams.
+
+Required
+- Three or more years of professional Python backend experience.
+- Experience with FastAPI or a comparable Python web framework.
+- Production use of PostgreSQL, automated tests, and REST APIs.
+- Familiarity with Docker and cloud-hosted services.
+
+Compensation: $135,000-$165,000. Logistics experience is not required.
