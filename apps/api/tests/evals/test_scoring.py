@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
+
 import pytest
+
 from app.chains.matcher import analyze
 
 DATA = Path(__file__).resolve().parents[4] / "data"

@@ -1,11 +1,14 @@
 from langchain_groq import ChatGroq
+
 from app.core.config import settings
-from app.schemas.verdict import MatchResult
 from app.prompts.matcher import MATCHER_PROMPT
+from app.schemas.verdict import MatchResult
+
 
 def build_chain():
     if not settings.groq_api_key:
-        raise RuntimeError("GROQ_API_KEY is not set in the root .env file. Please set GROQ_API_KEY in your environment variables.")
+        raise RuntimeError("GROQ_API_KEY is not set in the root .env file. " \
+        "Please set GROQ_API_KEY in your environment variables.")
     llm = ChatGroq(
         model=settings.groq_model,
         api_key=settings.groq_api_key,

@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+
 from app.core import metadata
 from app.routers import health
 
