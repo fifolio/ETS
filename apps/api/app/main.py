@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from app.core import metadata
-from app.routers import health
+from app.routers import analyze, health
 
 app = FastAPI(
     title=metadata.APP_TITLE,
@@ -12,7 +12,7 @@ app = FastAPI(
     license_info=metadata.LICENSE_INFO,
     servers=metadata.SERVERS,
     openapi_tags=metadata.TAGS_METADATA,
-)   
+)
 
 app.include_router(health.router)
-
+app.include_router(analyze.router)

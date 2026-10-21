@@ -10,7 +10,7 @@ their time.
 
 Send a job post and a candidate's CV, and the API returns a **smash or pass** verdict with a match
 score, matching and missing skills, and red flags such as unrealistic requirements
-(for example, "20 years of experience in AI").
+(for example, "20 years of experience building in MCPs").
 
 ## How it works
 1. The candidate signs up and uploads a CV on the ETS web app.
@@ -46,7 +46,11 @@ SERVERS = [
 TAGS_METADATA = [
     {
         "name": "health",
-        "description": "Service status checks, used by hosting platforms and monitoring.",
+        "description": "Service status checks, \\ used by hosting platforms and monitoring.",
     },
-    # later add: {"name": "analyze", "description": "Job post vs CV matching."}
+    {
+        "name": "analyze",
+        "description": "Analyze a candidate's CV against a job post and \\ "
+        "return a structured verdict.",
+    },
 ]

@@ -10,6 +10,7 @@ SAMPLE_CV = (
     "Experience: 2 years building web apps\n"
 )
 
+
 def make_pdf(text: str = "") -> bytes:
     doc = pymupdf.open()
     page = doc.new_page()
@@ -19,17 +20,21 @@ def make_pdf(text: str = "") -> bytes:
     doc.close()
     return data
 
+
 def test_extracts_text_from_pdf():
     text = extract_text_from_pdf(make_pdf(SAMPLE_CV))
     assert "Frontend Developer" in text
     assert "React" in text
 
+
 def test_clean_text_collapses_whitespace():
     assert clean_text("a   b\t c\n\n\n\n\nd  ") == "a b c\n\nd"
+
 
 def test_invalid_file_raises():
     with pytest.raises(CVParsingError):
         extract_text_from_pdf(b"this is not a pdf")
+
 
 def test_blank_pdf_raises():
     with pytest.raises(CVParsingError):
