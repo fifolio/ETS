@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 
 from app.core import metadata
-from app.routers import analyze, health
+from app.core.errors import register_exception_handlers
+from app.routers import analyze, cv, health
 
 app = FastAPI(
     title=metadata.APP_TITLE,
@@ -14,5 +15,8 @@ app = FastAPI(
     openapi_tags=metadata.TAGS_METADATA,
 )
 
+register_exception_handlers(app)
 app.include_router(health.router)
+app.include_router(analyze.router)
+app.include_router(cv.router)
 app.include_router(analyze.router)

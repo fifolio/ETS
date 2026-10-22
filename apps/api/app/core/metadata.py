@@ -53,4 +53,5 @@ TAGS_METADATA = [
         "description": "Analyze a candidate's CV against a job post and \\ "
         "return a structured verdict.",
     },
+    {"name": "cv", "description": "Upload and check the logged-in user's CV."},
 ]
