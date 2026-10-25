@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from appwrite.client import Client
 from appwrite.services.account import Account
 from appwrite.services.storage import Storage
@@ -5,6 +7,13 @@ from appwrite.services.tables_db import TablesDB
 
 from app.core.config import settings
 from app.core.errors import ConfigurationError
+
+
+@dataclass(frozen=True)
+class AuthenticatedUser:
+    id: str
+    name: str
+    email: str
 
 
 def _new_client() -> Client:
@@ -34,8 +43,9 @@ def storage() -> Storage:
     return Storage(_admin_client())
 
 
-def verify_jwt(token: str) -> str:
-    """Return the user ID for a valid user JWT. Raises AppwriteException if it's invalid."""
-    client = _new_client()
+def verify_jwt(token: str) -> AuthenticatedUser:
+    """Return the user for a valid JWT. Raises AppwriteException if it's invalid."""
+    client = _new_client()  # deliberately no API key: this client acts as the user
     client.set_jwt(token)
-    return Account(client).get().id
+    user = Account(client).get()
+    return AuthenticatedUser(id=user.id, name=user.name, email=user.email)

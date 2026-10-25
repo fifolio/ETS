@@ -9,9 +9,10 @@ pytestmark = pytest.mark.usefixtures("logged_in")
 
 client = TestClient(app)
 
-
+# Matches the test user in conftest.py: Jane Doe, jane.doe@example.com
 SAMPLE_CV = (
     "Jane Doe\n"
+    "jane.doe@example.com\n"
     "Frontend Developer\n"
     "Skills: React, TypeScript, Tailwind CSS\n"
     "Experience: 2 years building web apps\n"
@@ -42,7 +43,7 @@ def test_get_cv_returns_info(monkeypatch):
     assert response.json() == {"file_name": "cv.pdf", "characters": 500}
 
 
-def test_upload_cv_parses_and_saves(monkeypatch):
+def test_upload_cv_parses_validates_and_saves(monkeypatch):
     saved = {}
 
     def fake_save(user_id, file_name, pdf_bytes, text):
@@ -62,7 +63,23 @@ def test_upload_cv_parses_and_saves(monkeypatch):
 
 def test_upload_rejects_non_pdf():
     response = client.post("/cv", files={"file": ("cv.pdf", b"not a pdf", "application/pdf")})
+
     assert response.status_code == 422
+    assert response.json()["problems"]
+
+
+def test_upload_rejects_cv_that_does_not_match_the_account(monkeypatch):
+    monkeypatch.setattr("app.routers.cv.save_cv", lambda *args: pytest.fail("must not save"))
+    other_cv = SAMPLE_CV.replace("Jane Doe", "John Smith").replace(
+        "jane.doe@example.com", "john@other.com"
+    )
+
+    response = client.post("/cv", files={"file": ("cv.pdf", make_pdf(other_cv), "application/pdf")})
+
+    assert response.status_code == 422
+    body = response.json()
+    assert body["detail"] == "The CV did not pass validation."
+    assert len(body["problems"]) == 2  # wrong email and wrong name
 
 
 def test_upload_rejects_large_file():

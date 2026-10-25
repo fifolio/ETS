@@ -11,7 +11,22 @@ class ConfigurationError(RuntimeError):
     """Raised when required settings, like Appwrite credentials, are missing."""
 
 
+class CVValidationError(Exception):
+    """Raised when an uploaded CV can't be accepted. Carries one message per problem."""
+
+    def __init__(self, problems: list[str]):
+        super().__init__("; ".join(problems))
+        self.problems = problems
+
+
 def register_exception_handlers(app: FastAPI) -> None:
+    @app.exception_handler(CVValidationError)
+    async def cv_validation_error_handler(request: Request, exc: CVValidationError):
+        return JSONResponse(
+            status_code=422,
+            content={"detail": "The CV did not pass validation.", "problems": exc.problems},
+        )
+
     @app.exception_handler(ConfigurationError)
     async def configuration_error_handler(request: Request, exc: ConfigurationError):
         logger.error("Configuration error: %s", exc)

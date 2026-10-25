@@ -2,8 +2,9 @@ from appwrite.exception import AppwriteException
 from fastapi.security import HTTPAuthorizationCredentials
 from fastapi.testclient import TestClient
 
-from app.core.auth import get_current_user_id
+from app.core.auth import get_current_user
 from app.main import app
+from app.services.appwrite_client import AuthenticatedUser
 
 client = TestClient(app)
 
@@ -30,7 +31,8 @@ def test_appwrite_outage_returns_502(monkeypatch):
     assert response.status_code == 502
 
 
-def test_valid_token_returns_user_id(monkeypatch):
-    monkeypatch.setattr("app.core.auth.verify_jwt", lambda token: "user-1")
+def test_valid_token_returns_user(monkeypatch):
+    user = AuthenticatedUser("user-1", "Jane Doe", "jane.doe@example.com")
+    monkeypatch.setattr("app.core.auth.verify_jwt", lambda token: user)
     credentials = HTTPAuthorizationCredentials(scheme="Bearer", credentials="good-token")
-    assert get_current_user_id(credentials) == "user-1"
+    assert get_current_user(credentials) == user
