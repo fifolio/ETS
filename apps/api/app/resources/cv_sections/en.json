@@ -1,0 +1,7 @@
+{
+  "language": "English",
+  "education": ["education", "academic", "studies", "degrees"],
+  "experience": ["experience", "experiences", "employment", "work history", "career history", "internship", "internships"],
+  "skills": ["skills", "expertise", "competencies"],
+  "profile": ["profile", "summary", "about me", "objective"]
+}

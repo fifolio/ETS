@@ -1,0 +1,7 @@
+{
+  "language": "Spanish",
+  "education": ["educación", "formación", "formación académica", "estudios"],
+  "experience": ["experiencia", "experiencia laboral", "experiencia profesional", "historial laboral"],
+  "skills": ["habilidades", "competencias", "conocimientos", "aptitudes"],
+  "profile": ["perfil", "perfil profesional", "resumen", "sobre mí", "objetivo"]
+}

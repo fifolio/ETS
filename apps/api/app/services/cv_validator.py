@@ -1,73 +1,51 @@
 import re
-import unicodedata
+
+from app.services.cv_sections import SectionKeyword, load_keywords
+from app.services.text_utils import has_unspaced_script, normalize, strip_accents
 
 EMAIL_PATTERN = re.compile(r"[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}")
-INLINE_HEADING = re.compile(r"^\s*(?P<keyword>[a-z ]+?)\s*:")
+INLINE_HEADING = re.compile(r"^\s*(?P<keyword>[^:：]{1,40}?)\s*[:：]")
 MAX_HEADING_WORDS = 4
-
-SECTION_KEYWORDS = {
-    "education": [
-        "education",
-        "formation",
-        "formations",
-        "etudes",
-        "diplome",
-        "diplomes",
-        "academic",
-        "academique",
-    ],
-    "experience": [
-        "experience",
-        "experiences",
-        "employment",
-        "work history",
-        "parcours professionnel",
-        "internship",
-        "internships",
-    ],
-    "skills": ["skills", "competences", "competence", "expertise"],
-    "profile": ["profile", "profil", "summary", "about me", "objective", "objectif", "a propos"],
-}
-
-KEYWORD_TO_SECTION = {
-    keyword: section for section, keywords in SECTION_KEYWORDS.items() for keyword in keywords
-}
-
-print(KEYWORD_TO_SECTION)
+MAX_UNSPACED_LINE_CHARS = 30  # Chinese, Japanese, Thai have no spaces, so limit by length
+UNSPACED_HEADING_WINDOW = 12  # for those scripts, the keyword must start near the line start
 
 
-def _strip_accents(text: str) -> str:
-    decomposed = unicodedata.normalize("NFKD", text)
-    return "".join(char for char in decomposed if not unicodedata.combining(char))
+def _heading_candidates(line: str) -> list[str]:
+    """Return the parts of a line that could be a section heading."""
+    lowered = strip_accents(line).lower()
+    candidates = []
+
+    normalized = normalize(lowered)
+    if 0 < len(normalized.split()) <= MAX_HEADING_WORDS:
+        candidates.append(normalized)
+
+    inline = INLINE_HEADING.match(lowered)  # for lines like "Skills: React, Docker"
+    if inline:
+        keyword = normalize(inline.group("keyword"))
+        if 0 < len(keyword.split()) <= 3:
+            candidates.append(keyword)
+
+    return candidates
 
 
-def _normalize(text: str) -> str:
-    """Lowercase, remove accents and punctuation, collapse spaces."""
-    return re.sub(r"[\W_]+", " ", _strip_accents(text).lower()).strip()
+def _matches(candidate: str, keyword: SectionKeyword) -> bool:
+    if keyword.substring:
+        return (
+            len(candidate) <= MAX_UNSPACED_LINE_CHARS
+            and keyword.text in candidate[:UNSPACED_HEADING_WINDOW]
+        )
+    return f" {keyword.text} " in f" {candidate} "
 
 
 def find_sections(text: str) -> set[str]:
     """Return which resume sections (education, experience, skills, profile) have a heading."""
-    found = set()
+    keywords = load_keywords()
+    found: set[str] = set()
     for line in text.splitlines():
-        lowered = _strip_accents(line).lower()
-        candidates = []
-
-        words = _normalize(lowered).split()
-        if 0 < len(words) <= MAX_HEADING_WORDS:
-            candidates.append(" ".join(words))
-
-        inline = INLINE_HEADING.match(lowered)
-        if inline:
-            keyword = _normalize(inline.group("keyword"))
-            if 0 < len(keyword.split()) <= 3:
-                candidates.append(keyword)
-
-        for candidate in candidates:
-            padded = f" {candidate} "
-            for keyword, section in KEYWORD_TO_SECTION.items():
-                if f" {keyword} " in padded:
-                    found.add(section)
+        for candidate in _heading_candidates(line):
+            for keyword in keywords:
+                if keyword.section not in found and _matches(candidate, keyword):
+                    found.add(keyword.section)
     return found
 
 
@@ -83,12 +61,19 @@ def _email_problem(text: str, account_email: str) -> str | None:
 
 
 def _name_matches(text: str, account_name: str) -> bool:
-    parts = [part for part in _normalize(account_name).split() if len(part) >= 2]
+    parts = [part for part in normalize(account_name).split() if len(part) >= 2]
     if not parts:
         return False
     required = len(parts) if len(parts) <= 2 else len(parts) - 1
-    cv_words = set(_normalize(text).split())
-    return sum(part in cv_words for part in parts) >= required
+    normalized_cv = normalize(text)
+    cv_words = set(normalized_cv.split())
+
+    def appears(part: str) -> bool:
+        if has_unspaced_script(part):
+            return part in normalized_cv  # Chinese, Japanese, Thai names have no spaces around
+        return part in cv_words
+
+    return sum(appears(part) for part in parts) >= required
 
 
 def validate_cv(text: str, *, account_name: str, account_email: str) -> list[str]:

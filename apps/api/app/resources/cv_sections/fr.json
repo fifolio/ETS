@@ -1,0 +1,7 @@
+{
+  "language": "French",
+  "education": ["formation", "formations", "études", "diplôme", "diplômes", "académique", "parcours académique"],
+  "experience": ["expérience", "expériences", "parcours professionnel"],
+  "skills": ["compétences", "compétence", "connaissances"],
+  "profile": ["profil", "à propos", "objectif", "présentation"]
+}

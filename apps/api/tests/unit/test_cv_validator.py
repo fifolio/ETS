@@ -68,9 +68,12 @@ def test_two_part_name_needs_both_parts():
     assert len(problems) == 1
 
 
-def test_skips_the_name_check_when_the_account_has_no_name():
+def test_name_check_when_the_account_has_no_name():
     cv = GOOD_CV.replace("Jane Doe", "Anonymous")
-    assert validate_cv(cv, account_name="", account_email="jane.doe@example.com") == ["The CV doesn't contain your account name. Make sure the name on your CV matches the name you signed up with."]
+    assert validate_cv(cv, account_name="", account_email="jane.doe@example.com") == [
+        "The CV doesn't contain your account name. "
+        "Make sure the name on your CV matches the name you signed up with."
+    ]
 
 
 def test_rejects_text_without_any_section():
@@ -110,3 +113,29 @@ def test_a_sentence_mentioning_experience_is_not_a_heading():
 def test_reports_every_problem_at_once():
     problems = validate_cv("random text", **ACCOUNT)
     assert len(problems) == 3  # email, name, and sections
+
+
+@pytest.mark.parametrize(
+    ("heading", "expected"),
+    [
+        ("Educación", "education"),
+        ("Experiencia laboral", "experience"),
+        ("Habilidades", "skills"),
+        ("الخبرة العملية", "experience"),
+        ("المهارات", "skills"),
+        ("教育背景", "education"),
+        ("技能：React、Node.js", "skills"),
+    ],
+)
+def test_finds_headings_in_spanish_arabic_and_chinese(heading, expected):
+    assert find_sections(f"{heading}\nsome content here") == {expected}
+
+
+def test_a_long_chinese_sentence_is_not_a_heading():
+    text = "我有很多教育方面的经验可以分享给大家，希望大家喜欢这个项目的设计和实现过程"
+    assert find_sections(text) == set()
+
+
+def test_chinese_name_matches_without_spaces():
+    cv = "姓名：张伟 | zhang@example.com\n教育背景\n北京大学计算机系"
+    assert validate_cv(cv, account_name="张伟", account_email="zhang@example.com") == []
