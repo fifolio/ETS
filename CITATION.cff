@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "ETS: Employment Targeting System"
+abstract: >-
+  An open-source, AI-powered tool that compares a job post with a candidate's CV
+  and returns a smash-or-pass verdict, flagging unrealistic or copy-pasted requirements.
+type: software
+authors:
+  - family-names: "Dabbabi"
+    given-names: "Firas"
+    email: "FirasDabbabi@gmail.com"
+repository-code: "https://github.com/fifolio/ETS"
+license: MIT
+version: 1.0.0
+keywords:
+  - Anti-ATS
+  - job search
+  - CV matching
+  - large language models
+  - open source
