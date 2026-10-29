@@ -19,5 +19,6 @@ class Settings(BaseSettings):
     appwrite_scans_table_id: str = ""
     appwrite_cv_bucket_id: str = ""
 
+    cors_origins: str = ""
 
 settings = Settings()
