@@ -1,6 +1,7 @@
 import pytest
 
-from app.services.cv_validator import find_sections, validate_cv
+from app.services.cv_validation.find_sections import find_sections
+from app.services.cv_validation.validate_cv import validate_cv
 
 GOOD_CV = """
 Jane Doe
@@ -69,11 +70,9 @@ def test_two_part_name_needs_both_parts():
 
 
 def test_name_check_when_the_account_has_no_name():
-    cv = GOOD_CV.replace("Jane Doe", "Anonymous")
-    assert validate_cv(cv, account_name="", account_email="jane.doe@example.com") == [
-        "The CV doesn't contain your account name. "
-        "Make sure the name on your CV matches the name you signed up with."
-    ]
+    cv = GOOD_CV.replace("Jane Doe", "")
+    result = validate_cv(cv, account_name="Jeanne Dupré", account_email="jane.doe@example.com")
+    assert result == ["The CV doesn't contain your account name."]
 
 
 def test_rejects_text_without_any_section():

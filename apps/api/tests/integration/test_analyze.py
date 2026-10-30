@@ -2,8 +2,9 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.schemas.verdict import MatchResult, Verdict
-from app.services.cv_store import StoredCV
+from app.schemas.match_result import MatchResult
+from app.schemas.verdict import Verdict
+from app.types.stored_cv import StoredCV
 
 pytestmark = pytest.mark.usefixtures("logged_in")
 

@@ -1,8 +1,8 @@
 import pytest
 
-from app.core.auth import get_current_user
+from app.dependencies.get_current_user import get_current_user
 from app.main import app
-from app.services.appwrite_client import AuthenticatedUser
+from app.types.authenticated_user import AuthenticatedUser
 
 TEST_USER = AuthenticatedUser(id="user-1", name="Jane Doe", email="jane.doe@example.com")
 

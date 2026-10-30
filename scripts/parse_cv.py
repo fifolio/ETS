@@ -4,9 +4,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "apps" / "api"))
 
-from app.services.cv_parser import extract_text_from_pdf
-from app.services.cv_validator import validate_cv
-
+from app.services.cv_parsing.extract_text_from_pdf import extract_text_from_pdf 
+from app.services.cv_validation.validate_cv import validate_cv 
 
 if __name__ == "__main__":
     text = extract_text_from_pdf(Path(sys.argv[1]).read_bytes())

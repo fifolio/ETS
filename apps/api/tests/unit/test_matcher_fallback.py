@@ -2,9 +2,14 @@ import groq
 import httpx
 import pytest
 from langchain_core.exceptions import OutputParserException
+from langchain_core.runnables import RunnableLambda
 
-from app.chains import matcher
-from app.schemas.verdict import MatchResult, Verdict
+import app.chains.analyze as analyze_module
+import app.chains.build_chain as build_chain_module
+from app.chains.analyze import analyze
+from app.core.config import settings
+from app.schemas.match_result import MatchResult
+from app.schemas.verdict import Verdict
 
 PRIMARY_RESULT = MatchResult(
     verdict=Verdict.SMASH,
@@ -40,9 +45,9 @@ def rate_limit_error():
 def setup(monkeypatch):
     def _setup(primary: FakeChain, fallback: FakeChain):
         chains = {"primary-model": primary, "fallback-model": fallback}
-        monkeypatch.setattr(matcher, "build_chain", lambda model: chains[model])
-        monkeypatch.setattr(matcher.settings, "groq_model", "primary-model")
-        monkeypatch.setattr(matcher.settings, "groq_fallback_model", "fallback-model")
+        monkeypatch.setattr(analyze_module, "build_chain", lambda model: chains[model])
+        monkeypatch.setattr(settings, "groq_model", "primary-model")
+        monkeypatch.setattr(settings, "groq_fallback_model", "fallback-model")
 
     return _setup
 
@@ -52,7 +57,7 @@ def test_uses_primary_when_it_works(setup):
     fallback = FakeChain(result=FALLBACK_RESULT)
     setup(primary, fallback)
 
-    assert matcher.analyze("cv", "job") == PRIMARY_RESULT
+    assert analyze("cv", "job") == PRIMARY_RESULT
     assert fallback.calls == 0
 
 
@@ -61,7 +66,7 @@ def test_falls_back_on_rate_limit(setup):
     fallback = FakeChain(result=FALLBACK_RESULT)
     setup(primary, fallback)
 
-    assert matcher.analyze("cv", "job") == FALLBACK_RESULT
+    assert analyze("cv", "job") == FALLBACK_RESULT
     assert fallback.calls == 1
 
 
@@ -70,14 +75,14 @@ def test_falls_back_on_bad_model_output(setup):
     fallback = FakeChain(result=FALLBACK_RESULT)
     setup(primary, fallback)
 
-    assert matcher.analyze("cv", "job") == FALLBACK_RESULT
+    assert analyze("cv", "job") == FALLBACK_RESULT
 
 
 def test_raises_when_both_models_fail(setup):
     setup(FakeChain(error=rate_limit_error()), FakeChain(error=rate_limit_error()))
 
     with pytest.raises(groq.RateLimitError):
-        matcher.analyze("cv", "job")
+        analyze("cv", "job")
 
 
 def test_does_not_fall_back_on_unrelated_errors(setup):
@@ -85,5 +90,22 @@ def test_does_not_fall_back_on_unrelated_errors(setup):
     setup(FakeChain(error=ValueError("a bug in our code")), fallback)
 
     with pytest.raises(ValueError):
-        matcher.analyze("cv", "job")
+        analyze("cv", "job")
     assert fallback.calls == 0
+
+
+def test_build_chain_uses_the_requested_model(monkeypatch):
+    captured = {}
+
+    class FakeGroq:
+        def __init__(self, model, **kwargs):
+            captured["model"] = model
+
+        def with_structured_output(self, schema):
+            return RunnableLambda(lambda x: x)
+
+    monkeypatch.setattr(build_chain_module, "ChatGroq", FakeGroq)
+    monkeypatch.setattr(settings, "groq_api_key", "test-key")
+
+    build_chain_module.build_chain("some-model")
+    assert captured["model"] == "some-model"

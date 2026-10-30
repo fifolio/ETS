@@ -2,13 +2,13 @@ import logging
 
 from fastapi import APIRouter, HTTPException
 
-from app.chains.matcher import analyze
-from app.core.auth import CurrentUserId
-from app.schemas.analyze import AnalyzeRequest
-from app.schemas.errors import ErrorResponse
-from app.schemas.verdict import MatchResult
-from app.services.cv_store import get_cv
-from app.services.scan_store import save_scan
+from app.chains.analyze import analyze
+from app.schemas.analyze_request import AnalyzeRequest
+from app.schemas.error_response import ErrorResponse
+from app.schemas.match_result import MatchResult
+from app.services.cv.get_cv import get_cv
+from app.services.scans.save_scan import save_scan
+from app.types.current_user import CurrentUserId
 
 logger = logging.getLogger(__name__)
 
@@ -32,10 +32,7 @@ router = APIRouter(
     description="Compares the logged-in user's stored CV with a job post.",
 )
 def analyze_job(payload: AnalyzeRequest, user_id: CurrentUserId) -> MatchResult:
-    """Compare the user's CV with a job post and return the match verdict."""
-
     cv = get_cv(user_id)
-
     if cv is None:
         raise HTTPException(status_code=404, detail="Upload your CV before scanning a job.")
 
@@ -53,6 +50,7 @@ def analyze_job(payload: AnalyzeRequest, user_id: CurrentUserId) -> MatchResult:
     try:
         save_scan(user_id, result, payload.job_url, payload.job_title)
     except Exception:
+        # History is a bonus: never lose the verdict because saving it failed.
         logger.exception("Could not save scan history")
 
     return result

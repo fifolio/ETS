@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from app.chains.matcher import analyze
+from app.chains.analyze import analyze
 
 DATA = Path(__file__).resolve().parents[4] / "data"
 CASES = json.loads((DATA / "cases.json").read_text())

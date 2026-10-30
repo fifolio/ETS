@@ -1,24 +1,18 @@
 from fastapi import APIRouter, HTTPException, UploadFile
 
-from app.core.auth import CurrentUser, CurrentUserId
-from app.core.errors import CVValidationError
-from app.schemas.cv import CVInfo
-from app.schemas.errors import CVValidationErrorResponse, ErrorResponse
-from app.services.cv_parser import CVParsingError, extract_text_from_pdf
-from app.services.cv_store import get_cv, save_cv
-from app.services.cv_validator import validate_cv
+from app.constants.cv_parsing import MAX_CV_BYTES
+from app.exceptions.cv_parsing_error import CVParsingError
+from app.exceptions.cv_validation_error import CVValidationError
+from app.routers.cv.options import CV_ROUTER_OPTIONS
+from app.schemas.cv_info import CVInfo
+from app.schemas.cv_validation_error_response import CVValidationErrorResponse
+from app.schemas.error_response import ErrorResponse
+from app.services.cv.save_cv import save_cv
+from app.services.cv_parsing.extract_text_from_pdf import extract_text_from_pdf
+from app.services.cv_validation.validate_cv import validate_cv
+from app.types.current_user import CurrentUser
 
-MAX_CV_BYTES = 5 * 1024 * 1024  # matches the Appwrite bucket limit
-
-router = APIRouter(
-    prefix="/cv",
-    tags=["cv"],
-    responses={
-        401: {"model": ErrorResponse, "description": "Missing or invalid token."},
-        502: {"model": ErrorResponse, "description": "The storage service failed."},
-        503: {"model": ErrorResponse, "description": "The service is not configured."},
-    },
-)
+router = APIRouter(**CV_ROUTER_OPTIONS)
 
 
 @router.post(
@@ -56,16 +50,3 @@ def upload_cv(user: CurrentUser, file: UploadFile) -> CVInfo:
     file_name = file.filename or "cv.pdf"
     save_cv(user.id, file_name, data, text)
     return CVInfo(file_name=file_name, characters=len(text))
-
-
-@router.get(
-    "",
-    response_model=CVInfo,
-    summary="Get your stored CV info",
-    responses={404: {"model": ErrorResponse, "description": "No CV uploaded yet."}},
-)
-def read_cv(user_id: CurrentUserId) -> CVInfo:
-    cv = get_cv(user_id)
-    if cv is None:
-        raise HTTPException(status_code=404, detail="No CV uploaded yet.")
-    return CVInfo(file_name=cv.file_name, characters=len(cv.text))

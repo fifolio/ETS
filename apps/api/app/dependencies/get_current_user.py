@@ -2,11 +2,11 @@ from typing import Annotated
 
 from appwrite.exception import AppwriteException
 from fastapi import Depends, HTTPException
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.security import HTTPAuthorizationCredentials
 
-from app.services.appwrite_client import AuthenticatedUser, verify_jwt
-
-bearer_scheme = HTTPBearer(auto_error=False, description="Appwrite JWT of the logged-in user")
+from app.dependencies.bearer_scheme import bearer_scheme
+from app.services.appwrite.verify_jwt import verify_jwt
+from app.types.authenticated_user import AuthenticatedUser
 
 
 def get_current_user(
@@ -24,14 +24,4 @@ def get_current_user(
     except AppwriteException as exc:
         if exc.code == 401:
             raise unauthorized from exc
-        raise  # Appwrite itself is failing, so the 502 handler deal with it
-
-
-CurrentUser = Annotated[AuthenticatedUser, Depends(get_current_user)]
-
-
-def get_current_user_id(user: CurrentUser) -> str:
-    return user.id
-
-
-CurrentUserId = Annotated[str, Depends(get_current_user_id)]
+        raise  # Appwrite itself is failing, so let the 502 handler deal with it

@@ -3,7 +3,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.services.cv_store import StoredCV
+from app.types.stored_cv import StoredCV
 
 pytestmark = pytest.mark.usefixtures("logged_in")
 
@@ -29,13 +29,13 @@ def make_pdf(text: str) -> bytes:
 
 
 def test_get_cv_returns_404_when_missing(monkeypatch):
-    monkeypatch.setattr("app.routers.cv.get_cv", lambda user_id: None)
+    monkeypatch.setattr("app.routers.cv.read_cv.get_cv", lambda user_id: None)
     assert client.get("/cv").status_code == 404
 
 
 def test_get_cv_returns_info(monkeypatch):
     stored = StoredCV("row-1", "file-1", "cv.pdf", "x" * 500)
-    monkeypatch.setattr("app.routers.cv.get_cv", lambda user_id: stored)
+    monkeypatch.setattr("app.routers.cv.read_cv.get_cv", lambda user_id: stored)
 
     response = client.get("/cv")
 
@@ -49,7 +49,7 @@ def test_upload_cv_parses_validates_and_saves(monkeypatch):
     def fake_save(user_id, file_name, pdf_bytes, text):
         saved.update(user_id=user_id, file_name=file_name, text=text)
 
-    monkeypatch.setattr("app.routers.cv.save_cv", fake_save)
+    monkeypatch.setattr("app.routers.cv.upload_cv.save_cv", fake_save)
 
     response = client.post(
         "/cv", files={"file": ("my-cv.pdf", make_pdf(SAMPLE_CV), "application/pdf")}
@@ -69,7 +69,9 @@ def test_upload_rejects_non_pdf():
 
 
 def test_upload_rejects_cv_that_does_not_match_the_account(monkeypatch):
-    monkeypatch.setattr("app.routers.cv.save_cv", lambda *args: pytest.fail("must not save"))
+    monkeypatch.setattr(
+        "app.routers.cv.upload_cv.save_cv", lambda *args: pytest.fail("must not save")
+    )
     other_cv = SAMPLE_CV.replace("Jane Doe", "John Smith").replace(
         "jane.doe@example.com", "john@other.com"
     )

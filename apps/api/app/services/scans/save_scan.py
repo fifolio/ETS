@@ -1,14 +1,14 @@
 from appwrite.id import ID
 
 from app.core.config import settings
-from app.schemas.verdict import MatchResult
-from app.services.appwrite_client import tables_db
+from app.schemas.match_result import MatchResult
+from app.services.appwrite.get_tables_db import get_tables_db
 
 
 def save_scan(
     user_id: str, result: MatchResult, job_url: str | None, job_title: str | None
 ) -> None:
-    tables_db.create_row(
+    get_tables_db().create_row(
         database_id=settings.appwrite_database_id,
         table_id=settings.appwrite_scans_table_id,
         row_id=ID.unique(),

@@ -1,7 +1,9 @@
 import pymupdf
 import pytest
 
-from app.services.cv_parser import CVParsingError, clean_text, extract_text_from_pdf
+from app.exceptions.cv_parsing_error import CVParsingError
+from app.services.cv_parsing.clean_text import clean_text
+from app.services.cv_parsing.extract_text_from_pdf import extract_text_from_pdf
 
 SAMPLE_CV = (
     "Jane Doe\n"

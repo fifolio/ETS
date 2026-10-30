@@ -2,15 +2,16 @@ import json
 
 import pytest
 
-from app.services import cv_sections
-from app.services.cv_sections import SECTION_NAMES, SECTIONS_DIR, load_keywords
-from app.services.cv_validator import find_sections
+from app.constants import cv_sections as section_constants
+from app.constants.cv_sections import SECTION_NAMES, SECTIONS_DIR
+from app.services.cv_sections.load_keywords import load_keywords
+from app.services.cv_validation.find_sections import find_sections
 
 
 @pytest.fixture
 def sections_dir(tmp_path, monkeypatch):
     """Point the loader at an empty temporary folder, then restore the real one."""
-    monkeypatch.setattr(cv_sections, "SECTIONS_DIR", tmp_path)
+    monkeypatch.setattr(section_constants, "SECTIONS_DIR", tmp_path)
     load_keywords.cache_clear()
     yield tmp_path
     load_keywords.cache_clear()

@@ -2,9 +2,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core import metadata
-from app.core.errors import register_exception_handlers
-from app.routers import analyze, cv, health
 from app.core.config import settings
+from app.handlers.register_exception_handlers import register_exception_handlers
+from app.routers import analyze, health
+from app.routers.cv import read_cv, upload_cv
 
 app = FastAPI(
     title=metadata.APP_TITLE,
@@ -18,14 +19,15 @@ app = FastAPI(
 )
 
 app.add_middleware(
-    CORSMiddleware, 
+    CORSMiddleware,
     allow_origins=[origin.strip() for origin in settings.cors_origins.split(",") if origin.strip()],
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
-    allow_headers=["Authorization", "Content-Type"]
+    allow_headers=["Authorization", "Content-Type"],
 )
 
 register_exception_handlers(app)
+
 app.include_router(health.router)
-app.include_router(analyze.router)
-app.include_router(cv.router)
+app.include_router(upload_cv.router)
+app.include_router(read_cv.router)
 app.include_router(analyze.router)
