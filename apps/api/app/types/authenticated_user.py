@@ -6,3 +6,4 @@ class AuthenticatedUser:
     id: str
     name: str
     email: str
+    email_verified: bool = False

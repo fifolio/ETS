@@ -1,13 +1,16 @@
+import { CvSection } from "@/components/cv/cv-section";
 import { AccountDetails } from "@/components/profile/account-details";
-import { ApiCheckButton } from "@/components/profile/api-check-button";
+import { ProfileForm } from "@/components/profile/profile-form";
+import { SetupChecklist } from "@/components/profile/setup-checklist";
 
 export default function ProfilePage() {
     return (
         <main>
             <h1>Profile</h1>
+            <SetupChecklist />
             <AccountDetails />
-            <h2>Temporary: API check</h2>
-            <ApiCheckButton />
+            <ProfileForm />
+            <CvSection />
         </main>
     );
 }

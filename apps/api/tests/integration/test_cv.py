@@ -2,7 +2,9 @@ import pymupdf
 import pytest
 from fastapi.testclient import TestClient
 
+from app.dependencies.get_current_user import get_current_user
 from app.main import app
+from app.types.authenticated_user import AuthenticatedUser
 from app.types.stored_cv import StoredCV
 
 pytestmark = pytest.mark.usefixtures("logged_in")
@@ -88,3 +90,34 @@ def test_upload_rejects_large_file():
     big = b"0" * (5 * 1024 * 1024 + 1)
     response = client.post("/cv", files={"file": ("cv.pdf", big, "application/pdf")})
     assert response.status_code == 413
+
+
+def test_upload_requires_a_verified_email(monkeypatch):
+    unverified = AuthenticatedUser("user-2", "Jane Doe", "jane.doe@example.com", False)
+    app.dependency_overrides[get_current_user] = lambda: unverified
+    monkeypatch.setattr(
+        "app.routers.cv.upload_cv.save_cv", lambda *args: pytest.fail("must not save")
+    )
+
+    response = client.post(
+        "/cv", files={"file": ("cv.pdf", make_pdf(SAMPLE_CV), "application/pdf")}
+    )
+
+    assert response.status_code == 403
+
+
+def test_delete_cv_removes_the_users_cv(monkeypatch):
+    deleted = []
+    monkeypatch.setattr(
+        "app.routers.cv.delete_cv.delete_cv", lambda user_id: deleted.append(user_id) or True
+    )
+
+    response = client.delete("/cv")
+
+    assert response.status_code == 204
+    assert deleted == ["user-1"]
+
+
+def test_delete_cv_returns_404_when_there_is_none(monkeypatch):
+    monkeypatch.setattr("app.routers.cv.delete_cv.delete_cv", lambda user_id: False)
+    assert client.delete("/cv").status_code == 404

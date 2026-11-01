@@ -1,0 +1,18 @@
+export const ROLE_SUGGESTIONS = [
+    "Software engineer",
+    "Frontend developer",
+    "Backend developer",
+    "Data scientist",
+    "Data analyst",
+    "Machine learning engineer",
+    "DevOps engineer",
+    "Product manager",
+    "UX designer",
+    "Doctor",
+    "Dentist",
+    "Nurse",
+    "Architect",
+    "Civil engineer",
+    "Accountant",
+    "Teacher",
+];

@@ -9,4 +9,6 @@ def verify_jwt(token: str) -> AuthenticatedUser:
     client = new_client()  # deliberately no API key: this client acts as the user
     client.set_jwt(token)
     user = Account(client).get()
-    return AuthenticatedUser(id=user.id, name=user.name, email=user.email)
+    return AuthenticatedUser(
+        id=user.id, name=user.name, email=user.email, email_verified=user.emailverification
+    )

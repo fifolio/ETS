@@ -31,9 +31,13 @@ router = APIRouter(**CV_ROUTER_OPTIONS)
             "model": CVValidationErrorResponse,
             "description": "The file isn't a readable PDF, or the CV didn't pass validation.",
         },
+        403: {"model": ErrorResponse, "description": "The user's email isn't verified yet."},
     },
 )
 def upload_cv(user: CurrentUser, file: UploadFile) -> CVInfo:
+    if not user.email_verified:
+        raise HTTPException(status_code=403, detail="Verify your email before uploading your CV.")
+
     data = file.file.read(MAX_CV_BYTES + 1)
     if len(data) > MAX_CV_BYTES:
         raise HTTPException(status_code=413, detail="The CV file is larger than 5 MB.")

@@ -5,6 +5,7 @@ import { logIn } from "@/services/auth/log-in";
 import { logOut } from "@/services/auth/log-out";
 import { signUp } from "@/services/auth/sign-up";
 import type { AuthStore } from "@/types/auth/auth-store";
+import { useCvStore } from "@/stores/cv/cv-store";
 
 export const useAuthStore = create<AuthStore>()((set) => ({
     user: null,
@@ -16,6 +17,7 @@ export const useAuthStore = create<AuthStore>()((set) => ({
     logIn: async (input) => set({ user: await logIn(input) }),
     logOut: async () => {
         await logOut();
+        useCvStore.getState().clear();
         set({ user: null });
     },
 }));

@@ -5,7 +5,7 @@ from app.core import metadata
 from app.core.config import settings
 from app.handlers.register_exception_handlers import register_exception_handlers
 from app.routers import analyze, health
-from app.routers.cv import read_cv, upload_cv
+from app.routers.cv import delete_cv, read_cv, upload_cv
 
 app = FastAPI(
     title=metadata.APP_TITLE,
@@ -31,3 +31,4 @@ app.include_router(health.router)
 app.include_router(upload_cv.router)
 app.include_router(read_cv.router)
 app.include_router(analyze.router)
+app.include_router(delete_cv.router)

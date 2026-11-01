@@ -5,12 +5,16 @@ const services = vi.hoisted(() => ({
     signUp: vi.fn(),
     logIn: vi.fn(),
     logOut: vi.fn(),
+    clearCv: vi.fn(),
 }));
 
 vi.mock("@/services/auth/load-session", () => ({ loadSession: services.loadSession }));
 vi.mock("@/services/auth/sign-up", () => ({ signUp: services.signUp }));
 vi.mock("@/services/auth/log-in", () => ({ logIn: services.logIn }));
 vi.mock("@/services/auth/log-out", () => ({ logOut: services.logOut }));
+vi.mock("@/stores/cv/cv-store", () => ({
+    useCvStore: { getState: () => ({ clear: services.clearCv }) },
+}));
 
 import { useAuthStore } from "@/stores/auth/auth-store";
 import type { AppUser } from "@/types/auth/auth";
@@ -62,6 +66,7 @@ describe("auth store", () => {
         await useAuthStore.getState().logOut();
 
         expect(useAuthStore.getState().user).toBeNull();
+        expect(services.clearCv).toHaveBeenCalled();
     });
 
     it("passes the error on and keeps no user when log in fails", async () => {
