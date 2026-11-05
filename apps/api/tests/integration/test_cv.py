@@ -52,6 +52,7 @@ def test_upload_cv_parses_validates_and_saves(monkeypatch):
         saved.update(user_id=user_id, file_name=file_name, text=text)
 
     monkeypatch.setattr("app.routers.cv.upload_cv.save_cv", fake_save)
+    monkeypatch.setattr("app.routers.cv.upload_cv.mark_cv_done", lambda user: None)
 
     response = client.post(
         "/cv", files={"file": ("my-cv.pdf", make_pdf(SAMPLE_CV), "application/pdf")}
@@ -121,3 +122,18 @@ def test_delete_cv_removes_the_users_cv(monkeypatch):
 def test_delete_cv_returns_404_when_there_is_none(monkeypatch):
     monkeypatch.setattr("app.routers.cv.delete_cv.delete_cv", lambda user_id: False)
     assert client.delete("/cv").status_code == 404
+
+
+def test_upload_marks_the_account_as_having_a_cv(monkeypatch):
+    marked = []
+    monkeypatch.setattr("app.routers.cv.upload_cv.save_cv", lambda *args: None)
+    monkeypatch.setattr(
+        "app.routers.cv.upload_cv.mark_cv_done", lambda user: marked.append(user.id)
+    )
+
+    response = client.post(
+        "/cv", files={"file": ("cv.pdf", make_pdf(SAMPLE_CV), "application/pdf")}
+    )
+
+    assert response.status_code == 201
+    assert marked == ["user-1"]

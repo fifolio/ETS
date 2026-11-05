@@ -13,7 +13,7 @@ export function VerifyEmailStatus() {
     if (status === "done") {
         return (
             <p>
-                Your email is verified. <Link href="/profile">Go to your profile</Link>
+                Your email is verified. <Link href="/setup">Continue</Link>
             </p>
         );
     }

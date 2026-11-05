@@ -78,10 +78,26 @@ Create a key under **Overview → Integrations → API keys**, named `ets-api`, 
 | `rows.write` | Saving CVs and scan results |
 | `files.read` | Reading stored CV files |
 | `files.write` | Storing uploaded CV files |
+| `users.read` | List and read user accounts |
+| `users.write` | Update user labels and delete expired accounts |
 
 Grant more scopes only if the API reports a missing scope. Treat this key as a secret: it belongs in the root `.env` file only, and must never be committed or used in client-side code.
 
-## 6. Platforms
+## 6. Subscription Plans
+
+ETS uses Appwrite user labels to identify each user's subscription plan:
+
+| Plan | Appwrite user label |
+|---|---|
+| Explore | `explore` |
+| Next Move | `nextmove` |
+| Urgent | `urgent` |
+
+The API reads these labels to determine the user's subscription tier and manage plan-specific access and limits.
+
+A user with no subscription label defaults to the Free (`explore`) plan.
+
+## 7. Platforms
 
 Add a **Web app** platform for each domain that runs the ETS web app. Use only the hostname, with no protocol, port, or slashes.
 
@@ -90,7 +106,7 @@ Add a **Web app** platform for each domain that runs the ETS web app. Use only t
 | ETS Web (local dev) | `localhost` | Local development |
 | ETS Web (production) | your live domain | Deployed web app |
 
-## 7. Environment variables
+## 8. Environment variables
 
 Set these in the root `.env` file (see `.env.example` for the empty template):
 

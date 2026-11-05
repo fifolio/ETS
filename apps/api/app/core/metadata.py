@@ -54,4 +54,5 @@ TAGS_METADATA = [
         "return a structured verdict.",
     },
     {"name": "cv", "description": "Upload and check the logged-in user's CV."},
+    {"name": "onboarding", "description": "Account setup progress."},
 ]

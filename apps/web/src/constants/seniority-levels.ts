@@ -1,6 +1,6 @@
-import type { SeniorityOption } from "@/types/profile";
+import type { OptionItem, SeniorityLevel } from "@/types/profile";
 
-export const SENIORITY_LEVELS: SeniorityOption[] = [
+export const SENIORITY_LEVELS: OptionItem<SeniorityLevel>[] = [
     { value: "intern", label: "Intern" },
     { value: "junior", label: "Junior" },
     { value: "mid", label: "Mid-level" },

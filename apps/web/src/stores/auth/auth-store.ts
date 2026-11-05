@@ -6,6 +6,8 @@ import { logOut } from "@/services/auth/log-out";
 import { signUp } from "@/services/auth/sign-up";
 import type { AuthStore } from "@/types/auth/auth-store";
 import { useCvStore } from "@/stores/cv/cv-store";
+import { useOnboardingStore } from "@/stores/onboarding/onboarding-store";
+
 
 export const useAuthStore = create<AuthStore>()((set) => ({
     user: null,
@@ -18,6 +20,7 @@ export const useAuthStore = create<AuthStore>()((set) => ({
     logOut: async () => {
         await logOut();
         useCvStore.getState().clear();
+        useOnboardingStore.getState().clear();
         set({ user: null });
     },
 }));

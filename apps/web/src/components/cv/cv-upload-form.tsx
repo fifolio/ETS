@@ -1,7 +1,7 @@
 "use client";
 
 import { useCvUpload } from "@/hooks/use-cv-upload";
-import type { CvUploadFormProps } from "@/types/cv";
+import type { CvUploadFormProps } from "@/types/cv/cv";
 
 import { ProblemList } from "./problem-list";
 

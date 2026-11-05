@@ -21,5 +21,8 @@ class Settings(BaseSettings):
 
     cors_origins: str = ""
 
+    cleanup_token: str = ""  # shared secret for the scheduled cleanup; empty disables it
+    setup_deadline_hours: int = 48
+
 
 settings = Settings()

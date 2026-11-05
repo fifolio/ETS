@@ -1,6 +1,6 @@
 import { apiFetch } from "@/lib/api/api-fetch";
 import { readApiError } from "@/lib/api/read-api-error";
-import type { CvInfo } from "@/types/cv";
+import type { CvInfo } from "@/types/cv/cv";
 
 export async function uploadCv(file: File): Promise<CvInfo> {
     const body = new FormData();

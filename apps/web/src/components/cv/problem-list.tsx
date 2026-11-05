@@ -1,4 +1,4 @@
-import type { ProblemListProps } from "@/types/cv";
+import type { ProblemListProps } from "@/types/cv/cv";
 
 export function ProblemList({ problems }: ProblemListProps) {
     if (problems.length === 0) {

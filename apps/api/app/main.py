@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core import metadata
 from app.core.config import settings
 from app.handlers.register_exception_handlers import register_exception_handlers
-from app.routers import analyze, health
+from app.routers import analyze, health, internal, onboarding
 from app.routers.cv import delete_cv, read_cv, upload_cv
 
 app = FastAPI(
@@ -32,3 +32,5 @@ app.include_router(upload_cv.router)
 app.include_router(read_cv.router)
 app.include_router(analyze.router)
 app.include_router(delete_cv.router)
+app.include_router(onboarding.router)
+app.include_router(internal.router)

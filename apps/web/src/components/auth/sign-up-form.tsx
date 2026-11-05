@@ -15,7 +15,7 @@ export function SignUpForm() {
             email: String(data.get("email")),
             password: String(data.get("password")),
         });
-        router.push("/profile");
+        router.push("/setup");
     });
 
     return (

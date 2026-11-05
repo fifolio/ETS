@@ -7,10 +7,11 @@ from app.routers.cv.options import CV_ROUTER_OPTIONS
 from app.schemas.cv_info import CVInfo
 from app.schemas.cv_validation_error_response import CVValidationErrorResponse
 from app.schemas.error_response import ErrorResponse
+from app.services.account.mark_cv_done import mark_cv_done
 from app.services.cv.save_cv import save_cv
 from app.services.cv_parsing.extract_text_from_pdf import extract_text_from_pdf
 from app.services.cv_validation.validate_cv import validate_cv
-from app.types.current_user import CurrentUser
+from app.types.verified_user import VerifiedUser
 
 router = APIRouter(**CV_ROUTER_OPTIONS)
 
@@ -31,12 +32,9 @@ router = APIRouter(**CV_ROUTER_OPTIONS)
             "model": CVValidationErrorResponse,
             "description": "The file isn't a readable PDF, or the CV didn't pass validation.",
         },
-        403: {"model": ErrorResponse, "description": "The user's email isn't verified yet."},
     },
 )
-def upload_cv(user: CurrentUser, file: UploadFile) -> CVInfo:
-    if not user.email_verified:
-        raise HTTPException(status_code=403, detail="Verify your email before uploading your CV.")
+def upload_cv(user: VerifiedUser, file: UploadFile) -> CVInfo:
 
     data = file.file.read(MAX_CV_BYTES + 1)
     if len(data) > MAX_CV_BYTES:
@@ -53,4 +51,5 @@ def upload_cv(user: CurrentUser, file: UploadFile) -> CVInfo:
 
     file_name = file.filename or "cv.pdf"
     save_cv(user.id, file_name, data, text)
+    mark_cv_done(user)
     return CVInfo(file_name=file_name, characters=len(text))

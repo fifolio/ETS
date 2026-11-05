@@ -4,11 +4,16 @@ const services = vi.hoisted(() => ({
     getCvInfo: vi.fn(),
     uploadCv: vi.fn(),
     deleteCv: vi.fn(),
+    getOnboardingStatus: vi.fn(),
 }));
 
 vi.mock("@/services/cv/get-cv-info", () => ({ getCvInfo: services.getCvInfo }));
 vi.mock("@/services/cv/upload-cv", () => ({ uploadCv: services.uploadCv }));
 vi.mock("@/services/cv/delete-cv", () => ({ deleteCv: services.deleteCv }));
+vi.mock("@/services/onboarding/get-onboarding-status", () => ({
+    getOnboardingStatus: services.getOnboardingStatus,
+}));
+
 
 import { useCvStore } from "@/stores/cv/cv-store";
 
@@ -16,6 +21,12 @@ const info = { file_name: "cv.pdf", characters: 1200 };
 
 beforeEach(() => {
     vi.resetAllMocks();
+    services.getOnboardingStatus.mockResolvedValue({
+        steps: {},
+        next_step: null,
+        complete: true,
+        missing_profile_fields: [],
+    });
     useCvStore.setState({ info: null, loaded: false });
 });
 
@@ -51,5 +62,13 @@ describe("cv store", () => {
         useCvStore.getState().clear();
 
         expect(useCvStore.getState()).toMatchObject({ info: null, loaded: false });
+    });
+
+    it("reloads the setup status after an upload", async () => {
+        services.uploadCv.mockResolvedValue(info);
+
+        await useCvStore.getState().upload(new File(["x"], "cv.pdf"));
+
+        expect(services.getOnboardingStatus).toHaveBeenCalledTimes(1);
     });
 });

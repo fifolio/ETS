@@ -14,3 +14,16 @@ def logged_in():
     app.dependency_overrides[get_current_user] = lambda: TEST_USER
     yield TEST_USER
     app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def complete_prefs():
+    return {
+        "role": "Software engineer",
+        "seniority": "mid",
+        "yearsOfExperience": 4,
+        "currentLocation": "Tunis, Tunisia",
+        "desiredLocations": ["San Francisco, United States"],
+        "workArrangements": ["remote", "hybrid"],
+        "employmentTypes": ["full-time"],
+    }
