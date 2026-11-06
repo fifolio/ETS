@@ -18,7 +18,7 @@ Console labels can differ slightly between Appwrite versions. The names, types, 
 
 ## 3. Database
 
-Create a database with the ID `ets`. Then create the two tables below. Leave table permissions empty.
+Create a database with the ID `ets`. Then create the three tables below. Leave table permissions empty.
 
 ### Table `cvs`
 
@@ -51,12 +51,37 @@ Stores the history of smash-or-pass results. The full job post text is intention
 | `verdict` | Enum: `smash`, `pass` | Yes | Result of the analysis |
 | `score` | Integer, min 0, max 100 | Yes | Match score |
 | `resultJson` | Text | Yes | Full `MatchResult` response as JSON |
+| `wordCount` | Integer, min 0 | Yes | Number of words in the analyzed job post |
 
 Indexes:
 
 | Index | Type | Column |
 |---|---|---|
 | `userId_key` | Key | `userId` |
+
+### Table `testimonials`
+
+Stores feedback submissions and public testimonial moderation status. Private suggestions and the metrics snapshot are never exposed by the public testimonials endpoint. Leave table permissions empty.
+
+| Column | Type | Required | Notes |
+|---|---|---|---|
+| `userId` | Varchar, size 64 | Yes | Appwrite account ID of the submitter |
+| `quote` | Text | No | Public testimonial text; may be empty for suggestions-only feedback |
+| `internalSuggestions` | Text | No | Private suggestions; may be empty |
+| `metricsSaved` | Text | No | JSON snapshot of the submitter's usage metrics |
+| `displayName` | Varchar, size 255 | No | Name shown with an approved testimonial |
+| `role` | Varchar, size 255 | No | Submitter's role, or an empty string if not set |
+| `consent` | Boolean | Yes | Whether the submitter consented to public display |
+| `status` | Enum: `pending`, `approved` | Yes | New submissions are pending until approved |
+
+Indexes:
+
+| Index | Type | Column |
+|---|---|---|
+| `userId_unique` | Unique | `userId` |
+| `status_key` | Key | `status` |
+
+The unique index prevents a user from submitting feedback more than once. Only approved rows with consent and a non-empty quote are shown publicly.
 
 ## 4. Storage
 
@@ -97,6 +122,8 @@ The API reads these labels to determine the user's subscription tier and manage 
 
 A user with no subscription label defaults to the Free (`explore`) plan.
 
+After feedback is successfully sent, the API sets the `feedbackdone` user label to prevent another submission.
+
 ## 7. Platforms
 
 Add a **Web app** platform for each domain that runs the ETS web app. Use only the hostname, with no protocol, port, or slashes.
@@ -118,6 +145,7 @@ Set these in the root `.env` file (see `.env.example` for the empty template):
 | `APPWRITE_DATABASE_ID` | `ets` |
 | `APPWRITE_CVS_TABLE_ID` | `cvs` |
 | `APPWRITE_SCANS_TABLE_ID` | `scans` |
+| `APPWRITE_TESTIMONIALS_TABLE_ID` | `testimonials` |
 | `APPWRITE_CV_BUCKET_ID` | `cvs` |
 
 The web app additionally needs `NEXT_PUBLIC_APPWRITE_ENDPOINT` and `NEXT_PUBLIC_APPWRITE_PROJECT_ID` in `apps/web/.env.local`. Never put the API key in a variable that starts with `NEXT_PUBLIC_`, because those values are sent to the browser.

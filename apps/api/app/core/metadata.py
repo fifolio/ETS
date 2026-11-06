@@ -55,4 +55,6 @@ TAGS_METADATA = [
     },
     {"name": "cv", "description": "Upload and check the logged-in user's CV."},
     {"name": "onboarding", "description": "Account setup progress."},
+    {"name": "feedback", "description": "Testimonials and  private suggestions from users."},
+    {"name": "testimonials", "description": "Approved testimonials for the public landing page."},
 ]

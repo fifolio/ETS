@@ -4,8 +4,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core import metadata
 from app.core.config import settings
 from app.handlers.register_exception_handlers import register_exception_handlers
-from app.routers import analyze, health, internal, onboarding
+from app.routers import analyze, health, internal, onboarding, testimonials
 from app.routers.cv import delete_cv, read_cv, upload_cv
+from app.routers.feedback import eligibility, submit
 
 app = FastAPI(
     title=metadata.APP_TITLE,
@@ -34,3 +35,6 @@ app.include_router(analyze.router)
 app.include_router(delete_cv.router)
 app.include_router(onboarding.router)
 app.include_router(internal.router)
+app.include_router(eligibility.router)
+app.include_router(submit.router)
+app.include_router(testimonials.router)

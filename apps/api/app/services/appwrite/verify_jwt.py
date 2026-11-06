@@ -2,6 +2,7 @@ from appwrite.services.account import Account
 
 from app.services.account.read_subscription import read_subscription
 from app.services.appwrite.new_client import new_client
+from app.services.appwrite.parse_appwrite_datetime import parse_appwrite_datetime
 from app.services.appwrite.read_user_prefs import read_user_prefs
 from app.types.authenticated_user import AuthenticatedUser
 
@@ -19,4 +20,5 @@ def verify_jwt(token: str) -> AuthenticatedUser:
         prefs=read_user_prefs(user.prefs),
         labels=list(user.labels),
         subscription=read_subscription(list(user.labels)),
+        registered_at=parse_appwrite_datetime(user.registration),
     )

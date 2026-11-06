@@ -6,7 +6,11 @@ from app.services.appwrite.get_tables_db import get_tables_db
 
 
 def save_scan(
-    user_id: str, result: MatchResult, job_url: str | None, job_title: str | None
+    user_id: str,
+    result: MatchResult,
+    job_url: str | None,
+    job_title: str | None,
+    word_count: int,
 ) -> None:
     get_tables_db().create_row(
         database_id=settings.appwrite_database_id,
@@ -19,5 +23,6 @@ def save_scan(
             "verdict": result.verdict.value,
             "score": result.score,
             "resultJson": result.model_dump_json(),
+            "wordCount": word_count,
         },
     )

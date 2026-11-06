@@ -7,6 +7,7 @@ const services = vi.hoisted(() => ({
     logOut: vi.fn(),
     clearCv: vi.fn(),
     clearOnboarding: vi.fn(),
+    clearFeedback: vi.fn(),
 }));
 
 vi.mock("@/services/auth/load-session", () => ({ loadSession: services.loadSession }));
@@ -18,6 +19,9 @@ vi.mock("@/stores/cv/cv-store", () => ({
 }));
 vi.mock("@/stores/onboarding/onboarding-store", () => ({
     useOnboardingStore: { getState: () => ({ clear: services.clearOnboarding }) },
+}));
+vi.mock("@/stores/feedback/feedback-store", () => ({
+    useFeedbackStore: { getState: () => ({ clear: services.clearFeedback }) },
 }));
 
 import { useAuthStore } from "@/stores/auth/auth-store";
@@ -72,6 +76,7 @@ describe("auth store", () => {
         expect(useAuthStore.getState().user).toBeNull();
         expect(services.clearCv).toHaveBeenCalled();
         expect(services.clearOnboarding).toHaveBeenCalled();
+        expect(services.clearFeedback).toHaveBeenCalled();
     });
 
     it("passes the error on and keeps no user when log in fails", async () => {

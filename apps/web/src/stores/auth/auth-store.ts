@@ -7,6 +7,7 @@ import { signUp } from "@/services/auth/sign-up";
 import type { AuthStore } from "@/types/auth/auth-store";
 import { useCvStore } from "@/stores/cv/cv-store";
 import { useOnboardingStore } from "@/stores/onboarding/onboarding-store";
+import { useFeedbackStore } from "@/stores/feedback/feedback-store";
 
 
 export const useAuthStore = create<AuthStore>()((set) => ({
@@ -21,6 +22,7 @@ export const useAuthStore = create<AuthStore>()((set) => ({
         await logOut();
         useCvStore.getState().clear();
         useOnboardingStore.getState().clear();
+        useFeedbackStore.getState().clear();
         set({ user: null });
     },
 }));

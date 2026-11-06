@@ -28,12 +28,22 @@ FAKE_RESULT = MatchResult(
 )
 
 
+@pytest.fixture(autouse=True)
+def usage(monkeypatch):
+    recorded = []
+    monkeypatch.setattr(
+        "app.routers.analyze.record_scan_usage",
+        lambda user_id, words: recorded.append((user_id, words)),
+    )
+    return recorded
+
+
 @pytest.fixture
 def stored_cv(monkeypatch):
     monkeypatch.setattr("app.routers.analyze.get_cv", lambda user_id: FAKE_CV)
 
 
-def test_analyze_returns_verdict_and_saves_scan(monkeypatch, stored_cv):
+def test_analyze_returns_verdict_and_saves_scan(monkeypatch, stored_cv, usage):
     saved = []
     monkeypatch.setattr("app.routers.analyze.analyze", lambda cv, job: FAKE_RESULT)
     monkeypatch.setattr("app.routers.analyze.save_scan", lambda *args: saved.append(args))
@@ -44,6 +54,8 @@ def test_analyze_returns_verdict_and_saves_scan(monkeypatch, stored_cv):
     assert response.json()["verdict"] == "smash"
     assert len(saved) == 1
     assert saved[0][0] == "user-1"
+    assert saved[0][4] > 0
+    assert usage == [("user-1", saved[0][4])]
 
 
 def test_analyze_without_cv_returns_404(monkeypatch):
@@ -84,3 +96,19 @@ def test_analyze_still_returns_verdict_if_saving_history_fails(monkeypatch, stor
 
     response = client.post("/analyze", json=VALID_PAYLOAD)
     assert response.status_code == 200
+
+
+def test_analyze_still_returns_verdict_if_recording_usage_fails(monkeypatch, stored_cv):
+    saved = []
+
+    def fail(user_id, words):
+        raise ValueError("usage table down")
+
+    monkeypatch.setattr("app.routers.analyze.analyze", lambda cv, job: FAKE_RESULT)
+    monkeypatch.setattr("app.routers.analyze.save_scan", lambda *args: saved.append(args))
+    monkeypatch.setattr("app.routers.analyze.record_scan_usage", fail)
+
+    response = client.post("/analyze", json=VALID_PAYLOAD)
+
+    assert response.status_code == 200
+    assert len(saved) == 1  # the history is still saved when usage recording fails

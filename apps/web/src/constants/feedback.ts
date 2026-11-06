@@ -1,0 +1,3 @@
+// Keep in sync with the API (MAX_QUOTE_LENGTH and MAX_SUGGESTIONS_LENGTH).
+export const MAX_QUOTE_LENGTH = 500;
+export const MAX_SUGGESTIONS_LENGTH = 2000;

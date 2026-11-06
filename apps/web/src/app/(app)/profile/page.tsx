@@ -2,6 +2,8 @@ import { CvSection } from "@/components/cv/cv-section";
 import { AccountDetails } from "@/components/profile/account-details";
 import { ProfileForm } from "@/components/profile/profile-form";
 
+export const instant = false;
+
 export default function ProfilePage() {
     return (
         <main>
