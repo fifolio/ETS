@@ -2,11 +2,10 @@ from collections.abc import Iterator
 
 from appwrite.query import Query
 
+from app.constants.paging import PAGE_SIZE
 from app.services.appwrite.get_users import get_users
 from app.services.cleanup.to_account_summary import to_account_summary
 from app.types.account_summary import AccountSummary
-
-PAGE_SIZE = 100
 
 
 def iter_accounts() -> Iterator[AccountSummary]:

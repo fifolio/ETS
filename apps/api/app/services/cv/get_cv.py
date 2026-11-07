@@ -16,9 +16,4 @@ def get_cv(user_id: str) -> StoredCV | None:
     if not result.rows:
         return None
     row = result.rows[0]
-    return StoredCV(
-        row_id=row.id,
-        file_id=row.data.fileId,
-        file_name=row.data.fileName,
-        text=row.data.text,
-    )
+    return StoredCV(row_id=row.id, file_name=row.data.fileName, text=row.data.text)

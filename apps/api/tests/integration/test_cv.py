@@ -36,7 +36,7 @@ def test_get_cv_returns_404_when_missing(monkeypatch):
 
 
 def test_get_cv_returns_info(monkeypatch):
-    stored = StoredCV("row-1", "file-1", "cv.pdf", "x" * 500)
+    stored = StoredCV("row-1", "cv.pdf", "x" * 500)
     monkeypatch.setattr("app.routers.cv.read_cv.get_cv", lambda user_id: stored)
 
     response = client.get("/cv")
@@ -48,7 +48,7 @@ def test_get_cv_returns_info(monkeypatch):
 def test_upload_cv_parses_validates_and_saves(monkeypatch):
     saved = {}
 
-    def fake_save(user_id, file_name, pdf_bytes, text):
+    def fake_save(user_id, file_name, text):
         saved.update(user_id=user_id, file_name=file_name, text=text)
 
     monkeypatch.setattr("app.routers.cv.upload_cv.save_cv", fake_save)

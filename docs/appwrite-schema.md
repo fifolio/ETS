@@ -2,7 +2,7 @@
 
 ETS uses [Appwrite](https://appwrite.io) for user accounts, the database, and CV file storage. This page describes everything you need to create in your own Appwrite project if you want to self-host ETS or contribute to it.
 
-> **Security model:** all permissions on the database tables and the storage bucket are intentionally **empty**. Only the ETS API reads and writes this data, using a secret server API key. Browser clients (the web app and the extension) only handle login and never access the database or storage directly.
+> **Security model:** all permissions on the database tables are intentionally **empty**. Only the ETS API reads and writes this data, using a secret server API key. Browser clients (the web app and the extension) only handle login and never access the database or storage directly.
 
 Console labels can differ slightly between Appwrite versions. The names, types, and settings below are what matter.
 
@@ -27,9 +27,9 @@ Stores one parsed CV per user.
 | Column | Type | Required | Notes |
 |---|---|---|---|
 | `userId` | Varchar, size 64 | Yes | Appwrite account ID of the owner |
-| `fileId` | Varchar, size 64 | No | ID of the original PDF in the `cvs` bucket |
 | `fileName` | Varchar, size 255 | No | Original file name |
 | `text` | Text | Yes | CV text extracted from the PDF |
+CV PDFs are not stored. The file is read in memory, its text is extracted, and the file is discarded.
 
 Indexes:
 
@@ -83,17 +83,7 @@ Indexes:
 
 The unique index prevents a user from submitting feedback more than once. Only approved rows with consent and a non-empty quote are shown publicly.
 
-## 4. Storage
-
-Create a bucket with these settings. Leave bucket permissions empty.
-
-| Setting | Value |
-|---|---|
-| Bucket ID | `cvs` |
-| Maximum file size | 5 MB |
-| Allowed file extensions | `pdf` |
-
-## 5. Server API key
+## 4. Server API key
 
 Create a key under **Overview → Integrations → API keys**, named `ets-api`, with only these scopes:
 
@@ -101,14 +91,12 @@ Create a key under **Overview → Integrations → API keys**, named `ets-api`, 
 |---|---|
 | `rows.read` | Reading CVs and scan history |
 | `rows.write` | Saving CVs and scan results |
-| `files.read` | Reading stored CV files |
-| `files.write` | Storing uploaded CV files |
 | `users.read` | List and read user accounts |
 | `users.write` | Update user labels and delete expired accounts |
 
 Grant more scopes only if the API reports a missing scope. Treat this key as a secret: it belongs in the root `.env` file only, and must never be committed or used in client-side code.
 
-## 6. Subscription Plans
+## 5. Subscription Plans
 
 ETS uses Appwrite user labels to identify each user's subscription plan:
 
@@ -133,7 +121,7 @@ Add a **Web app** platform for each domain that runs the ETS web app. Use only t
 | ETS Web (local dev) | `localhost` | Local development |
 | ETS Web (production) | your live domain | Deployed web app |
 
-## 8. Environment variables
+## 6. Environment variables
 
 Set these in the root `.env` file (see `.env.example` for the empty template):
 
@@ -146,7 +134,6 @@ Set these in the root `.env` file (see `.env.example` for the empty template):
 | `APPWRITE_CVS_TABLE_ID` | `cvs` |
 | `APPWRITE_SCANS_TABLE_ID` | `scans` |
 | `APPWRITE_TESTIMONIALS_TABLE_ID` | `testimonials` |
-| `APPWRITE_CV_BUCKET_ID` | `cvs` |
 
 The web app additionally needs `NEXT_PUBLIC_APPWRITE_ENDPOINT` and `NEXT_PUBLIC_APPWRITE_PROJECT_ID` in `apps/web/.env.local`. Never put the API key in a variable that starts with `NEXT_PUBLIC_`, because those values are sent to the browser.
 
@@ -156,3 +143,10 @@ The web app additionally needs `NEXT_PUBLIC_APPWRITE_ENDPOINT` and `NEXT_PUBLIC_
 2. The client sends a short-lived token (JWT) from that session to the ETS API.
 3. The API verifies the token with Appwrite to learn the user's ID.
 4. The API reads and writes the user's CV and scan history with its secret server key.
+
+## Deleting an account
+
+Deleting an account (the 48-hour cleanup, `DELETE /account`, or a manual deletion in the
+console followed by the next cleanup run) removes the user's CV row and file, usage totals,
+and scans. Testimonials are kept on purpose: delete a row by hand in the `testimonials` table
+if a user asks for it to be erased.

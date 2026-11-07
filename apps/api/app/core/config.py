@@ -17,7 +17,6 @@ class Settings(BaseSettings):
     appwrite_database_id: str = ""
     appwrite_cvs_table_id: str = ""
     appwrite_scans_table_id: str = ""
-    appwrite_cv_bucket_id: str = ""
     appwrite_testimonials_table_id: str = ""
     appwrite_usage_table_id: str = ""
 

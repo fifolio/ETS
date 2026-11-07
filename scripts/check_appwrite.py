@@ -4,19 +4,22 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "apps" / "api"))
 
-from app.core.config import settings
-from app.services.appwrite.get_storage import get_storage 
-from app.services.appwrite.get_tables_db import get_tables_db
+from app.core.config import settings  # noqa: E402
+from app.services.appwrite.get_tables_db import get_tables_db  # noqa: E402
 
 
 def main():
-    db = settings.appwrite_database_id
-    get_tables_db().list_rows(database_id=db, table_id=settings.appwrite_cvs_table_id)
-    print("cvs table: OK")
-    get_tables_db().list_rows(database_id=db, table_id=settings.appwrite_scans_table_id)
-    print("scans table: OK")
-    get_storage().list_files(settings.appwrite_cv_bucket_id)
-    print("cvs bucket: OK")
+    tables = get_tables_db()
+    checks = {
+        "cvs": settings.appwrite_cvs_table_id,
+        "scans": settings.appwrite_scans_table_id,
+        "usage_stats": settings.appwrite_usage_table_id,
+        "testimonials": settings.appwrite_testimonials_table_id,
+    }
+    for name, table_id in checks.items():
+        tables.list_rows(database_id=settings.appwrite_database_id, table_id=table_id)
+        print(f"{name} table: OK")
+
 
 if __name__ == "__main__":
     main()

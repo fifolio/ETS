@@ -16,7 +16,8 @@ VALID_PAYLOAD = {
     "job_title": "React Developer",
 }
 
-FAKE_CV = StoredCV("row-1", "file-1", "cv.pdf", "Jane Doe, frontend developer. " * 10)
+FAKE_CV = StoredCV("row-1", "cv.pdf", "Jane Doe, frontend developer. " * 10)
+
 
 FAKE_RESULT = MatchResult(
     verdict=Verdict.SMASH,

@@ -50,6 +50,6 @@ def upload_cv(user: VerifiedUser, file: UploadFile) -> CVInfo:
         raise CVValidationError(problems)
 
     file_name = file.filename or "cv.pdf"
-    save_cv(user.id, file_name, data, text)
+    save_cv(user.id, file_name, text)
     mark_cv_done(user)
     return CVInfo(file_name=file_name, characters=len(text))
