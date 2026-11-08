@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     appwrite_scans_table_id: str = ""
     appwrite_testimonials_table_id: str = ""
     appwrite_usage_table_id: str = ""
+    appwrite_industries_table_id: str = "" 
+    appwrite_jobs_table_id: str = ""
 
     cors_origins: str = ""
 

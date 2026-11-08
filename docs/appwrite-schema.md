@@ -83,6 +83,40 @@ Indexes:
 
 The unique index prevents a user from submitting feedback more than once. Only approved rows with consent and a non-empty quote are shown publicly.
 
+### Table `Industries`
+
+Stores the industries available in the ETS platform.
+
+| Column | Type | Required | Description |
+|---|---|---|---|
+| name | Varchar(100) | Yes | Industry display name |
+
+- Row IDs are manually assigned industry slugs.
+- Unique index on `name`.
+- Public read access.
+- No public write access.
+- Row security disabled.
+
+Anyone can read this table; only the admin (the Appwrite console or the server) can write.
+
+### Table `Jobs`
+
+Stores job roles and their hourly market rates in USD.
+
+| Column | Type | Required | Description |
+|---|---|---|---|
+| name | Varchar(100) | Yes | Job title |
+| industryId | Varchar(64) | Yes | Related industry's row ID |
+| hourlyRateUsd | Float | Yes | Hourly market rate in USD (minimum 0) |
+
+- Unique composite index on `industryId` and `name`.
+- Public read access.
+- No public write access.
+- Row security disabled.
+- Each job belongs to an industry through its `industryId` value.
+
+Anyone can read this table; only the admin (the Appwrite console or the server) can write.
+
 ## 4. Server API key
 
 Create a key under **Overview → Integrations → API keys**, named `ets-api`, with only these scopes:
