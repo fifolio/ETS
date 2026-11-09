@@ -1,7 +1,7 @@
 from app.core.config import settings
 from app.schemas.cv_row import CVRow
 from app.schemas.usage_row import UsageRow
-from app.services.cleanup.iter_table_rows import iter_table_rows
+from app.services.appwrite.iter_table_rows import iter_table_rows
 
 
 def find_data_owner_ids() -> set[str]:

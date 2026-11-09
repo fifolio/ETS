@@ -13,10 +13,9 @@ function makeForm(entries: Record<string, string | string[]>): FormData {
 }
 
 describe("parseProfileForm", () => {
-    it("reads every field", () => {
+    it("reads every answer", () => {
         const profile = parseProfileForm(
             makeForm({
-                role: " Nurse ",
                 seniority: "mid",
                 yearsOfExperience: "5",
                 currentLocation: " Tunis, Tunisia ",
@@ -24,13 +23,10 @@ describe("parseProfileForm", () => {
                 workArrangements: ["remote", "hybrid"],
                 employmentTypes: ["full-time"],
                 willingToRelocate: "on",
-                hourlyRate: "25.5",
-                currency: "EUR",
             }),
         );
 
         expect(profile).toEqual({
-            role: "Nurse",
             seniority: "mid",
             yearsOfExperience: 5,
             currentLocation: "Tunis, Tunisia",
@@ -38,8 +34,6 @@ describe("parseProfileForm", () => {
             workArrangements: ["remote", "hybrid"],
             employmentTypes: ["full-time"],
             willingToRelocate: true,
-            hourlyRate: 25.5,
-            currency: "EUR",
         });
     });
 
@@ -49,14 +43,9 @@ describe("parseProfileForm", () => {
         expect(profile.desiredLocations).toEqual(["Paris", "Berlin", "Rome"]);
     });
 
-    it("uses safe defaults for empty optional fields", () => {
-        const profile = parseProfileForm(makeForm({ yearsOfExperience: "", hourlyRate: "" }));
+    it("uses safe defaults for empty fields", () => {
+        const profile = parseProfileForm(makeForm({ yearsOfExperience: "" }));
 
-        expect(profile).toMatchObject({
-            yearsOfExperience: null,
-            hourlyRate: null,
-            willingToRelocate: false,
-            currency: "USD",
-        });
+        expect(profile).toMatchObject({ yearsOfExperience: null, willingToRelocate: false });
     });
 });

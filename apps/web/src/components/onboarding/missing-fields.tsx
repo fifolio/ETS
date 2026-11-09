@@ -5,9 +5,10 @@ export function MissingFields({ fields }: MissingFieldsProps) {
     if (fields.length === 0) {
         return null;
     }
+    const labels = [...new Set(fields.map((field) => PROFILE_FIELD_LABELS[field] ?? field))];
     return (
         <p role="alert">
-            Still missing: {fields.map((field) => PROFILE_FIELD_LABELS[field] ?? field).join(", ")}
+            Still missing: {labels.join(", ")}
         </p>
     );
 }

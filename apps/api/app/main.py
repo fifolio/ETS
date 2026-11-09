@@ -5,6 +5,7 @@ from app.core import metadata
 from app.core.config import settings
 from app.handlers.register_exception_handlers import register_exception_handlers
 from app.routers import account, analyze, health, internal, onboarding, testimonials
+from app.routers.catalog import industries, industry_jobs
 from app.routers.cv import delete_cv, read_cv, upload_cv
 from app.routers.feedback import eligibility, submit
 
@@ -39,3 +40,5 @@ app.include_router(eligibility.router)
 app.include_router(submit.router)
 app.include_router(testimonials.router)
 app.include_router(account.router)
+app.include_router(industries.router)
+app.include_router(industry_jobs.router)

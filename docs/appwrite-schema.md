@@ -52,12 +52,31 @@ Stores the history of smash-or-pass results. The full job post text is intention
 | `score` | Integer, min 0, max 100 | Yes | Match score |
 | `resultJson` | Text | Yes | Full `MatchResult` response as JSON |
 | `wordCount` | Integer, min 0 | Yes | Number of words in the analyzed job post |
+| `minutesSaved` | Float | No | Minutes saved by the scan (default 0) |
+| `cashEquivalent` | Float | No | Cash equivalent of the time saved (default 0) |
 
 Indexes:
 
 | Index | Type | Column |
 |---|---|---|
 | `userId_key` | Key | `userId` |
+
+### Table `usage_stats`
+
+Stores aggregate usage totals per user. Use the user's Appwrite account ID as the row ID.
+
+| Column | Type | Required | Notes |
+|---|---|---|---|
+| `scanCount` | Integer, min 0 | No | Total scans (default 0) |
+| `wordsTotal` | Integer, min 0 | No | Total words analyzed (default 0) |
+| `minutesTotal` | Float | No | Total minutes saved (default 0) |
+| `cashTotal` | Float | No | Total cash equivalent (default 0) |
+
+### Account preferences
+
+The app writes these preference keys: `industryId`, `industry`, `jobId`, `role`, `hourlyRateUsd`, `seniority`, `yearsOfExperience`, `currentLocation`, `desiredLocations`, `workArrangements`, `employmentTypes`, `willingToRelocate`, `theme`, and `language`.
+
+The API never trusts `hourlyRateUsd` from the preferences: it reads the rate from the jobs table.
 
 ### Table `testimonials`
 

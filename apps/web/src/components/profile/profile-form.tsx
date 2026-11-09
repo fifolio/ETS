@@ -3,17 +3,19 @@
 import { useState } from "react";
 
 import { CheckboxGroup } from "@/components/form/checkbox-group";
-import { CURRENCIES } from "@/constants/currencies";
 import { EMPLOYMENT_TYPES } from "@/constants/employment-types";
-import { ROLE_SUGGESTIONS } from "@/constants/role-suggestions";
 import { SENIORITY_LEVELS } from "@/constants/seniority-levels";
 import { WORK_ARRANGEMENTS } from "@/constants/work-arrangements";
 import { useFormSubmit } from "@/hooks/use-form-submit";
+import { useJobCatalog } from "@/hooks/use-job-catalog";
+import { buildJobSelection } from "@/lib/catalog/build-job-selection";
 import { parseProfileForm } from "@/lib/profile/parse-profile-form";
 import { readProfilePrefs } from "@/lib/profile/read-profile-prefs";
 import { saveProfile } from "@/services/profile/save-profile";
 import { useAuthStore } from "@/stores/auth/auth-store";
 import { useOnboardingStore } from "@/stores/onboarding/onboarding-store";
+
+import { JobPicker } from "./job-picker";
 
 export function ProfileForm() {
     const user = useAuthStore((state) => state.user);
@@ -21,32 +23,47 @@ export function ProfileForm() {
     const loadOnboarding = useOnboardingStore((state) => state.load);
     const [saved, setSaved] = useState(false);
 
+    const current = user ? readProfilePrefs(user) : null;
+    const catalog = useJobCatalog({
+        industryId: current?.industryId ?? "",
+        jobId: current?.jobId ?? "",
+    });
+
     const { busy, error, handleSubmit } = useFormSubmit(async (data) => {
         if (!user) {
             return;
         }
+        const selection = buildJobSelection(
+            catalog.industries,
+            catalog.jobs,
+            catalog.industryId,
+            catalog.jobId,
+        );
+        if (!selection) {
+            throw new Error("Choose your industry and role.");
+        }
         setSaved(false);
-        await saveProfile(user.prefs, parseProfileForm(data));
+        await saveProfile(user.prefs, { ...parseProfileForm(data), ...selection });
         await refresh();
         await loadOnboarding();
         setSaved(true);
     });
 
-    if (!user) {
+    if (!user || !current) {
         return null;
     }
-    const current = readProfilePrefs(user);
 
     return (
         <form onSubmit={handleSubmit}>
-            <label>
-                Role <input name="role" list="role-suggestions" required defaultValue={current.role} />
-            </label>
-            <datalist id="role-suggestions">
-                {ROLE_SUGGESTIONS.map((role) => (
-                    <option key={role} value={role} />
-                ))}
-            </datalist>
+            <JobPicker
+                industries={catalog.industries}
+                jobs={catalog.jobs}
+                industryId={catalog.industryId}
+                jobId={catalog.jobId}
+                onIndustryChange={catalog.selectIndustry}
+                onJobChange={catalog.selectJob}
+            />
+            {catalog.error && <p role="alert">{catalog.error}</p>}
             <br />
             <label>
                 Seniority{" "}
@@ -103,24 +120,6 @@ export function ProfileForm() {
                 <input name="willingToRelocate" type="checkbox" defaultChecked={current.willingToRelocate} />{" "}
                 I am willing to relocate
             </label>
-            <br />
-            <label>
-                Expected hourly rate (optional){" "}
-                <input
-                    name="hourlyRate"
-                    type="number"
-                    min={0}
-                    step={0.01}
-                    defaultValue={current.hourlyRate ?? ""}
-                />
-            </label>{" "}
-            <select name="currency" defaultValue={current.currency} aria-label="Currency">
-                {CURRENCIES.map((code) => (
-                    <option key={code} value={code}>
-                        {code}
-                    </option>
-                ))}
-            </select>
             <br />
             <button type="submit" disabled={busy}>
                 Save

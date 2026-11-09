@@ -2,6 +2,9 @@ import pytest
 from appwrite.exception import AppwriteException
 
 import app.services.usage.record_scan_usage as module
+from app.types.scan_savings import ScanSavings
+
+SAVINGS = ScanSavings(minutes=4.0, cash=3.3333)
 
 
 class Fakes:
@@ -11,14 +14,14 @@ class Fakes:
         self.increments = []
         self.creates = []
 
-    def increment(self, user_id, words):
-        self.increments.append((user_id, words))
+    def increment(self, user_id, words, savings):
+        self.increments.append((user_id, words, savings))
         outcome = self.outcomes.pop(0)
         if outcome:
             raise outcome
 
-    def create(self, user_id, words):
-        self.creates.append((user_id, words))
+    def create(self, user_id, words, savings):
+        self.creates.append((user_id, words, savings))
         if self.create_error:
             raise self.create_error
 
@@ -33,18 +36,18 @@ def install(monkeypatch, increments, create=None):
 def test_increments_an_existing_row(monkeypatch):
     fakes = install(monkeypatch, [None])
 
-    module.record_scan_usage("user-1", 900)
+    module.record_scan_usage("user-1", 900, SAVINGS)
 
-    assert fakes.increments == [("user-1", 900)]
+    assert fakes.increments == [("user-1", 900, SAVINGS)]
     assert fakes.creates == []
 
 
 def test_creates_the_row_on_the_first_scan(monkeypatch):
     fakes = install(monkeypatch, [AppwriteException("missing", 404)])
 
-    module.record_scan_usage("user-1", 900)
+    module.record_scan_usage("user-1", 900, SAVINGS)
 
-    assert fakes.creates == [("user-1", 900)]
+    assert fakes.creates == [("user-1", 900, SAVINGS)]
 
 
 def test_increments_again_when_another_request_created_the_row_first(monkeypatch):
@@ -54,7 +57,7 @@ def test_increments_again_when_another_request_created_the_row_first(monkeypatch
         create=AppwriteException("exists", 409),
     )
 
-    module.record_scan_usage("user-1", 900)
+    module.record_scan_usage("user-1", 900, SAVINGS)
 
     assert len(fakes.increments) == 2
 
@@ -63,11 +66,11 @@ def test_other_errors_are_raised(monkeypatch):
     install(monkeypatch, [AppwriteException("boom", 500)])
 
     with pytest.raises(AppwriteException):
-        module.record_scan_usage("user-1", 900)
+        module.record_scan_usage("user-1", 900, SAVINGS)
 
 
 def test_a_failed_create_is_raised(monkeypatch):
     install(monkeypatch, [AppwriteException("missing", 404)], create=AppwriteException("boom", 500))
 
     with pytest.raises(AppwriteException):
-        module.record_scan_usage("user-1", 900)
+        module.record_scan_usage("user-1", 900, SAVINGS)

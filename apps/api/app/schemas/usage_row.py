@@ -6,3 +6,5 @@ class UsageRow(BaseModel):
 
     scanCount: int = 0
     wordsTotal: int = 0
+    minutesTotal: float = 0.0
+    cashTotal: float = 0.0

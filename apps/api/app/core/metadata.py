@@ -58,4 +58,5 @@ TAGS_METADATA = [
     {"name": "feedback", "description": "Testimonials and  private suggestions from users."},
     {"name": "testimonials", "description": "Approved testimonials for the public landing page."},
     {"name": "account", "description": "Delete your account and all your data."},
+    {"name": "catalog", "description": "Industries and jobs with hourly rates (public)."},
 ]

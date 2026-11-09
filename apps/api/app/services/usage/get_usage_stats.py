@@ -15,6 +15,11 @@ def get_usage_stats(user_id: str) -> UsageStats:
         model_type=UsageRow,
     )
     if not result.rows:
-        return UsageStats(scans=0, words=0)
+        return UsageStats(scans=0, words=0, minutes=0, cash=0)
     row = result.rows[0].data
-    return UsageStats(scans=row.scanCount, words=row.wordsTotal)
+    return UsageStats(
+        scans=row.scanCount,
+        words=row.wordsTotal,
+        minutes=row.minutesTotal,
+        cash=row.cashTotal,
+    )

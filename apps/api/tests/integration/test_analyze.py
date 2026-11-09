@@ -18,7 +18,6 @@ VALID_PAYLOAD = {
 
 FAKE_CV = StoredCV("row-1", "cv.pdf", "Jane Doe, frontend developer. " * 10)
 
-
 FAKE_RESULT = MatchResult(
     verdict=Verdict.SMASH,
     score=82,
@@ -29,45 +28,34 @@ FAKE_RESULT = MatchResult(
 )
 
 
-@pytest.fixture(autouse=True)
-def usage(monkeypatch):
-    recorded = []
-    monkeypatch.setattr(
-        "app.routers.analyze.record_scan_usage",
-        lambda user_id, words: recorded.append((user_id, words)),
-    )
-    return recorded
-
-
 @pytest.fixture
 def stored_cv(monkeypatch):
     monkeypatch.setattr("app.routers.analyze.get_cv", lambda user_id: FAKE_CV)
 
 
-def test_analyze_returns_verdict_and_saves_scan(monkeypatch, stored_cv, usage):
-    saved = []
+def test_analyze_returns_the_verdict_and_records_the_scan(monkeypatch, stored_cv):
+    recorded = []
     monkeypatch.setattr("app.routers.analyze.analyze", lambda cv, job: FAKE_RESULT)
-    monkeypatch.setattr("app.routers.analyze.save_scan", lambda *args: saved.append(args))
+    monkeypatch.setattr("app.routers.analyze.record_scan", lambda *args: recorded.append(args))
 
     response = client.post("/analyze", json=VALID_PAYLOAD)
 
     assert response.status_code == 200
     assert response.json()["verdict"] == "smash"
-    assert len(saved) == 1
-    assert saved[0][0] == "user-1"
-    assert saved[0][4] > 0
-    assert usage == [("user-1", saved[0][4])]
+    user, result, job_url, job_title, job_text = recorded[0]
+    assert user.id == "user-1"
+    assert result == FAKE_RESULT
+    assert (job_url, job_title) == (VALID_PAYLOAD["job_url"], VALID_PAYLOAD["job_title"])
+    assert job_text == VALID_PAYLOAD["job_text"]
 
 
 def test_analyze_without_cv_returns_404(monkeypatch):
     monkeypatch.setattr("app.routers.analyze.get_cv", lambda user_id: None)
-    response = client.post("/analyze", json=VALID_PAYLOAD)
-    assert response.status_code == 404
+    assert client.post("/analyze", json=VALID_PAYLOAD).status_code == 404
 
 
 def test_analyze_rejects_short_job_text():
-    response = client.post("/analyze", json={"job_text": "too short"})
-    assert response.status_code == 422
+    assert client.post("/analyze", json={"job_text": "too short"}).status_code == 422
 
 
 def test_analyze_model_failure_returns_502(monkeypatch, stored_cv):
@@ -75,8 +63,7 @@ def test_analyze_model_failure_returns_502(monkeypatch, stored_cv):
         raise ValueError("model exploded")
 
     monkeypatch.setattr("app.routers.analyze.analyze", boom)
-    response = client.post("/analyze", json=VALID_PAYLOAD)
-    assert response.status_code == 502
+    assert client.post("/analyze", json=VALID_PAYLOAD).status_code == 502
 
 
 def test_analyze_missing_key_returns_503(monkeypatch, stored_cv):
@@ -84,32 +71,4 @@ def test_analyze_missing_key_returns_503(monkeypatch, stored_cv):
         raise RuntimeError("GROQ_API_KEY is not set")
 
     monkeypatch.setattr("app.routers.analyze.analyze", no_key)
-    response = client.post("/analyze", json=VALID_PAYLOAD)
-    assert response.status_code == 503
-
-
-def test_analyze_still_returns_verdict_if_saving_history_fails(monkeypatch, stored_cv):
-    def fail(*args):
-        raise ValueError("database down")
-
-    monkeypatch.setattr("app.routers.analyze.analyze", lambda cv, job: FAKE_RESULT)
-    monkeypatch.setattr("app.routers.analyze.save_scan", fail)
-
-    response = client.post("/analyze", json=VALID_PAYLOAD)
-    assert response.status_code == 200
-
-
-def test_analyze_still_returns_verdict_if_recording_usage_fails(monkeypatch, stored_cv):
-    saved = []
-
-    def fail(user_id, words):
-        raise ValueError("usage table down")
-
-    monkeypatch.setattr("app.routers.analyze.analyze", lambda cv, job: FAKE_RESULT)
-    monkeypatch.setattr("app.routers.analyze.save_scan", lambda *args: saved.append(args))
-    monkeypatch.setattr("app.routers.analyze.record_scan_usage", fail)
-
-    response = client.post("/analyze", json=VALID_PAYLOAD)
-
-    assert response.status_code == 200
-    assert len(saved) == 1  # the history is still saved when usage recording fails
+    assert client.post("/analyze", json=VALID_PAYLOAD).status_code == 503

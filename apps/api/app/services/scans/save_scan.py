@@ -3,6 +3,7 @@ from appwrite.id import ID
 from app.core.config import settings
 from app.schemas.match_result import MatchResult
 from app.services.appwrite.get_tables_db import get_tables_db
+from app.types.scan_savings import ScanSavings
 
 
 def save_scan(
@@ -11,6 +12,7 @@ def save_scan(
     job_url: str | None,
     job_title: str | None,
     word_count: int,
+    savings: ScanSavings,
 ) -> None:
     get_tables_db().create_row(
         database_id=settings.appwrite_database_id,
@@ -24,5 +26,7 @@ def save_scan(
             "score": result.score,
             "resultJson": result.model_dump_json(),
             "wordCount": word_count,
+            "minutesSaved": savings.minutes,
+            "cashEquivalent": savings.cash,
         },
     )

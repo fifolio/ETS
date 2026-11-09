@@ -12,7 +12,7 @@ and private suggestions. Both land in the `testimonials` table of the Appwrite d
      change `status` to `approved`. Otherwise change it to `rejected`.
    - **Suggestions:** read `internalSuggestions` for the product roadmap. This field is
      private: never copy it to a public place.
-4. `metricsSaved` is a snapshot of the user's scans, words, and minutes saved at submission time.
+4. `metricsSaved` is a snapshot of the user's scans, words, and minutes saved at submission time; the minutes value comes from the user's stored `minutesTotal`.
 
 ## What the public sees
 

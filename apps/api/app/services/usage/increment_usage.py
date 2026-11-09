@@ -1,11 +1,18 @@
 from app.core.config import settings
 from app.services.appwrite.get_tables_db import get_tables_db
+from app.types.scan_savings import ScanSavings
 
 
-def increment_usage(user_id: str, words: int) -> None:
-    """Add one scan and `words` words to the user's totals. Each step is atomic on the server."""
+def increment_usage(user_id: str, words: int, savings: ScanSavings) -> None:
+    """Add one scan and its words, minutes, and cash to the user's totals (atomic per column)."""
     tables = get_tables_db()
-    for column, value in (("scanCount", 1), ("wordsTotal", words)):
+    amounts = (
+        ("scanCount", 1),
+        ("wordsTotal", words),
+        ("minutesTotal", savings.minutes),
+        ("cashTotal", savings.cash),
+    )
+    for column, value in amounts:
         if value:
             tables.increment_row_column(
                 database_id=settings.appwrite_database_id,

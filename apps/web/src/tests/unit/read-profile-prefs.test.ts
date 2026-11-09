@@ -6,10 +6,14 @@ import type { AppUser } from "@/types/auth/auth";
 const makeUser = (prefs: object) => ({ prefs }) as unknown as AppUser;
 
 describe("readProfilePrefs", () => {
-    it("reads saved answers", () => {
+    it("reads saved answers, including the industry, role, and hourly rate", () => {
         const prefs = readProfilePrefs(
             makeUser({
+                industryId: "software-it",
+                industry: "Software & IT",
+                jobId: "job-1",
                 role: "Software engineer",
+                hourlyRateUsd: 50,
                 seniority: "senior",
                 yearsOfExperience: 8,
                 currentLocation: "Tunis, Tunisia",
@@ -17,25 +21,29 @@ describe("readProfilePrefs", () => {
                 workArrangements: ["remote"],
                 employmentTypes: ["contract"],
                 willingToRelocate: true,
-                hourlyRate: 40,
-                currency: "EUR",
             }),
         );
 
         expect(prefs).toMatchObject({
+            industryId: "software-it",
+            industry: "Software & IT",
+            jobId: "job-1",
             role: "Software engineer",
+            hourlyRateUsd: 50,
             seniority: "senior",
             yearsOfExperience: 8,
             desiredLocations: ["Berlin", "Paris"],
             willingToRelocate: true,
-            hourlyRate: 40,
-            currency: "EUR",
         });
     });
 
-    it("returns empty values and defaults when nothing is saved", () => {
+    it("returns empty values when nothing is saved", () => {
         expect(readProfilePrefs(makeUser({}))).toEqual({
+            industryId: "",
+            industry: "",
+            jobId: "",
             role: "",
+            hourlyRateUsd: null,
             seniority: "",
             yearsOfExperience: null,
             currentLocation: "",
@@ -43,8 +51,6 @@ describe("readProfilePrefs", () => {
             workArrangements: [],
             employmentTypes: [],
             willingToRelocate: false,
-            hourlyRate: null,
-            currency: "USD",
         });
     });
 

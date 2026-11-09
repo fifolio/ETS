@@ -1,5 +1,7 @@
 import { SetupWizard } from "@/components/onboarding/setup-wizard";
 
+export const instant = false;
+
 export default function SetupPage() {
     return (
         <main>

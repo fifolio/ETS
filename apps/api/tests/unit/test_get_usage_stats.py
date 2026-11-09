@@ -12,12 +12,14 @@ class FakeTables:
 
 
 def test_reads_the_running_totals(monkeypatch):
-    row = SimpleNamespace(data=SimpleNamespace(scanCount=12, wordsTotal=8400))
+    row = SimpleNamespace(
+        data=SimpleNamespace(scanCount=12, wordsTotal=8400, minutesTotal=37.3333, cashTotal=31.1111)
+    )
     monkeypatch.setattr(module, "get_tables_db", lambda: FakeTables([row]))
 
     stats = module.get_usage_stats("user-1")
 
-    assert (stats.scans, stats.words) == (12, 8400)
+    assert (stats.scans, stats.words, stats.minutes, stats.cash) == (12, 8400, 37.3333, 31.1111)
 
 
 def test_a_user_who_never_scanned_has_zeros(monkeypatch):
@@ -25,4 +27,4 @@ def test_a_user_who_never_scanned_has_zeros(monkeypatch):
 
     stats = module.get_usage_stats("user-1")
 
-    assert (stats.scans, stats.words) == (0, 0)
+    assert (stats.scans, stats.words, stats.minutes, stats.cash) == (0, 0, 0.0, 0.0)

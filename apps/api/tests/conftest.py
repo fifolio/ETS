@@ -19,11 +19,15 @@ def logged_in():
 @pytest.fixture
 def complete_prefs():
     return {
+        "industryId": "software-it",
+        "industry": "Software & IT",
+        "jobId": "job-1",
         "role": "Software engineer",
+        "hourlyRateUsd": 50.0,
         "seniority": "mid",
         "yearsOfExperience": 4,
         "currentLocation": "Tunis, Tunisia",
-        "desiredLocations": ["San Francisco, United States"],
+        "desiredLocations": ["Berlin, Germany"],
         "workArrangements": ["remote", "hybrid"],
         "employmentTypes": ["full-time"],
     }

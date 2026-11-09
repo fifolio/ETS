@@ -3,7 +3,10 @@ import pytest
 from app.services.profile.missing_profile_fields import missing_profile_fields
 
 ALL_FIELDS = [
+    "industryId",
+    "jobId",
     "role",
+    "hourlyRateUsd",
     "seniority",
     "yearsOfExperience",
     "currentLocation",
@@ -24,6 +27,12 @@ def test_an_empty_profile_is_missing_everything():
 @pytest.mark.parametrize(
     ("field", "value"),
     [
+        ("industryId", ""),
+        ("jobId", None),
+        ("role", "  "),
+        ("hourlyRateUsd", -1),
+        ("hourlyRateUsd", True),
+        ("hourlyRateUsd", "50"),
         ("seniority", "wizard"),
         ("yearsOfExperience", -1),
         ("yearsOfExperience", 61),
