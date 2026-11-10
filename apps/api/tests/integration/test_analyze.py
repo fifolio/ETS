@@ -33,6 +33,11 @@ def stored_cv(monkeypatch):
     monkeypatch.setattr("app.routers.analyze.get_cv", lambda user_id: FAKE_CV)
 
 
+@pytest.fixture(autouse=True)
+def nothing_scanned_before(monkeypatch):
+    monkeypatch.setattr("app.routers.analyze.find_previous_scan", lambda user_id, url: None)
+
+
 def test_analyze_returns_the_verdict_and_records_the_scan(monkeypatch, stored_cv):
     recorded = []
     monkeypatch.setattr("app.routers.analyze.analyze", lambda cv, job: FAKE_RESULT)
@@ -41,12 +46,43 @@ def test_analyze_returns_the_verdict_and_records_the_scan(monkeypatch, stored_cv
     response = client.post("/analyze", json=VALID_PAYLOAD)
 
     assert response.status_code == 200
-    assert response.json()["verdict"] == "smash"
+    body = response.json()
+    assert body["verdict"] == "smash"
+    assert body["already_scanned"] is False
     user, result, job_url, job_title, job_text = recorded[0]
     assert user.id == "user-1"
     assert result == FAKE_RESULT
     assert (job_url, job_title) == (VALID_PAYLOAD["job_url"], VALID_PAYLOAD["job_title"])
     assert job_text == VALID_PAYLOAD["job_text"]
+
+
+def test_a_page_scanned_before_returns_the_stored_result_and_counts_nothing(monkeypatch, stored_cv):
+    calls = []
+    monkeypatch.setattr("app.routers.analyze.find_previous_scan", lambda user_id, url: FAKE_RESULT)
+    monkeypatch.setattr("app.routers.analyze.analyze", lambda cv, job: calls.append("analyze"))
+    monkeypatch.setattr("app.routers.analyze.record_scan", lambda *args: calls.append("record"))
+
+    response = client.post("/analyze", json=VALID_PAYLOAD)
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["already_scanned"] is True
+    assert (body["verdict"], body["score"]) == ("smash", 82)
+    assert calls == []  # no AI call and nothing recorded
+
+
+def test_the_previous_scan_check_uses_the_user_and_the_url_of_the_request(monkeypatch, stored_cv):
+    asked = []
+
+    def fake_lookup(user_id, url):
+        asked.append((user_id, url))
+        return FAKE_RESULT
+
+    monkeypatch.setattr("app.routers.analyze.find_previous_scan", fake_lookup)
+
+    client.post("/analyze", json=VALID_PAYLOAD)
+
+    assert asked == [("user-1", "https://example.com/jobs/1")]
 
 
 def test_analyze_without_cv_returns_404(monkeypatch):

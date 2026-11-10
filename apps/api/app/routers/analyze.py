@@ -4,9 +4,10 @@ from fastapi import APIRouter, HTTPException
 
 from app.chains.analyze import analyze
 from app.schemas.analyze_request import AnalyzeRequest
+from app.schemas.analyze_response import AnalyzeResponse
 from app.schemas.error_response import ErrorResponse
-from app.schemas.match_result import MatchResult
 from app.services.cv.get_cv import get_cv
+from app.services.scans.find_previous_scan import find_previous_scan
 from app.services.usage.record_scan import record_scan
 from app.types.verified_user import VerifiedUser
 
@@ -26,15 +27,23 @@ router = APIRouter(
 
 @router.post(
     "/analyze",
-    response_model=MatchResult,
+    response_model=AnalyzeResponse,
     response_description="Verdict, score, and reasons for the match.",
     summary="Smash or pass a job post",
-    description="Compares the logged-in user's stored CV with a job post.",
+    description=(
+        "Compares the logged-in user's stored CV with a job post. If this user already scanned "
+        "the same page, the stored result is returned with already_scanned set to true, and "
+        "nothing is counted again."
+    ),
 )
-def analyze_job(payload: AnalyzeRequest, user: VerifiedUser) -> MatchResult:
+def analyze_job(payload: AnalyzeRequest, user: VerifiedUser) -> AnalyzeResponse:
     cv = get_cv(user.id)
     if cv is None:
         raise HTTPException(status_code=404, detail="Upload your CV before scanning a job.")
+
+    previous = find_previous_scan(user.id, payload.job_url)
+    if previous is not None:
+        return AnalyzeResponse(**previous.model_dump(), already_scanned=True)
 
     try:
         result = analyze(cv.text, payload.job_text)
@@ -48,4 +57,4 @@ def analyze_job(payload: AnalyzeRequest, user: VerifiedUser) -> MatchResult:
         ) from exc
 
     record_scan(user, result, payload.job_url, payload.job_title, payload.job_text)
-    return result
+    return AnalyzeResponse(**result.model_dump())

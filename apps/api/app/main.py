@@ -8,6 +8,7 @@ from app.routers import account, analyze, health, internal, onboarding, testimon
 from app.routers.catalog import industries, industry_jobs
 from app.routers.cv import delete_cv, read_cv, upload_cv
 from app.routers.feedback import eligibility, submit
+from app.routers import stats
 
 app = FastAPI(
     title=metadata.APP_TITLE,
@@ -42,3 +43,4 @@ app.include_router(testimonials.router)
 app.include_router(account.router)
 app.include_router(industries.router)
 app.include_router(industry_jobs.router)
+app.include_router(stats.router)

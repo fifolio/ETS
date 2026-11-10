@@ -47,6 +47,7 @@ Stores the history of smash-or-pass results. The full job post text is intention
 |---|---|---|---|
 | `userId` | Varchar, size 64 | Yes | Appwrite account ID of the owner |
 | `jobUrl` | Text | No | Page that was scanned |
+| `urlHash` | Varchar, size 64 | No | Hash of the page URL |
 | `jobTitle` | Varchar, size 255 | No | Job title, if detected |
 | `verdict` | Enum: `smash`, `pass` | Yes | Result of the analysis |
 | `score` | Integer, min 0, max 100 | Yes | Match score |
@@ -60,6 +61,9 @@ Indexes:
 | Index | Type | Column |
 |---|---|---|
 | `userId_key` | Key | `userId` |
+| `userId_urlHash` | Unique | `userId`, `urlHash` |
+
+A page scanned twice by the same user returns the stored result and counts once.
 
 ### Table `usage_stats`
 
@@ -71,6 +75,8 @@ Stores aggregate usage totals per user. Use the user's Appwrite account ID as th
 | `wordsTotal` | Integer, min 0 | No | Total words analyzed (default 0) |
 | `minutesTotal` | Float | No | Total minutes saved (default 0) |
 | `cashTotal` | Float | No | Total cash equivalent (default 0) |
+
+`GET /stats/totals` is public, cached for 24h, and sums `usage_stats`.
 
 ### Account preferences
 

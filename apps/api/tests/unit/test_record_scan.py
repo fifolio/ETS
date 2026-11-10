@@ -1,7 +1,9 @@
 import app.services.usage.record_scan as module
+from appwrite.exception import AppwriteException
 
 from app.schemas.match_result import MatchResult
 from app.schemas.verdict import Verdict
+from app.services.scans.hash_job_url import hash_job_url
 from app.types.authenticated_user import AuthenticatedUser
 from app.types.scan_savings import ScanSavings
 
@@ -16,14 +18,15 @@ RESULT = MatchResult(
     red_flags=[],
 )
 JOB_TEXT = "word " * 1125
+URL = "https://example.com/job"
 
 
-def install(monkeypatch, fail_save=False, fail_usage=False):
+def install(monkeypatch, save_error=None, fail_usage=False):
     saved, recorded = [], []
 
     def save(*args):
-        if fail_save:
-            raise RuntimeError("scans table down")
+        if save_error:
+            raise save_error
         saved.append(args)
 
     def usage(*args):
@@ -40,14 +43,30 @@ def install(monkeypatch, fail_save=False, fail_usage=False):
 def test_saves_the_scan_and_the_totals_with_the_same_measurements(monkeypatch):
     saved, recorded = install(monkeypatch)
 
-    module.record_scan(USER, RESULT, "https://example.com/job", "Dev", JOB_TEXT)
+    module.record_scan(USER, RESULT, URL, "Dev", JOB_TEXT)
 
-    assert saved == [("user-1", RESULT, "https://example.com/job", "Dev", 1125, SAVINGS)]
+    assert saved == [("user-1", RESULT, URL, "Dev", 1125, SAVINGS, hash_job_url(URL))]
     assert recorded == [("user-1", 1125, SAVINGS)]
 
 
+def test_a_scan_without_a_url_is_saved_without_a_hash(monkeypatch):
+    saved, _ = install(monkeypatch)
+
+    module.record_scan(USER, RESULT, None, None, JOB_TEXT)
+
+    assert saved[0][-1] is None
+
+
+def test_a_page_recorded_a_moment_ago_adds_nothing_to_the_totals(monkeypatch):
+    saved, recorded = install(monkeypatch, save_error=AppwriteException("duplicate", 409))
+
+    module.record_scan(USER, RESULT, URL, "Dev", JOB_TEXT)
+
+    assert saved == [] and recorded == []
+
+
 def test_a_failing_history_save_still_records_the_totals(monkeypatch):
-    saved, recorded = install(monkeypatch, fail_save=True)
+    saved, recorded = install(monkeypatch, save_error=RuntimeError("scans table down"))
 
     module.record_scan(USER, RESULT, None, None, JOB_TEXT)
 
@@ -63,6 +82,6 @@ def test_a_failing_totals_update_still_saves_the_history(monkeypatch):
 
 
 def test_never_raises_even_when_everything_fails(monkeypatch):
-    install(monkeypatch, fail_save=True, fail_usage=True)
+    install(monkeypatch, save_error=RuntimeError("down"), fail_usage=True)
 
     module.record_scan(USER, RESULT, None, None, JOB_TEXT)

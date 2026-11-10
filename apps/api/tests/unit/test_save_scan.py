@@ -24,8 +24,10 @@ def test_stores_the_word_count_the_minutes_and_the_cash(monkeypatch):
         red_flags=[],
     )
 
-    module.save_scan("user-1", result, "https://example.com", "Dev", 900, ScanSavings(4.0, 3.3333))
+    module.save_scan(
+        "user-1", result, "https://example.com", "Dev", 900, ScanSavings(4.0, 3.3333), "abc123"
+    )
 
     data = tables.calls[0]["data"]
     assert (data["wordCount"], data["minutesSaved"], data["cashEquivalent"]) == (900, 4.0, 3.3333)
-    assert data["userId"] == "user-1" and data["verdict"] == "pass"
+    assert data["urlHash"] == "abc123"

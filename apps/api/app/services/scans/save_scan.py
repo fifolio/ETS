@@ -13,6 +13,7 @@ def save_scan(
     job_title: str | None,
     word_count: int,
     savings: ScanSavings,
+    url_hash: str | None,
 ) -> None:
     get_tables_db().create_row(
         database_id=settings.appwrite_database_id,
@@ -28,5 +29,6 @@ def save_scan(
             "wordCount": word_count,
             "minutesSaved": savings.minutes,
             "cashEquivalent": savings.cash,
+            "urlHash": url_hash,
         },
     )

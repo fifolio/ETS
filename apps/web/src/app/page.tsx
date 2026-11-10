@@ -1,12 +1,18 @@
 import { Suspense } from "react";
-
+import { SiteTotalsSection } from "@/components/stats/site-totals-section";
 import { TestimonialList } from "@/components/testimonials/testimonial-list";
+import { getSiteTotals } from "@/services/stats/get-site-totals";
 import { getPublicTestimonials } from "@/services/testimonials/get-public-testimonials";
 
-async function PublicTestimonialsSection() {
-  const testimonials = await getPublicTestimonials();
+async function HomePageContent() {
+  const [testimonials, totals] = await Promise.all([getPublicTestimonials(), getSiteTotals()]);
 
-  return <TestimonialList testimonials={testimonials} />;
+  return (
+    <>
+      {totals && <SiteTotalsSection totals={totals} />}
+      <TestimonialList testimonials={testimonials} />
+    </>
+  );
 }
 
 export default function HomePage() {
@@ -15,7 +21,7 @@ export default function HomePage() {
       <h1>ETS: Employment Targeting System</h1>
       <p>Smash or pass: know in seconds if a job post is worth your time.</p>
       <Suspense fallback={null}>
-        <PublicTestimonialsSection />
+        <HomePageContent />
       </Suspense>
     </main>
   );
