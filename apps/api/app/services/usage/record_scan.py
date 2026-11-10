@@ -3,6 +3,7 @@ import logging
 from appwrite.exception import AppwriteException
 
 from app.schemas.match_result import MatchResult
+from app.services.extensions.record_extension_use import record_extension_use
 from app.services.scans.hash_job_url import hash_job_url
 from app.services.scans.save_scan import save_scan
 from app.services.text.count_words import count_words
@@ -19,6 +20,7 @@ def record_scan(
     job_url: str | None,
     job_title: str | None,
     job_text: str,
+    install_id: str | None = None,
 ) -> None:
     """Save the scan and add it to the user's totals. Never raises: the verdict matters more."""
     words = count_words(job_text)
@@ -40,3 +42,5 @@ def record_scan(
         record_scan_usage(user.id, words, savings)
     except Exception:
         logger.exception("Could not record usage")
+
+    record_extension_use(user.id, install_id, counted=True)

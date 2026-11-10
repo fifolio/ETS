@@ -1,6 +1,7 @@
-import app.services.usage.record_scan as module
+import pytest
 from appwrite.exception import AppwriteException
 
+import app.services.usage.record_scan as module
 from app.schemas.match_result import MatchResult
 from app.schemas.verdict import Verdict
 from app.services.scans.hash_job_url import hash_job_url
@@ -19,6 +20,17 @@ RESULT = MatchResult(
 )
 JOB_TEXT = "word " * 1125
 URL = "https://example.com/job"
+
+
+@pytest.fixture(autouse=True)
+def uses(monkeypatch):
+    calls = []
+    monkeypatch.setattr(
+        module,
+        "record_extension_use",
+        lambda user_id, install_id, counted: calls.append((user_id, install_id, counted)),
+    )
+    return calls
 
 
 def install(monkeypatch, save_error=None, fail_usage=False):
@@ -85,3 +97,19 @@ def test_never_raises_even_when_everything_fails(monkeypatch):
     install(monkeypatch, save_error=RuntimeError("down"), fail_usage=True)
 
     module.record_scan(USER, RESULT, None, None, JOB_TEXT)
+
+
+def test_a_scan_made_from_an_extension_counts_for_that_install(monkeypatch, uses):
+    install(monkeypatch)
+
+    module.record_scan(USER, RESULT, URL, "Dev", JOB_TEXT, "install-12345678")
+
+    assert uses == [("user-1", "install-12345678", True)]
+
+
+def test_a_page_recorded_a_moment_ago_does_not_count_for_the_install(monkeypatch, uses):
+    install(monkeypatch, save_error=AppwriteException("duplicate", 409))
+
+    module.record_scan(USER, RESULT, URL, "Dev", JOB_TEXT, "install-12345678")
+
+    assert uses == []

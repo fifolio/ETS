@@ -5,9 +5,16 @@ from app.services.profile.missing_profile_fields import missing_profile_fields
 from app.types.authenticated_user import AuthenticatedUser
 
 
-def build_onboarding_status(user: AuthenticatedUser, has_cv: bool) -> OnboardingStatus:
+def build_onboarding_status(
+    user: AuthenticatedUser, has_cv: bool, has_extension: bool
+) -> OnboardingStatus:
     missing = missing_profile_fields(user.prefs)
-    done = {"verify": user.email_verified, "cv": has_cv, "profile": not missing}
+    done = {
+        "verify": user.email_verified,
+        "cv": has_cv,
+        "profile": not missing,
+        "extension": has_extension,
+    }
     steps = {name: done[name] for name in ONBOARDING_STEPS}
     next_step = find_next_step(steps)
     return OnboardingStatus(

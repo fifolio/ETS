@@ -60,4 +60,5 @@ TAGS_METADATA = [
     {"name": "account", "description": "Delete your account and all your data."},
     {"name": "catalog", "description": "Industries and jobs with hourly rates (public)."},
     {"name": "stats", "description": "Public totals for the landing page."},
+    {"name": "extensions", "description": "Browser extension installs linked to an account."},
 ]

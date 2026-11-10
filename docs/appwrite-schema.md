@@ -18,7 +18,7 @@ Console labels can differ slightly between Appwrite versions. The names, types, 
 
 ## 3. Database
 
-Create a database with the ID `ets`. Then create the three tables below. Leave table permissions empty.
+Create a database with the ID `ets`. Then create the tables below. Leave table permissions empty.
 
 ### Table `cvs`
 
@@ -77,6 +77,29 @@ Stores aggregate usage totals per user. Use the user's Appwrite account ID as th
 | `cashTotal` | Float | No | Total cash equivalent (default 0) |
 
 `GET /stats/totals` is public, cached for 24h, and sums `usage_stats`.
+
+### Table `extensions`
+
+Stores browser extension installations registered to a user. Leave table permissions empty.
+
+| Column | Type | Required | Notes |
+|---|---|---|---|
+| `userId` | Varchar, size 64 | Yes | Appwrite account ID of the owner |
+| `installId` | Varchar, size 64 | Yes | Random ID for this browser installation |
+| `browser` | Varchar, size 50 | Yes | Browser name |
+| `browserVersion` | Varchar, size 50 | No | Browser version |
+| `os` | Varchar, size 50 | No | Operating system |
+| `extensionVersion` | Varchar, size 20 | No | Extension version |
+| `lastUsedAt` | Datetime | Yes | Last time the extension was used |
+| `scanCount` | Integer, min 0 | No | Scans attributed to this installation (default 0) |
+
+Indexes:
+
+| Index | Type | Columns |
+|---|---|---|
+| `userId_installId_unique` | Unique | `userId`, `installId` |
+
+The install date is the row’s creation time. Registrations are self-reported: the registry is an activity record, not proof of authenticity.
 
 ### Account preferences
 
@@ -148,8 +171,8 @@ Create a key under **Overview → Integrations → API keys**, named `ets-api`, 
 
 | Scope | Used for |
 |---|---|
-| `rows.read` | Reading CVs and scan history |
-| `rows.write` | Saving CVs and scan results |
+| `rows.read` | Reading CVs, scan history, and extension registrations |
+| `rows.write` | Saving CVs, scan results, and extension registrations |
 | `users.read` | List and read user accounts |
 | `users.write` | Update user labels and delete expired accounts |
 
@@ -193,6 +216,7 @@ Set these in the root `.env` file (see `.env.example` for the empty template):
 | `APPWRITE_CVS_TABLE_ID` | `cvs` |
 | `APPWRITE_SCANS_TABLE_ID` | `scans` |
 | `APPWRITE_TESTIMONIALS_TABLE_ID` | `testimonials` |
+| `APPWRITE_EXTENSIONS_TABLE_ID` | `extensions` |
 
 The web app additionally needs `NEXT_PUBLIC_APPWRITE_ENDPOINT` and `NEXT_PUBLIC_APPWRITE_PROJECT_ID` in `apps/web/.env.local`. Never put the API key in a variable that starts with `NEXT_PUBLIC_`, because those values are sent to the browser.
 

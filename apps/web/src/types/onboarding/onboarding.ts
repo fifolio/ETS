@@ -1,4 +1,4 @@
-export type OnboardingStepName = "verify" | "cv" | "profile";
+export type OnboardingStepName = "verify" | "cv" | "profile" | "extension";
 
 export interface OnboardingStatus {
     steps: Record<string, boolean>;

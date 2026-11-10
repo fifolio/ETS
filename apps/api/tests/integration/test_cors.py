@@ -27,3 +27,15 @@ def test_preflight_from_an_unknown_origin_gets_no_permission():
         headers={"Origin": "https://evil.example", "Access-Control-Request-Method": "POST"},
     )
     assert "access-control-allow-origin" not in response.headers
+
+
+def test_the_install_id_header_is_allowed():
+    response = client.options(
+        "/analyze",
+        headers={
+            "Origin": ALLOWED_ORIGIN,
+            "Access-Control-Request-Method": "POST",
+            "Access-Control-Request-Headers": "authorization,content-type,x-ets-install-id",
+        },
+    )
+    assert response.status_code == 200

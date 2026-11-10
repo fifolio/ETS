@@ -4,11 +4,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core import metadata
 from app.core.config import settings
 from app.handlers.register_exception_handlers import register_exception_handlers
-from app.routers import account, analyze, health, internal, onboarding, testimonials
+from app.routers import account, analyze, health, internal, onboarding, stats, testimonials
 from app.routers.catalog import industries, industry_jobs
 from app.routers.cv import delete_cv, read_cv, upload_cv
+from app.routers.extensions import register
 from app.routers.feedback import eligibility, submit
-from app.routers import stats
 
 app = FastAPI(
     title=metadata.APP_TITLE,
@@ -25,7 +25,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[origin.strip() for origin in settings.cors_origins.split(",") if origin.strip()],
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE"],
-    allow_headers=["Authorization", "Content-Type"],
+    allow_headers=["Authorization", "Content-Type", "X-ETS-Install-Id"],
 )
 
 register_exception_handlers(app)
@@ -44,3 +44,4 @@ app.include_router(account.router)
 app.include_router(industries.router)
 app.include_router(industry_jobs.router)
 app.include_router(stats.router)
+app.include_router(register.router)

@@ -38,6 +38,16 @@ def nothing_scanned_before(monkeypatch):
     monkeypatch.setattr("app.routers.analyze.find_previous_scan", lambda user_id, url: None)
 
 
+@pytest.fixture
+def extension_uses(monkeypatch):
+    calls = []
+    monkeypatch.setattr(
+        "app.routers.analyze.record_extension_use",
+        lambda user_id, install_id, counted: calls.append((user_id, install_id, counted)),
+    )
+    return calls
+
+
 def test_analyze_returns_the_verdict_and_records_the_scan(monkeypatch, stored_cv):
     recorded = []
     monkeypatch.setattr("app.routers.analyze.analyze", lambda cv, job: FAKE_RESULT)
@@ -49,11 +59,12 @@ def test_analyze_returns_the_verdict_and_records_the_scan(monkeypatch, stored_cv
     body = response.json()
     assert body["verdict"] == "smash"
     assert body["already_scanned"] is False
-    user, result, job_url, job_title, job_text = recorded[0]
+    user, result, job_url, job_title, job_text, install_id = recorded[0]
     assert user.id == "user-1"
     assert result == FAKE_RESULT
     assert (job_url, job_title) == (VALID_PAYLOAD["job_url"], VALID_PAYLOAD["job_title"])
     assert job_text == VALID_PAYLOAD["job_text"]
+    assert install_id is None
 
 
 def test_a_page_scanned_before_returns_the_stored_result_and_counts_nothing(monkeypatch, stored_cv):
@@ -108,3 +119,31 @@ def test_analyze_missing_key_returns_503(monkeypatch, stored_cv):
 
     monkeypatch.setattr("app.routers.analyze.analyze", no_key)
     assert client.post("/analyze", json=VALID_PAYLOAD).status_code == 503
+
+
+def test_the_install_id_header_reaches_the_bookkeeping(monkeypatch, stored_cv):
+    recorded = []
+    monkeypatch.setattr("app.routers.analyze.analyze", lambda cv, job: FAKE_RESULT)
+    monkeypatch.setattr("app.routers.analyze.record_scan", lambda *args: recorded.append(args))
+
+    client.post("/analyze", json=VALID_PAYLOAD, headers={"X-ETS-Install-Id": "install-12345678"})
+
+    assert recorded[0][-1] == "install-12345678"
+
+
+def test_a_page_scanned_before_only_updates_the_last_use_of_the_install(
+    monkeypatch, stored_cv, extension_uses
+):
+    monkeypatch.setattr("app.routers.analyze.find_previous_scan", lambda user_id, url: FAKE_RESULT)
+
+    client.post("/analyze", json=VALID_PAYLOAD, headers={"X-ETS-Install-Id": "install-12345678"})
+
+    assert extension_uses == [("user-1", "install-12345678", False)]
+
+
+def test_a_request_without_the_header_has_no_install(monkeypatch, stored_cv, extension_uses):
+    monkeypatch.setattr("app.routers.analyze.find_previous_scan", lambda user_id, url: FAKE_RESULT)
+
+    client.post("/analyze", json=VALID_PAYLOAD)
+
+    assert extension_uses == [("user-1", None, False)]

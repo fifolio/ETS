@@ -9,13 +9,23 @@ client = TestClient(app)
 
 def test_status_for_a_verified_user_without_a_cv(monkeypatch, logged_in):
     monkeypatch.setattr("app.routers.onboarding.get_cv", lambda user_id: None)
+    monkeypatch.setattr("app.routers.onboarding.has_registered_extension", lambda user_id: False)
 
     response = client.get("/onboarding/status")
 
     assert response.status_code == 200
     body = response.json()
     assert body["next_step"] == "cv"
-    assert body["steps"] == {"verify": True, "cv": False, "profile": False}
+    assert body["steps"] == {"verify": True, "cv": False, "profile": False, "extension": False}
+
+
+def test_a_registered_extension_marks_its_step_done(monkeypatch, logged_in):
+    monkeypatch.setattr("app.routers.onboarding.get_cv", lambda user_id: None)
+    monkeypatch.setattr("app.routers.onboarding.has_registered_extension", lambda user_id: True)
+
+    response = client.get("/onboarding/status")
+
+    assert response.json()["steps"]["extension"] is True
 
 
 def test_status_is_available_before_the_email_is_verified(logged_in):

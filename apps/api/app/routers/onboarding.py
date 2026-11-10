@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from app.schemas.error_response import ErrorResponse
 from app.schemas.onboarding_status import OnboardingStatus
 from app.services.cv.get_cv import get_cv
+from app.services.extensions.has_registered_extension import has_registered_extension
 from app.services.onboarding.build_onboarding_status import build_onboarding_status
 from app.types.current_user import CurrentUser
 
@@ -24,4 +25,5 @@ router = APIRouter(
 )
 def onboarding_status(user: CurrentUser) -> OnboardingStatus:
     has_cv = user.email_verified and get_cv(user.id) is not None
-    return build_onboarding_status(user, has_cv)
+    has_extension = user.email_verified and has_registered_extension(user.id)
+    return build_onboarding_status(user, has_cv, has_extension)

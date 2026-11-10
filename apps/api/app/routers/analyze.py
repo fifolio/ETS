@@ -1,12 +1,14 @@
 import logging
+from typing import Annotated
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Header, HTTPException
 
 from app.chains.analyze import analyze
 from app.schemas.analyze_request import AnalyzeRequest
 from app.schemas.analyze_response import AnalyzeResponse
 from app.schemas.error_response import ErrorResponse
 from app.services.cv.get_cv import get_cv
+from app.services.extensions.record_extension_use import record_extension_use
 from app.services.scans.find_previous_scan import find_previous_scan
 from app.services.usage.record_scan import record_scan
 from app.types.verified_user import VerifiedUser
@@ -36,13 +38,18 @@ router = APIRouter(
         "nothing is counted again."
     ),
 )
-def analyze_job(payload: AnalyzeRequest, user: VerifiedUser) -> AnalyzeResponse:
+def analyze_job(
+    payload: AnalyzeRequest,
+    user: VerifiedUser,
+    install_id: Annotated[str | None, Header(alias="X-ETS-Install-Id", max_length=64)] = None,
+) -> AnalyzeResponse:
     cv = get_cv(user.id)
     if cv is None:
         raise HTTPException(status_code=404, detail="Upload your CV before scanning a job.")
 
     previous = find_previous_scan(user.id, payload.job_url)
     if previous is not None:
+        record_extension_use(user.id, install_id, counted=False)
         return AnalyzeResponse(**previous.model_dump(), already_scanned=True)
 
     try:
@@ -56,5 +63,5 @@ def analyze_job(payload: AnalyzeRequest, user: VerifiedUser) -> AnalyzeResponse:
             status_code=502, detail="The AI model failed to respond. Please try again."
         ) from exc
 
-    record_scan(user, result, payload.job_url, payload.job_title, payload.job_text)
+    record_scan(user, result, payload.job_url, payload.job_title, payload.job_text, install_id)
     return AnalyzeResponse(**result.model_dump())
