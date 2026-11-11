@@ -7,7 +7,7 @@ from app.handlers.register_exception_handlers import register_exception_handlers
 from app.routers import account, analyze, health, internal, onboarding, stats, testimonials
 from app.routers.catalog import industries, industry_jobs
 from app.routers.cv import delete_cv, read_cv, upload_cv
-from app.routers.extensions import register
+from app.routers.extensions import list_extensions, register, revoke_extension
 from app.routers.feedback import eligibility, submit
 
 app = FastAPI(
@@ -45,3 +45,5 @@ app.include_router(industries.router)
 app.include_router(industry_jobs.router)
 app.include_router(stats.router)
 app.include_router(register.router)
+app.include_router(list_extensions.router)
+app.include_router(revoke_extension.router)

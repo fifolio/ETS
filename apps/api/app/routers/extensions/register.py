@@ -1,21 +1,12 @@
 from fastapi import APIRouter, Response
 
-from app.schemas.error_response import ErrorResponse
+from app.routers.extensions.options import EXTENSIONS_ROUTER_OPTIONS
 from app.schemas.extension_receipt import ExtensionReceipt
 from app.schemas.extension_registration import ExtensionRegistration
 from app.services.extensions.register_extension import register_extension
 from app.types.verified_user import VerifiedUser
 
-router = APIRouter(
-    prefix="/extensions",
-    tags=["extensions"],
-    responses={
-        401: {"model": ErrorResponse, "description": "Missing or invalid token."},
-        403: {"model": ErrorResponse, "description": "The user's email isn't verified yet."},
-        502: {"model": ErrorResponse, "description": "The storage service failed."},
-        503: {"model": ErrorResponse, "description": "The service is not configured."},
-    },
-)
+router = APIRouter(**EXTENSIONS_ROUTER_OPTIONS)
 
 
 @router.post(

@@ -11,7 +11,14 @@ UNVERIFIED = AuthenticatedUser("user-2", "Jane Doe", "jane.doe@example.com", Fal
 
 
 @pytest.mark.parametrize(
-    ("method", "path"), [("get", "/cv"), ("delete", "/cv"), ("post", "/analyze")]
+    ("method", "path"),
+    [
+        ("get", "/cv"),
+        ("delete", "/cv"),
+        ("post", "/analyze"),
+        ("get", "/extensions"),
+        ("delete", "/extensions/ext-1"),
+    ],
 )
 def test_unverified_users_are_blocked(logged_in, method, path):
     app.dependency_overrides[get_current_user] = lambda: UNVERIFIED

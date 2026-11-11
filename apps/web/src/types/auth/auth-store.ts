@@ -11,6 +11,7 @@ export interface AuthActions {
   signUp: (input: SignUpInput) => Promise<void>;
   logIn: (input: LogInInput) => Promise<void>;
   logOut: () => Promise<void>;
+  signOutLocally: () => void;
 }
 
 export type AuthStore = AuthState & AuthActions;

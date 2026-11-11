@@ -28,6 +28,7 @@ def register_extension(user_id: str, registration: ExtensionRegistration) -> boo
                     "userId": user_id,
                     "installId": registration.install_id,
                     "scanCount": 0,
+                    "installedAt": details["lastUsedAt"],
                 }
             )
             return True

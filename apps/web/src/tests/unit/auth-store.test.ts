@@ -8,6 +8,7 @@ const services = vi.hoisted(() => ({
     clearCv: vi.fn(),
     clearOnboarding: vi.fn(),
     clearFeedback: vi.fn(),
+    clearExtensions: vi.fn()
 }));
 
 vi.mock("@/services/auth/load-session", () => ({ loadSession: services.loadSession }));
@@ -22,6 +23,9 @@ vi.mock("@/stores/onboarding/onboarding-store", () => ({
 }));
 vi.mock("@/stores/feedback/feedback-store", () => ({
     useFeedbackStore: { getState: () => ({ clear: services.clearFeedback }) },
+}));
+vi.mock("@/stores/extension/extensions-store", () => ({
+    useExtensionsStore: { getState: () => ({ clear: services.clearExtensions }) },
 }));
 
 import { useAuthStore } from "@/stores/auth/auth-store";
@@ -77,6 +81,7 @@ describe("auth store", () => {
         expect(services.clearCv).toHaveBeenCalled();
         expect(services.clearOnboarding).toHaveBeenCalled();
         expect(services.clearFeedback).toHaveBeenCalled();
+        expect(services.clearExtensions).toHaveBeenCalled();
     });
 
     it("passes the error on and keeps no user when log in fails", async () => {
@@ -86,5 +91,15 @@ describe("auth store", () => {
             useAuthStore.getState().logIn({ email: "jane.doe@example.com", password: "wrong-password" }),
         ).rejects.toThrow("Invalid credentials");
         expect(useAuthStore.getState().user).toBeNull();
+    });
+
+    it("forgets the user locally without calling the log out service", () => {
+        useAuthStore.setState({ user: jane, loading: false });
+
+        useAuthStore.getState().signOutLocally();
+
+        expect(useAuthStore.getState().user).toBeNull();
+        expect(services.logOut).not.toHaveBeenCalled();
+        expect(services.clearCv).toHaveBeenCalled();
     });
 });

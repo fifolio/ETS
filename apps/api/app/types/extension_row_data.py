@@ -10,3 +10,4 @@ class ExtensionRowData(TypedDict, total=False):
     extensionVersion: str
     lastUsedAt: str
     scanCount: int
+    installedAt: str

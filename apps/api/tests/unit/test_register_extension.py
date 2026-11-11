@@ -38,6 +38,7 @@ def test_a_new_install_is_created_with_zero_scans(monkeypatch):
     assert created[0]["installId"] == "install-12345678"
     assert created[0]["scanCount"] == 0
     assert updated == []
+    assert "installedAt" in created[0]
 
 
 def test_a_known_install_is_refreshed_without_touching_its_scan_count(monkeypatch):
@@ -48,6 +49,7 @@ def test_a_known_install_is_refreshed_without_touching_its_scan_count(monkeypatc
     assert updated[0][0] == "row-1"
     assert "scanCount" not in updated[0][1]
     assert updated[0][1]["browser"] == "Chrome"
+    assert "installedAt" not in updated[0][1]
 
 
 def test_a_simultaneous_registration_falls_back_to_refreshing_that_row(monkeypatch):

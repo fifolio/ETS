@@ -90,6 +90,7 @@ Stores browser extension installations registered to a user. Leave table permiss
 | `browserVersion` | Varchar, size 50 | No | Browser version |
 | `os` | Varchar, size 50 | No | Operating system |
 | `extensionVersion` | Varchar, size 20 | No | Extension version |
+| `installedAt` | Datetime | Yes | When the install first registered |
 | `lastUsedAt` | Datetime | Yes | Last time the extension was used |
 | `scanCount` | Integer, min 0 | No | Scans attributed to this installation (default 0) |
 
@@ -99,7 +100,7 @@ Indexes:
 |---|---|---|
 | `userId_installId_unique` | Unique | `userId`, `installId` |
 
-The install date is the row’s creation time. Registrations are self-reported: the registry is an activity record, not proof of authenticity.
+`installedAt` is set when the install first registers. Registrations are self-reported: the registry is an activity record, not proof of authenticity. `/analyze` refuses an unregistered install ID.
 
 ### Account preferences
 

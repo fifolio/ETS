@@ -48,6 +48,13 @@ def extension_uses(monkeypatch):
     return calls
 
 
+@pytest.fixture(autouse=True)
+def install_registered(monkeypatch):
+    monkeypatch.setattr(
+        "app.routers.analyze.find_extension_id", lambda user_id, install_id: "row-1"
+    )
+
+
 def test_analyze_returns_the_verdict_and_records_the_scan(monkeypatch, stored_cv):
     recorded = []
     monkeypatch.setattr("app.routers.analyze.analyze", lambda cv, job: FAKE_RESULT)
@@ -147,3 +154,36 @@ def test_a_request_without_the_header_has_no_install(monkeypatch, stored_cv, ext
     client.post("/analyze", json=VALID_PAYLOAD)
 
     assert extension_uses == [("user-1", None, False)]
+
+
+def test_an_install_that_was_removed_is_refused(monkeypatch, stored_cv):
+    monkeypatch.setattr("app.routers.analyze.find_extension_id", lambda user_id, install_id: None)
+
+    response = client.post(
+        "/analyze", json=VALID_PAYLOAD, headers={"X-ETS-Install-Id": "install-12345678"}
+    )
+
+    assert response.status_code == 403
+    assert "removed" in response.json()["detail"]
+
+
+def test_a_registered_install_is_accepted(monkeypatch, stored_cv):
+    monkeypatch.setattr("app.routers.analyze.analyze", lambda cv, job: FAKE_RESULT)
+    monkeypatch.setattr("app.routers.analyze.record_scan", lambda *args: None)
+
+    response = client.post(
+        "/analyze", json=VALID_PAYLOAD, headers={"X-ETS-Install-Id": "install-12345678"}
+    )
+
+    assert response.status_code == 200
+
+
+def test_a_request_without_an_install_id_is_not_checked(monkeypatch, stored_cv):
+    def fail(user_id, install_id):
+        raise AssertionError("must not be looked up")
+
+    monkeypatch.setattr("app.routers.analyze.find_extension_id", fail)
+    monkeypatch.setattr("app.routers.analyze.analyze", lambda cv, job: FAKE_RESULT)
+    monkeypatch.setattr("app.routers.analyze.record_scan", lambda *args: None)
+
+    assert client.post("/analyze", json=VALID_PAYLOAD).status_code == 200

@@ -8,6 +8,7 @@ from app.schemas.analyze_request import AnalyzeRequest
 from app.schemas.analyze_response import AnalyzeResponse
 from app.schemas.error_response import ErrorResponse
 from app.services.cv.get_cv import get_cv
+from app.services.extensions.find_extension_id import find_extension_id
 from app.services.extensions.record_extension_use import record_extension_use
 from app.services.scans.find_previous_scan import find_previous_scan
 from app.services.usage.record_scan import record_scan
@@ -43,9 +44,16 @@ def analyze_job(
     user: VerifiedUser,
     install_id: Annotated[str | None, Header(alias="X-ETS-Install-Id", max_length=64)] = None,
 ) -> AnalyzeResponse:
+
     cv = get_cv(user.id)
     if cv is None:
         raise HTTPException(status_code=404, detail="Upload your CV before scanning a job.")
+
+    if install_id and find_extension_id(user.id, install_id) is None:
+        raise HTTPException(
+            status_code=403,
+            detail="This extension was removed from your account. Log in again.",
+        )
 
     previous = find_previous_scan(user.id, payload.job_url)
     if previous is not None:

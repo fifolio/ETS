@@ -8,8 +8,8 @@ export function LoggedInLinks({ name }: LoggedInLinksProps) {
     return (
         <>
             <Link href="/">ETS</Link> | <Link href="/dashboard">Dashboard</Link> |{" "}
-            <Link href="/history">Jobs history</Link> | <Link href="/profile">Profile</Link> |{" "}
-            <Link href="/settings">Settings</Link> | {name} <LogOutButton />
+            <Link href="/history">Jobs history</Link> | <Link href="/settings">Settings</Link> | {name}{" "}
+            <LogOutButton />
         </>
     );
 }
