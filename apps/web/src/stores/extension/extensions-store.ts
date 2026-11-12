@@ -3,7 +3,7 @@ import { create } from "zustand";
 import { getExtensions } from "@/services/extensions/get-extensions";
 import { removeExtension } from "@/services/extensions/remove-extension";
 import { useOnboardingStore } from "@/stores/onboarding/onboarding-store";
-import type { ExtensionsStore } from "@/types/extension/extensions-store";
+import type { ExtensionsStore } from "@/types/extensions-store";
 
 export const useExtensionsStore = create<ExtensionsStore>()((set, get) => ({
     items: [],

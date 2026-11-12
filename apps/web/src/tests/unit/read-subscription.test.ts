@@ -6,7 +6,7 @@ import type { AppUser } from "@/types/auth/auth";
 const makeUser = (labels: string[]) => ({ labels }) as unknown as AppUser;
 
 describe("readSubscription", () => {
-    it("is free when the user has no plan label", () => {
+    it("is explore when the user has no plan label", () => {
         expect(readSubscription(makeUser([]))).toBe("explore");
     });
 

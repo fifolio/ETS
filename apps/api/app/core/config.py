@@ -31,5 +31,7 @@ class Settings(BaseSettings):
     feedback_min_days: int = 7
     feedback_min_scans: int = 15
 
+    payment_provider: str = ""
+
 
 settings = Settings()

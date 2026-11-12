@@ -4,7 +4,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core import metadata
 from app.core.config import settings
 from app.handlers.register_exception_handlers import register_exception_handlers
-from app.routers import account, analyze, health, internal, onboarding, stats, testimonials
+from app.routers import (
+    account,
+    analyze,
+    health,
+    internal,
+    onboarding,
+    plans,
+    stats,
+    subscription,
+    testimonials,
+)
 from app.routers.catalog import industries, industry_jobs
 from app.routers.cv import delete_cv, read_cv, upload_cv
 from app.routers.extensions import list_extensions, register, revoke_extension
@@ -47,3 +57,5 @@ app.include_router(stats.router)
 app.include_router(register.router)
 app.include_router(list_extensions.router)
 app.include_router(revoke_extension.router)
+app.include_router(plans.router)
+app.include_router(subscription.router)

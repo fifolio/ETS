@@ -9,7 +9,7 @@ import { useCvStore } from "@/stores/cv/cv-store";
 import { useExtensionsStore } from "@/stores/extension/extensions-store";
 import { useFeedbackStore } from "@/stores/feedback/feedback-store";
 import { useOnboardingStore } from "@/stores/onboarding/onboarding-store";
-import type { AuthStore } from "@/types/auth-store";
+import type { AuthStore } from "@/types/auth/auth-store";
 
 export const useAuthStore = create<AuthStore>()((set, get) => ({
     user: null,

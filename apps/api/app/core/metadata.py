@@ -61,4 +61,6 @@ TAGS_METADATA = [
     {"name": "catalog", "description": "Industries and jobs with hourly rates (public)."},
     {"name": "stats", "description": "Public totals for the landing page."},
     {"name": "extensions", "description": "Browser extension installs linked to an account."},
+    {"name": "plans", "description": "Plans and their limits (public)."},
+    {"name": "subscription", "description": "Upgrade to a paid plan."},
 ]
