@@ -7,11 +7,11 @@ describe("describeJobBoards", () => {
         expect(describeJobBoards(1)).toBe("1 job board");
     });
 
-    it("describes a limit", () => {
-        expect(describeJobBoards(3)).toBe("Up to 3 job boards");
+    it("describes several job boards", () => {
+        expect(describeJobBoards(3)).toBe("3 job boards");
     });
 
-    it("describes no limit", () => {
-        expect(describeJobBoards(null)).toBe("All job boards");
+    it("describes a plan with no job boards yet", () => {
+        expect(describeJobBoards(0)).toBe("No job boards yet");
     });
 });

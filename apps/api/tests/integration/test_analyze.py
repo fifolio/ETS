@@ -55,6 +55,11 @@ def install_registered(monkeypatch):
     )
 
 
+@pytest.fixture(autouse=True)
+def job_board_allowed(monkeypatch):
+    monkeypatch.setattr("app.routers.analyze.is_job_url_allowed", lambda user, url: True)
+
+
 def test_analyze_returns_the_verdict_and_records_the_scan(monkeypatch, stored_cv):
     recorded = []
     monkeypatch.setattr("app.routers.analyze.analyze", lambda cv, job: FAKE_RESULT)
@@ -187,3 +192,37 @@ def test_a_request_without_an_install_id_is_not_checked(monkeypatch, stored_cv):
     monkeypatch.setattr("app.routers.analyze.record_scan", lambda *args: None)
 
     assert client.post("/analyze", json=VALID_PAYLOAD).status_code == 200
+
+
+def test_a_page_outside_the_users_job_boards_is_refused(monkeypatch, stored_cv):
+    calls = []
+    monkeypatch.setattr("app.routers.analyze.is_job_url_allowed", lambda user, url: False)
+    monkeypatch.setattr("app.routers.analyze.analyze", lambda cv, job: calls.append("analyze"))
+
+    response = client.post("/analyze", json=VALID_PAYLOAD)
+
+    assert response.status_code == 403
+    assert "job board" in response.json()["detail"]
+    assert calls == []
+
+
+def test_the_job_board_check_gets_the_user_and_the_page_address(monkeypatch, stored_cv):
+    asked = []
+
+    def fake_check(user, url):
+        asked.append((user.id, url))
+        return True
+
+    monkeypatch.setattr("app.routers.analyze.is_job_url_allowed", fake_check)
+    monkeypatch.setattr("app.routers.analyze.analyze", lambda cv, job: FAKE_RESULT)
+    monkeypatch.setattr("app.routers.analyze.record_scan", lambda *args: None)
+
+    client.post("/analyze", json=VALID_PAYLOAD)
+
+    assert asked == [("user-1", "https://example.com/jobs/1")]
+
+
+def test_a_request_without_a_job_url_is_rejected(stored_cv):
+    payload = {"job_text": VALID_PAYLOAD["job_text"]}
+
+    assert client.post("/analyze", json=payload).status_code == 422

@@ -102,9 +102,23 @@ Indexes:
 
 `installedAt` is set when the install first registers. Registrations are self-reported: the registry is an activity record, not proof of authenticity. `/analyze` refuses an unregistered install ID.
 
+### Table `job_boards`
+
+Stores the job boards available for users to select. Leave table permissions empty.
+
+| Column | Type | Required | Notes |
+|---|---|---|---|
+| Row ID | Varchar, size 64 | Yes | Stable board slug, such as `linkedin` |
+| `name` | Varchar, size 255 | Yes | Name shown to users |
+| `url` | Varchar, size 2048 | Yes | Main URL allowed for the board |
+| `isDefault` | Boolean | No | Default board for plans that cannot choose; set on exactly one active board |
+| `isActive` | Boolean | No | Whether the board is available (default true) |
+
+`POST /analyze` requires `job_url` and refuses pages outside the user's active boards.
+
 ### Account preferences
 
-The app writes these preference keys: `industryId`, `industry`, `jobId`, `role`, `hourlyRateUsd`, `seniority`, `yearsOfExperience`, `currentLocation`, `desiredLocations`, `workArrangements`, `employmentTypes`, `willingToRelocate`, `theme`, and `language`.
+The app writes these preference keys: `industryId`, `industry`, `jobId`, `role`, `hourlyRateUsd`, `seniority`, `yearsOfExperience`, `currentLocation`, `desiredLocations`, `workArrangements`, `employmentTypes`, `willingToRelocate`, `jobBoardIds`, `theme`, and `language`.
 
 The API never trusts `hourlyRateUsd` from the preferences: it reads the rate from the jobs table.
 

@@ -8,7 +8,7 @@ export function PlanCard({ plan, current, upgradable, paymentsEnabled, busy, onU
             <strong>{plan.name}</strong>
             {current && " (your plan)"}
             <br />
-            {describeJobBoards(plan.max_job_boards)}, {formatPlanPrice(plan.price_usd_per_month)}
+            {describeJobBoards(plan.job_board_count)}, {formatPlanPrice(plan.price_usd_per_month)}
             {upgradable && (
                 <>
                     <br />

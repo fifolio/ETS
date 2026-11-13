@@ -10,6 +10,7 @@ from app.schemas.error_response import ErrorResponse
 from app.services.cv.get_cv import get_cv
 from app.services.extensions.find_extension_id import find_extension_id
 from app.services.extensions.record_extension_use import record_extension_use
+from app.services.job_boards.is_job_url_allowed import is_job_url_allowed
 from app.services.scans.find_previous_scan import find_previous_scan
 from app.services.usage.record_scan import record_scan
 from app.types.verified_user import VerifiedUser
@@ -20,6 +21,10 @@ router = APIRouter(
     tags=["analyze"],
     responses={
         401: {"model": ErrorResponse, "description": "Missing or invalid token."},
+        403: {
+            "model": ErrorResponse,
+            "description": "Email not verified, extension removed, or job board not enabled.",
+        },
         404: {"model": ErrorResponse, "description": "The user hasn't uploaded a CV yet."},
         422: {"description": "Invalid input: the job text is missing, too short, or too long."},
         502: {"model": ErrorResponse, "description": "The AI model or storage failed."},
@@ -53,6 +58,12 @@ def analyze_job(
         raise HTTPException(
             status_code=403,
             detail="This extension was removed from your account. Log in again.",
+        )
+
+    if not is_job_url_allowed(user, payload.job_url):
+        raise HTTPException(
+            status_code=403,
+            detail="This job board isn't enabled for your account. Check Settings, Job boards.",
         )
 
     previous = find_previous_scan(user.id, payload.job_url)

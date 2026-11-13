@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     appwrite_industries_table_id: str = ""
     appwrite_jobs_table_id: str = ""
     appwrite_extensions_table_id: str = ""
+    appwrite_job_boards_table_id: str = ""
 
     cors_origins: str = ""
 

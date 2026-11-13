@@ -1,6 +1,6 @@
-export function describeJobBoards(max: number | null): string {
-    if (max === null) {
-        return "All job boards";
+export function describeJobBoards(count: number): string {
+    if (count === 0) {
+        return "No job boards yet";
     }
-    return max === 1 ? "1 job board" : `Up to ${max} job boards`;
+    return count === 1 ? "1 job board" : `${count} job boards`;
 }

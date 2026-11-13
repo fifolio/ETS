@@ -19,6 +19,8 @@ from app.routers.catalog import industries, industry_jobs
 from app.routers.cv import delete_cv, read_cv, upload_cv
 from app.routers.extensions import list_extensions, register, revoke_extension
 from app.routers.feedback import eligibility, submit
+from app.routers.job_boards import mine
+from app.routers.job_boards import public as job_boards_public
 
 app = FastAPI(
     title=metadata.APP_TITLE,
@@ -59,3 +61,5 @@ app.include_router(list_extensions.router)
 app.include_router(revoke_extension.router)
 app.include_router(plans.router)
 app.include_router(subscription.router)
+app.include_router(job_boards_public.router)
+app.include_router(mine.router)

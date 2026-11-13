@@ -23,5 +23,5 @@ class AnalyzeRequest(BaseModel):
         max_length=50_000,
         description="Text of the job post, as scraped from the page",
     )
-    job_url: str | None = Field(default=None, max_length=2000, description="Page URL")
+    job_url: str = Field(min_length=1, max_length=2000, description="Address of the job page")
     job_title: str | None = Field(default=None, max_length=255, description="Job title")

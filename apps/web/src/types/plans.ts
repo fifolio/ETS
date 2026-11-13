@@ -3,8 +3,8 @@ import type { SubscriptionPlan } from "./account";
 export interface PlanInfo {
     id: SubscriptionPlan;
     name: string;
-    max_job_boards: number | null;
     price_usd_per_month: number | null;
+    job_board_count: number;
 }
 
 export interface PlansResponse {

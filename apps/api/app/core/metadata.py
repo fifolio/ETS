@@ -63,4 +63,5 @@ TAGS_METADATA = [
     {"name": "extensions", "description": "Browser extension installs linked to an account."},
     {"name": "plans", "description": "Plans and their limits (public)."},
     {"name": "subscription", "description": "Upgrade to a paid plan."},
+    {"name": "job-boards", "description": "Job boards the extension may read."},
 ]

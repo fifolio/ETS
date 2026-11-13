@@ -10,8 +10,8 @@ export type AppUser = Models.User<
         workArrangements?: string[];
         employmentTypes?: string[];
         willingToRelocate?: boolean;
-        // hourlyRate?: number | null;
-        // currency?: string;
+        theme?: string;
+        language?: string;
         industryId?: string;
         industry?: string;
         jobId?: string;

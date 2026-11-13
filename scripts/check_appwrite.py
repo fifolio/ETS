@@ -18,6 +18,8 @@ def main():
         "industries": settings.appwrite_industries_table_id,
         "jobs": settings.appwrite_jobs_table_id,
         "extensions": settings.appwrite_extensions_table_id,
+        "job_boards": settings.appwrite_job_boards_table_id,
+
     }
     for name, table_id in checks.items():
         tables.list_rows(database_id=settings.appwrite_database_id, table_id=table_id)
