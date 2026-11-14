@@ -8,6 +8,7 @@ def install(monkeypatch, fail_on=None):
     calls = []
     monkeypatch.setattr(settings, "appwrite_scans_table_id", "scans-table")
     monkeypatch.setattr(settings, "appwrite_extensions_table_id", "extensions-table")
+    monkeypatch.setattr(settings, "appwrite_suggestions_table_id", "suggestions-table")
 
     def make(name):
         def step(user_id):
@@ -26,7 +27,7 @@ def install(monkeypatch, fail_on=None):
     return calls
 
 
-def test_deletes_the_cv_usage_scans_and_extension_installs(monkeypatch):
+def test_deletes_the_cv_usage_scans_extensions_and_suggestions(monkeypatch):
     calls = install(monkeypatch)
 
     module.delete_user_data("user-1")
@@ -36,6 +37,7 @@ def test_deletes_the_cv_usage_scans_and_extension_installs(monkeypatch):
         ("usage", "user-1"),
         ("scans-table", "user-1"),
         ("extensions-table", "user-1"),
+        ("suggestions-table", "user-1"),
     ]
 
 

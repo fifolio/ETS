@@ -4,6 +4,7 @@ import { ExtensionsSection } from "@/components/settings/extensions-section";
 import { JobBoardsSection } from "@/components/settings/job-boards-section";
 import { PasswordSection } from "@/components/settings/password-section";
 import { SubscriptionSection } from "@/components/settings/subscription-section";
+import { SuggestJobBoardSection } from "@/components/settings/suggest-job-board-section";
 
 export default function SettingsPage() {
   return (
@@ -12,6 +13,7 @@ export default function SettingsPage() {
       <AccountSection />
       <SubscriptionSection />
       <JobBoardsSection />
+      <SuggestJobBoardSection />
       <PasswordSection />
       <ExtensionsSection />
       <DeleteAccountSection />

@@ -5,7 +5,8 @@ from app.services.usage.delete_usage_row import delete_usage_row
 
 
 def delete_user_data(user_id: str) -> None:
-    """Delete what the user left behind: CV, usage totals, scans, and extension installs.
+    """Delete what the user left behind. /
+    This includes CVs, usage data, scans, extensions, and suggestions.
 
     Testimonials are kept on purpose.
     """
@@ -13,3 +14,4 @@ def delete_user_data(user_id: str) -> None:
     delete_usage_row(user_id)
     delete_rows_by_user(settings.appwrite_scans_table_id, user_id)
     delete_rows_by_user(settings.appwrite_extensions_table_id, user_id)
+    delete_rows_by_user(settings.appwrite_suggestions_table_id, user_id)

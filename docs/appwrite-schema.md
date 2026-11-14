@@ -1,6 +1,6 @@
 # Appwrite setup
 
-ETS uses [Appwrite](https://appwrite.io) for user accounts, the database, and CV file storage. This page describes everything you need to create in your own Appwrite project if you want to self-host ETS or contribute to it.
+ETS uses [Appwrite](https://appwrite.io) for user accounts and the database. This page describes everything you need to create in your own Appwrite project if you want to self-host ETS or contribute to it.
 
 > **Security model:** all permissions on the database tables are intentionally **empty**. Only the ETS API reads and writes this data, using a secret server API key. Browser clients (the web app and the extension) only handle login and never access the database or storage directly.
 
@@ -116,6 +116,29 @@ Stores the job boards available for users to select. Leave table permissions emp
 
 `POST /analyze` requires `job_url` and refuses pages outside the user's active boards.
 
+### Table `job_board_suggestions`
+
+Stores user-submitted job boards for review. Leave table permissions empty.
+
+| Column | Type | Required | Notes |
+|---|---|---|---|
+| `userId` | Varchar, size 64 | Yes | Who suggested it |
+| `name` | Varchar, size 100 | Yes | |
+| `url` | Varchar, size 500 | Yes | The cleaned main address |
+| `urlHash` | Varchar, size 64 | Yes | Hash of the cleaned address |
+| `exampleUrl` | Varchar, size 500 | No | A link to one job post |
+| `country` | Varchar, size 100 | No | |
+| `notes` | Varchar, size 500 | No | |
+| `status` | Enum: `pending`, `approved`, `rejected`, `duplicate` | Yes | The API sets `pending` |
+| `adminNote` | Varchar, size 500 | No | Your reason, for your own records |
+
+Indexes:
+
+| Index | Type | Columns |
+|---|---|---|
+| `userId_urlHash` | Unique | `userId`, `urlHash` |
+| `userId_status` | Key | `userId`, `status` |
+
 ### Account preferences
 
 The app writes these preference keys: `industryId`, `industry`, `jobId`, `role`, `hourlyRateUsd`, `seniority`, `yearsOfExperience`, `currentLocation`, `desiredLocations`, `workArrangements`, `employmentTypes`, `willingToRelocate`, `jobBoardIds`, `theme`, and `language`.
@@ -186,8 +209,8 @@ Create a key under **Overview → Integrations → API keys**, named `ets-api`, 
 
 | Scope | Used for |
 |---|---|
-| `rows.read` | Reading CVs, scan history, and extension registrations |
-| `rows.write` | Saving CVs, scan results, and extension registrations |
+| `rows.read` | Reading CVs, scan history, extension registrations, and job board suggestions |
+| `rows.write` | Saving CVs, scan results, extension registrations, and job board suggestions |
 | `users.read` | List and read user accounts |
 | `users.write` | Update user labels and delete expired accounts |
 
@@ -232,6 +255,7 @@ Set these in the root `.env` file (see `.env.example` for the empty template):
 | `APPWRITE_SCANS_TABLE_ID` | `scans` |
 | `APPWRITE_TESTIMONIALS_TABLE_ID` | `testimonials` |
 | `APPWRITE_EXTENSIONS_TABLE_ID` | `extensions` |
+| `APPWRITE_SUGGESTIONS_TABLE_ID` | `job_board_suggestions` |
 
 The web app additionally needs `NEXT_PUBLIC_APPWRITE_ENDPOINT` and `NEXT_PUBLIC_APPWRITE_PROJECT_ID` in `apps/web/.env.local`. Never put the API key in a variable that starts with `NEXT_PUBLIC_`, because those values are sent to the browser.
 
@@ -246,5 +270,5 @@ The web app additionally needs `NEXT_PUBLIC_APPWRITE_ENDPOINT` and `NEXT_PUBLIC_
 
 Deleting an account (the 48-hour cleanup, `DELETE /account`, or a manual deletion in the
 console followed by the next cleanup run) removes the user's CV row and file, usage totals,
-and scans. Testimonials are kept on purpose: delete a row by hand in the `testimonials` table
-if a user asks for it to be erased.
+scans, extension registrations, and job board suggestions. Testimonials are kept on purpose:
+delete a row by hand in the `testimonials` table if a user asks for it to be erased.

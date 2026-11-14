@@ -19,6 +19,7 @@ def main():
         "jobs": settings.appwrite_jobs_table_id,
         "extensions": settings.appwrite_extensions_table_id,
         "job_boards": settings.appwrite_job_boards_table_id,
+        "job_board_suggestions": settings.appwrite_suggestions_table_id,
 
     }
     for name, table_id in checks.items():

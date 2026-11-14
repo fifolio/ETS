@@ -45,3 +45,20 @@ strings and fragments are ignored.
 `GET /job-boards/mine` returns the boards included in the user's plan. The extension reads a
 page only when its address matches one of them, using the rules above. The API enforces the
 same rule in `POST /analyze`.
+
+## Suggestions from users
+
+Users suggest boards from Settings. Each suggestion is a row in the `job_board_suggestions`
+table (no client permissions). Review them in the Appwrite console:
+
+1. Filter on `status = pending`. `url` is the cleaned main address, `exampleUrl` is a link to
+   one real job post (open it to see how the pages look), and `$createdAt` is the date.
+2. To accept one, add a row to `job_boards` (see above), then set the suggestion's `status` to
+   `approved`.
+3. Otherwise set `status` to `rejected` or `duplicate`. `adminNote` is for your own record.
+
+Limits (in `apps/api/app/constants/suggestions.py`): 3 suggestions per user per 24 hours and
+at most 10 waiting for review. A board that ETS already supports is refused automatically, and
+the same user can't suggest the same address twice.
+
+Suggestions are deleted together with the account.
