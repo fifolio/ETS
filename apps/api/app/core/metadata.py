@@ -64,4 +64,8 @@ TAGS_METADATA = [
     {"name": "plans", "description": "Plans and their limits (public)."},
     {"name": "subscription", "description": "Upgrade to a paid plan."},
     {"name": "job-boards", "description": "Job boards the extension may read."},
+    {
+        "name": "preferences",
+        "description": "Theme and language, for the web app and the extension.",
+    },
 ]

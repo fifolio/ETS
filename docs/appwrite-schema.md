@@ -142,6 +142,7 @@ Indexes:
 ### Account preferences
 
 The app writes these preference keys: `industryId`, `industry`, `jobId`, `role`, `hourlyRateUsd`, `seniority`, `yearsOfExperience`, `currentLocation`, `desiredLocations`, `workArrangements`, `employmentTypes`, `willingToRelocate`, `jobBoardIds`, `theme`, and `language`.
+`theme` (light or dark) and `language` (a code from `GET /languages`) are set to light and en at sign-up and changed in Settings.
 
 The API never trusts `hourlyRateUsd` from the preferences: it reads the rate from the jobs table.
 

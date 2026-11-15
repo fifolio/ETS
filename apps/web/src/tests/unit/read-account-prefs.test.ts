@@ -17,10 +17,14 @@ describe("readAccountPrefs", () => {
         });
     });
 
-    it("falls back to the defaults for unknown values", () => {
-        expect(readAccountPrefs(makeUser({ theme: "neon", language: "xx" }))).toEqual({
+    it("falls back to the defaults for an unknown theme and a malformed language", () => {
+        expect(readAccountPrefs(makeUser({ theme: "neon", language: "English!" }))).toEqual({
             theme: "light",
             language: "en",
         });
+    });
+
+    it("accepts any language code of two or three letters", () => {
+        expect(readAccountPrefs(makeUser({ language: "fil" })).language).toBe("fil");
     });
 });

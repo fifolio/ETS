@@ -9,8 +9,11 @@ from app.routers import (
     analyze,
     health,
     internal,
+    job_board_suggestions,
+    languages,
     onboarding,
     plans,
+    preferences,
     stats,
     subscription,
     testimonials,
@@ -21,7 +24,6 @@ from app.routers.extensions import list_extensions, register, revoke_extension
 from app.routers.feedback import eligibility, submit
 from app.routers.job_boards import mine
 from app.routers.job_boards import public as job_boards_public
-from app.routers import job_board_suggestions
 
 app = FastAPI(
     title=metadata.APP_TITLE,
@@ -65,3 +67,5 @@ app.include_router(subscription.router)
 app.include_router(job_boards_public.router)
 app.include_router(mine.router)
 app.include_router(job_board_suggestions.router)
+app.include_router(languages.router)
+app.include_router(preferences.router)
