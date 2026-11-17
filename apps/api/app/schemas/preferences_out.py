@@ -8,3 +8,5 @@ class PreferencesOut(BaseModel):
         description="The language to display: the choice, or English until it is translated"
     )
     direction: str = Field(description="ltr or rtl, for the effective language")
+    currency: str = Field(description="The currency the user chose")
+    currency_symbol: str = Field(description="The symbol for the currency the user chose")

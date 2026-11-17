@@ -1,5 +1,4 @@
 import app.services.preferences.find_language as find_module
-
 from app.services.preferences.build_preferences import build_preferences
 from app.types.language_definition import LanguageDefinition
 
@@ -14,6 +13,8 @@ def test_empty_preferences_give_the_defaults():
         "language": "en",
         "effective_language": "en",
         "direction": "ltr",
+        "currency": "usd",
+        "currency_symbol": "$",
     }
 
 
@@ -41,4 +42,18 @@ def test_a_translated_right_to_left_language_gives_its_direction(monkeypatch):
         "language": "ar",
         "effective_language": "ar",
         "direction": "rtl",
+        "currency": "usd",
+        "currency_symbol": "$",
     }
+
+
+def test_a_saved_currency_comes_through_with_its_symbol(monkeypatch):
+    from app.schemas.currency_out import CurrencyOut
+
+    eur = CurrencyOut(code="eur", name="Euro", symbol="€", rate_from_usd=0.92)
+    monkeypatch.setattr("app.services.preferences.build_preferences.list_currencies", lambda: [eur])
+    monkeypatch.setattr(find_module, "LANGUAGES", (EN, AR_COMING))
+
+    result = build_preferences({"currency": "eur"})
+
+    assert (result.currency, result.currency_symbol) == ("eur", "€")

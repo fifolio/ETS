@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     appwrite_extensions_table_id: str = ""
     appwrite_job_boards_table_id: str = ""
     appwrite_suggestions_table_id: str = ""
+    appwrite_currencies_table_id: str = ""
 
     cors_origins: str = ""
 

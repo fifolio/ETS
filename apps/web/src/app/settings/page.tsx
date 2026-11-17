@@ -1,5 +1,6 @@
 import { AccountSection } from "@/components/settings/account-section";
 import { AppearanceSection } from "@/components/settings/appearance-section";
+import { CurrencySection } from "@/components/settings/currency-section";
 import { DeleteAccountSection } from "@/components/settings/delete-account-section";
 import { ExtensionsSection } from "@/components/settings/extensions-section";
 import { JobBoardsSection } from "@/components/settings/job-boards-section";
@@ -18,6 +19,7 @@ export default function SettingsPage() {
       <SuggestJobBoardSection />
       <AppearanceSection />
       <LanguageSection />
+      <CurrencySection />
       <PasswordSection />
       <ExtensionsSection />
       <DeleteAccountSection />

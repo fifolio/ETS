@@ -7,6 +7,7 @@ from app.handlers.register_exception_handlers import register_exception_handlers
 from app.routers import (
     account,
     analyze,
+    currencies,
     health,
     internal,
     job_board_suggestions,
@@ -69,3 +70,4 @@ app.include_router(mine.router)
 app.include_router(job_board_suggestions.router)
 app.include_router(languages.router)
 app.include_router(preferences.router)
+app.include_router(currencies.router)

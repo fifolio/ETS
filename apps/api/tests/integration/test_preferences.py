@@ -16,6 +16,8 @@ def test_a_user_without_saved_preferences_gets_the_defaults(logged_in):
         "language": "en",
         "effective_language": "en",
         "direction": "ltr",
+        "currency": "usd",
+        "currency_symbol": "$",
     }
 
 
@@ -39,3 +41,19 @@ def test_an_unverified_user_cannot_read_preferences(logged_in):
 
 def test_reading_preferences_needs_a_login():
     assert client.get("/preferences").status_code == 401
+
+
+def test_preferences_include_the_saved_currency_and_symbol(monkeypatch, logged_in):
+    from app.schemas.currency_out import CurrencyOut
+
+    eur = CurrencyOut(code="eur", name="Euro", symbol="€", rate_from_usd=0.92)
+    monkeypatch.setattr("app.services.preferences.build_preferences.list_currencies", lambda: [eur])
+
+    user = AuthenticatedUser(
+        "user-1", "Jane Doe", "jane.doe@example.com", True, {"currency": "eur"}
+    )
+    app.dependency_overrides[get_current_user] = lambda: user
+
+    body = client.get("/preferences").json()
+
+    assert (body["currency"], body["currency_symbol"]) == ("eur", "€")
