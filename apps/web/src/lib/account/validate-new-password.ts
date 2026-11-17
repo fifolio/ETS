@@ -20,3 +20,13 @@ export function validateNewPassword(
     }
     return null;
 }
+
+export function validateResetPassword(password: string, confirmation: string): string | null {
+  if (password.length < MIN_PASSWORD_LENGTH) {
+    return `The password must have at least ${MIN_PASSWORD_LENGTH} characters.`;
+  }
+  if (password !== confirmation) {
+    return "The two passwords don't match.";
+  }
+  return null;
+}

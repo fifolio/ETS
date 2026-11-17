@@ -1,19 +1,15 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-
 import { useFormSubmit } from "@/hooks/use-form-submit";
 import { useRedirectIfLoggedIn } from "@/hooks/use-redirect-if-logged-in";
 import { useAuthStore } from "@/stores/auth/auth-store";
 
 export function LoginForm() {
-    const router = useRouter();
     const logIn = useAuthStore((state) => state.logIn);
-    useRedirectIfLoggedIn("/dashboard");
+    useRedirectIfLoggedIn();
 
     const { busy, error, handleSubmit } = useFormSubmit(async (data) => {
         await logIn({ email: String(data.get("email")), password: String(data.get("password")) });
-        router.push("/dashboard");
     });
 
     return (

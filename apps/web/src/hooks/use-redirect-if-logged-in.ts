@@ -2,15 +2,17 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 import { useAuthStore } from "@/stores/auth/auth-store";
+import { useOnboardingStore } from "@/stores/onboarding/onboarding-store";
 
-export function useRedirectIfLoggedIn(to: string): void {
+export function useRedirectIfLoggedIn(): void {
     const router = useRouter();
     const user = useAuthStore((state) => state.user);
     const loading = useAuthStore((state) => state.loading);
+    const status = useOnboardingStore((state) => state.status);
 
     useEffect(() => {
-        if (!loading && user) {
-            router.replace(to);
+        if (!loading && user && status) {
+            router.replace(status.complete ? "/dashboard" : "/setup");
         }
-    }, [loading, user, router, to]);
+    }, [loading, user, status, router]);
 }

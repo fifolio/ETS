@@ -9,6 +9,8 @@ import { PasswordSection } from "@/components/settings/password-section";
 import { SubscriptionSection } from "@/components/settings/subscription-section";
 import { SuggestJobBoardSection } from "@/components/settings/suggest-job-board-section";
 
+export const instant = false;
+
 export default function SettingsPage() {
   return (
     <main>

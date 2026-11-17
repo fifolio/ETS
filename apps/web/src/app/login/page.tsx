@@ -7,6 +7,7 @@ export default function LoginPage() {
     <main>
       <h1>Log in</h1>
       <LoginForm />
+      <p><a href="/forgot-password">Forgot your password?</a></p>
       <p>
         No account yet? <Link href="/signup">Sign up</Link>
       </p>
