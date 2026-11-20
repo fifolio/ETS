@@ -4,8 +4,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "apps" / "api"))
 
-from app.core.config import settings  # noqa: E402
-from app.services.appwrite.get_tables_db import get_tables_db  # noqa: E402
+from app.core.config import settings
+from app.services.appwrite.get_tables_db import get_tables_db
 
 
 def main():
@@ -20,6 +20,11 @@ def main():
         "extensions": settings.appwrite_extensions_table_id,
         "job_boards": settings.appwrite_job_boards_table_id,
         "job_board_suggestions": settings.appwrite_suggestions_table_id,
+        "currencies": settings.appwrite_currencies_table_id,
+        "subscriptions": settings.appwrite_subscriptions_table_id,
+        "credit_balances": settings.appwrite_credit_balances_table_id,
+        "credit_ledger": settings.appwrite_credit_ledger_table_id,
+        "payments": settings.appwrite_payments_table_id,
 
     }
     for name, table_id in checks.items():

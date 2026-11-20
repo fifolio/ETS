@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class CurrencyOut(BaseModel):
     code: str
     name: str

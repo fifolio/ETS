@@ -1,7 +1,7 @@
-from app.schemas.currency_out import CurrencyOut
 from fastapi.testclient import TestClient
 
 from app.main import app
+from app.schemas.currency_out import CurrencyOut
 
 client = TestClient(app)
 USD = CurrencyOut(code="usd", name="US Dollar", symbol="$", rate_from_usd=1.0)

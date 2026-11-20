@@ -1,5 +1,4 @@
 from app.schemas.currency_out import CurrencyOut
-
 from app.services.currencies.list_currencies import list_currencies
 
 

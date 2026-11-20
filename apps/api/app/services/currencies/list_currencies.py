@@ -1,9 +1,8 @@
 import time
 from typing import Any
 
-from app.schemas.currency_out import CurrencyOut
-
 from app.core.config import settings
+from app.schemas.currency_out import CurrencyOut
 from app.schemas.currency_row import CurrencyRow
 from app.services.appwrite.iter_table_rows import iter_table_rows
 

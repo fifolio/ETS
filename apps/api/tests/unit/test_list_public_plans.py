@@ -20,3 +20,16 @@ def test_each_plan_shows_how_many_job_boards_it_includes():
     counts = {plan.id: plan.job_board_count for plan in list_public_plans(BOARDS)}
 
     assert counts == {"explore": 1, "nextmove": 3, "urgent": 4}
+
+
+def test_each_plan_shows_its_price_credits_and_top_up():
+    plans = {plan.id: plan for plan in list_public_plans(BOARDS)}
+
+    assert plans["explore"].price_usd_per_month == 0.0
+    assert plans["urgent"].price_usd_per_month == 14.0
+    nextmove = plans["nextmove"]
+    assert (nextmove.monthly_credits, nextmove.topup_credits, nextmove.topup_price_usd) == (
+        150,
+        25,
+        2.0,
+    )

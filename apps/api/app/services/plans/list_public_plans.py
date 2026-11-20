@@ -11,6 +11,9 @@ def list_public_plans(boards: list[JobBoard]) -> list[PlanOut]:
             name=plan.name,
             job_board_count=len(select_boards_for_plan(boards, plan.id)),
             price_usd_per_month=plan.price_usd_per_month,
+            monthly_credits=plan.subscription_credits,
+            topup_credits=plan.topup_credits,
+            topup_price_usd=plan.topup_price_usd,
         )
         for plan in PLANS
     ]

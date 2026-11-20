@@ -139,6 +139,85 @@ Indexes:
 | `userId_urlHash` | Unique | `userId`, `urlHash` |
 | `userId_status` | Key | `userId`, `status` |
 
+### Table `subscriptions`
+
+Stores one subscription row per user. Use the user's Appwrite account ID as the row ID. The API creates these rows, including for Explore users so their monthly credits can be renewed; never add rows by hand.
+
+| Column | Type | Required | Notes |
+|---|---|---|---|
+| `userId` | Varchar, size 64 | Yes | Appwrite account ID |
+| `plan` | Enum: `explore`, `nextmove`, `urgent` | Yes | |
+| `status` | Enum: `active`, `expired` | Yes | |
+| `cancelAtPeriodEnd` | Boolean | No | Default `false` |
+| `polarSubscriptionId` | Varchar, size 64 | No | |
+| `polarCustomerId` | Varchar, size 64 | No | |
+| `startedAt` | Datetime | No | |
+| `currentPeriodEnd` | Datetime | No | |
+| `creditsRenewedAt` | Datetime | No | |
+| `renewalReminderSentAt` | Datetime | No | |
+
+Indexes:
+
+| Index | Type | Columns |
+|---|---|---|
+| `status_currentPeriodEnd` | Key | `status`, `currentPeriodEnd` |
+
+The index supports the subscription expiry job.
+
+### Table `credit_balances`
+
+Stores one credit balance row per user. Use the user's Appwrite account ID as the row ID.
+
+| Column | Type | Required | Notes |
+|---|---|---|---|
+| `subscriptionCredits` | Integer | No | Default `0` |
+| `promotionalCredits` | Integer | No | Default `0` |
+| `purchasedCredits` | Integer | No | Default `0` |
+
+### Table `credit_ledger`
+
+Stores credit history. Every change adds a row; a negative `amount` means credits were spent.
+
+| Column | Type | Required | Notes |
+|---|---|---|---|
+| `userId` | Varchar, size 64 | Yes | Appwrite account ID |
+| `amount` | Integer | Yes | Positive grants credits; negative spends credits |
+| `kind` | Enum: `subscription`, `promotional`, `purchased` | Yes | |
+| `reason` | Varchar, size 200 | Yes | |
+| `refId` | Varchar, size 64 | No | |
+| `idempotencyKey` | Varchar, size 100 | No | |
+
+Indexes:
+
+| Index | Type | Column |
+|---|---|---|
+| `userId_key` | Key | `userId` |
+| `idempotencyKey_unique` | Unique | `idempotencyKey` |
+
+The unique idempotency key prevents the same payment from granting credits twice.
+
+### Table `payments`
+
+Stores one row per checkout attempt.
+
+| Column | Type | Required | Notes |
+|---|---|---|---|
+| `userId` | Varchar, size 64 | Yes | Appwrite account ID |
+| `sku` | Varchar, size 50 | Yes | |
+| `polarCheckoutId` | Varchar, size 64 | Yes | |
+| `polarOrderId` | Varchar, size 64 | No | |
+| `amountCents` | Integer | No | |
+| `status` | Enum: `pending`, `completed`, `failed`, `expired`, `refunded` | Yes | |
+| `appliedAt` | Datetime | No | |
+
+Indexes:
+
+| Index | Type | Column |
+|---|---|---|
+| `userId_key` | Key | `userId` |
+| `polarCheckoutId_unique` | Unique | `polarCheckoutId` |
+| `polarOrderId_unique` | Unique | `polarOrderId` |
+
 ### Account preferences
 
 The app writes these preference keys: `industryId`, `industry`, `jobId`, `role`, `hourlyRateUsd`, `seniority`, `yearsOfExperience`, `currentLocation`, `desiredLocations`, `workArrangements`, `employmentTypes`, `willingToRelocate`, `jobBoardIds`, `theme`, and `language`.

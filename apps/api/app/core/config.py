@@ -25,6 +25,10 @@ class Settings(BaseSettings):
     appwrite_job_boards_table_id: str = ""
     appwrite_suggestions_table_id: str = ""
     appwrite_currencies_table_id: str = ""
+    appwrite_subscriptions_table_id: str = ""
+    appwrite_credit_balances_table_id: str = ""
+    appwrite_credit_ledger_table_id: str = ""
+    appwrite_payments_table_id: str = ""
 
     cors_origins: str = ""
 
