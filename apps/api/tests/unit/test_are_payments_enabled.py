@@ -9,6 +9,6 @@ def test_payments_are_off_without_a_provider(monkeypatch):
 
 
 def test_payments_are_on_when_a_provider_is_set(monkeypatch):
-    monkeypatch.setattr(settings, "payment_provider", "konnect")
+    monkeypatch.setattr(settings, "payment_provider", "whop")
 
     assert are_payments_enabled() is True
