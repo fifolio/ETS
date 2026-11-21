@@ -1,4 +1,5 @@
 from app.core.config import settings
+from app.schemas.credit_balance_row import CreditBalanceRow
 from app.schemas.cv_row import CVRow
 from app.schemas.extension_row import ExtensionRow
 from app.schemas.suggestion_row import SuggestionRow
@@ -17,5 +18,9 @@ def find_data_owner_ids() -> set[str]:
     owners.update(
         row.data.userId
         for row in iter_table_rows(settings.appwrite_suggestions_table_id, SuggestionRow)
+    )
+    owners.update(
+        row.id
+        for row in iter_table_rows(settings.appwrite_credit_balances_table_id, CreditBalanceRow)
     )
     return owners

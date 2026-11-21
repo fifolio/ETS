@@ -5,6 +5,9 @@ export interface PlanInfo {
     name: string;
     price_usd_per_month: number | null;
     job_board_count: number;
+    monthly_credits: number; 
+    topup_credits: number; 
+    topup_price_usd: number;
 }
 
 export interface PlansResponse {

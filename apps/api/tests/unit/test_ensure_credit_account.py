@@ -1,35 +1,50 @@
 from datetime import UTC, datetime
 
+import pytest
+
 import app.services.credits.ensure_credit_account as module
-from app.types.credit_balance import CreditBalance
 
-NOW = datetime(2026, 11, 20, 12, 0, tzinfo=UTC)
+NOW = datetime(2026, 11, 21, 12, 0, tzinfo=UTC)
 
 
-def install(monkeypatch, balance):
+def install(monkeypatch, has_row, grant_error=None):
     calls = []
-    monkeypatch.setattr(module, "get_credit_balance", lambda user_id: balance)
+
+    def grant(*args):
+        if grant_error:
+            raise grant_error
+        calls.append(("grant", args))
+
+    monkeypatch.setattr(module, "has_subscription", lambda user_id: has_row)
+    monkeypatch.setattr(module, "add_credits", grant)
     monkeypatch.setattr(
-        module, "create_subscription_row", lambda *args: calls.append(("subscription_row", args))
+        module, "create_subscription_row", lambda *args: calls.append(("row", args))
     )
-    monkeypatch.setattr(module, "add_credits", lambda *args: calls.append(("grant", args)))
     return calls
 
 
-def test_a_user_who_already_has_a_balance_gets_nothing_new(monkeypatch):
-    calls = install(monkeypatch, CreditBalance(0, 0, 0))
+def test_a_user_with_a_subscription_row_gets_nothing_new(monkeypatch):
+    calls = install(monkeypatch, has_row=True)
 
     module.ensure_credit_account("user-1", NOW)
 
     assert calls == []
 
 
-def test_a_new_user_gets_an_explore_subscription_and_15_credits_once(monkeypatch):
-    calls = install(monkeypatch, None)
+def test_a_new_user_gets_the_explore_credits_and_then_the_row(monkeypatch):
+    calls = install(monkeypatch, has_row=False)
 
     module.ensure_credit_account("user-1", NOW)
 
     assert calls == [
-        ("subscription_row", ("user-1", "explore", NOW)),
         ("grant", ("user-1", "subscription", 15, "Explore credits", "explore-init:user-1")),
+        ("row", ("user-1", "explore", NOW)),
     ]
+
+
+def test_a_failing_grant_leaves_no_row_so_the_next_call_tries_again(monkeypatch):
+    calls = install(monkeypatch, has_row=False, grant_error=RuntimeError("table down"))
+
+    with pytest.raises(RuntimeError):
+        module.ensure_credit_account("user-1", NOW)
+    assert calls == []

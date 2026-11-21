@@ -28,6 +28,24 @@ FAKE_RESULT = MatchResult(
 )
 
 
+@pytest.fixture(autouse=True)
+def credits(monkeypatch):
+    log = []
+    monkeypatch.setattr(
+        "app.routers.analyze.ensure_credit_account",
+        lambda user_id, now: log.append(("ensure", user_id)),
+    )
+    monkeypatch.setattr(
+        "app.routers.analyze.reserve_credits",
+        lambda user_id: log.append(("reserve", user_id)) or [("subscription", 1)],
+    )
+    monkeypatch.setattr(
+        "app.routers.analyze.refund_credits",
+        lambda user_id, steps: log.append(("refund", user_id, steps)),
+    )
+    return log
+
+
 @pytest.fixture
 def stored_cv(monkeypatch):
     monkeypatch.setattr("app.routers.analyze.get_cv", lambda user_id: FAKE_CV)
@@ -226,3 +244,67 @@ def test_a_request_without_a_job_url_is_rejected(stored_cv):
     payload = {"job_text": VALID_PAYLOAD["job_text"]}
 
     assert client.post("/analyze", json=payload).status_code == 422
+
+
+def test_out_of_credits_returns_402_without_calling_the_model(monkeypatch, stored_cv):
+    calls = []
+    monkeypatch.setattr("app.routers.analyze.reserve_credits", lambda user_id: None)
+    monkeypatch.setattr("app.routers.analyze.analyze", lambda cv, job: calls.append("analyze"))
+
+    response = client.post("/analyze", json=VALID_PAYLOAD)
+
+    assert response.status_code == 402
+    assert "out of credits" in response.json()["detail"]
+    assert calls == []
+
+
+def test_the_credit_account_is_set_up_and_a_credit_is_reserved_before_the_model_runs(
+    monkeypatch, stored_cv, credits
+):
+    def fake_analyze(cv, job):
+        credits.append(("analyze",))
+        return FAKE_RESULT
+
+    monkeypatch.setattr("app.routers.analyze.analyze", fake_analyze)
+    monkeypatch.setattr("app.routers.analyze.record_scan", lambda *args: None)
+
+    client.post("/analyze", json=VALID_PAYLOAD)
+
+    assert [entry[0] for entry in credits] == ["ensure", "reserve", "analyze"]
+
+
+def test_a_successful_scan_keeps_the_credit_spent(monkeypatch, stored_cv, credits):
+    monkeypatch.setattr("app.routers.analyze.analyze", lambda cv, job: FAKE_RESULT)
+    monkeypatch.setattr("app.routers.analyze.record_scan", lambda *args: None)
+
+    client.post("/analyze", json=VALID_PAYLOAD)
+
+    assert not any(entry[0] == "refund" for entry in credits)
+
+
+def test_a_failed_model_call_refunds_the_credit(monkeypatch, stored_cv, credits):
+    def boom(cv, job):
+        raise ValueError("model exploded")
+
+    monkeypatch.setattr("app.routers.analyze.analyze", boom)
+
+    assert client.post("/analyze", json=VALID_PAYLOAD).status_code == 502
+    assert ("refund", "user-1", [("subscription", 1)]) in credits
+
+
+def test_a_missing_ai_key_refunds_the_credit(monkeypatch, stored_cv, credits):
+    def no_key(cv, job):
+        raise RuntimeError("GROQ_API_KEY is not set")
+
+    monkeypatch.setattr("app.routers.analyze.analyze", no_key)
+
+    assert client.post("/analyze", json=VALID_PAYLOAD).status_code == 503
+    assert ("refund", "user-1", [("subscription", 1)]) in credits
+
+
+def test_a_page_scanned_before_costs_no_credit(monkeypatch, stored_cv, credits):
+    monkeypatch.setattr("app.routers.analyze.find_previous_scan", lambda user_id, url: FAKE_RESULT)
+
+    client.post("/analyze", json=VALID_PAYLOAD)
+
+    assert credits == []

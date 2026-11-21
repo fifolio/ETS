@@ -1,5 +1,4 @@
 import app.services.preferences.find_language as find_module
-
 from app.services.preferences.effective_language import effective_language
 from app.types.language_definition import LanguageDefinition
 

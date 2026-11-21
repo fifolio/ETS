@@ -1,4 +1,5 @@
 import pytest
+
 from app.services.suggestions.is_ip_host import is_ip_host
 
 

@@ -14,3 +14,14 @@ a credit was spent.
 - Spending decrements a column atomically with a minimum of 0, so simultaneous requests can't
   spend the same credit twice.
 - A new user gets an Explore subscription row and 15 credits the first time credits are needed.
+
+## Scans
+
+A scan costs 1 credit. It is reserved before the AI runs and refunded (with a ledger row) if the
+AI fails. A page the user already scanned returns the stored result and costs nothing. With no
+credits, `POST /analyze` answers 402.
+
+Account deletion removes balances, the credit history, and the subscription row. Payment
+records and testimonials are kept.
+
+To give credits by hand: `uv run --project apps/api python scripts/grant_credits.py <user-id> <promotional|subscription|purchased> <amount>`

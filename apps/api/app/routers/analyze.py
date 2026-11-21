@@ -1,4 +1,5 @@
 import logging
+from datetime import UTC, datetime
 from typing import Annotated
 
 from fastapi import APIRouter, Header, HTTPException
@@ -7,6 +8,9 @@ from app.chains.analyze import analyze
 from app.schemas.analyze_request import AnalyzeRequest
 from app.schemas.analyze_response import AnalyzeResponse
 from app.schemas.error_response import ErrorResponse
+from app.services.credits.ensure_credit_account import ensure_credit_account
+from app.services.credits.refund_credits import refund_credits
+from app.services.credits.reserve_credits import reserve_credits
 from app.services.cv.get_cv import get_cv
 from app.services.extensions.find_extension_id import find_extension_id
 from app.services.extensions.record_extension_use import record_extension_use
@@ -21,6 +25,7 @@ router = APIRouter(
     tags=["analyze"],
     responses={
         401: {"model": ErrorResponse, "description": "Missing or invalid token."},
+        402: {"model": ErrorResponse, "description": "Out of credits."},
         403: {
             "model": ErrorResponse,
             "description": "Email not verified, extension removed, or job board not enabled.",
@@ -71,12 +76,22 @@ def analyze_job(
         record_extension_use(user.id, install_id, counted=False)
         return AnalyzeResponse(**previous.model_dump(), already_scanned=True)
 
+    ensure_credit_account(user.id, datetime.now(UTC))
+    reserved = reserve_credits(user.id)
+    if reserved is None:
+        raise HTTPException(
+            status_code=402,
+            detail="You are out of credits. Buy a top-up or upgrade your plan.",
+        )
+
     try:
         result = analyze(cv.text, payload.job_text)
     except RuntimeError as exc:
+        refund_credits(user.id, reserved)
         logger.error("AI service is not configured: %s", exc)
         raise HTTPException(status_code=503, detail="The AI service is unavailable.") from exc
     except Exception as exc:
+        refund_credits(user.id, reserved)
         logger.exception("Analysis failed")
         raise HTTPException(
             status_code=502, detail="The AI model failed to respond. Please try again."

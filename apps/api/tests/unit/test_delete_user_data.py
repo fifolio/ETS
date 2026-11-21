@@ -3,12 +3,13 @@ import pytest
 import app.services.account.delete_user_data as module
 from app.core.config import settings
 
+TABLES = ("credit_balances", "subscriptions", "credit_ledger", "scans", "extensions", "suggestions")
+
 
 def install(monkeypatch, fail_on=None):
     calls = []
-    monkeypatch.setattr(settings, "appwrite_scans_table_id", "scans-table")
-    monkeypatch.setattr(settings, "appwrite_extensions_table_id", "extensions-table")
-    monkeypatch.setattr(settings, "appwrite_suggestions_table_id", "suggestions-table")
+    for name in TABLES:
+        monkeypatch.setattr(settings, f"appwrite_{name}_table_id", f"{name}-table")
 
     def make(name):
         def step(user_id):
@@ -18,16 +19,18 @@ def install(monkeypatch, fail_on=None):
 
         return step
 
-    def rows(table_id, user_id):
-        calls.append((table_id, user_id))
-
     monkeypatch.setattr(module, "delete_cv", make("cv"))
     monkeypatch.setattr(module, "delete_usage_row", make("usage"))
-    monkeypatch.setattr(module, "delete_rows_by_user", rows)
+    monkeypatch.setattr(
+        module, "delete_row_by_id", lambda table_id, row_id: calls.append((table_id, row_id))
+    )
+    monkeypatch.setattr(
+        module, "delete_rows_by_user", lambda table_id, user_id: calls.append((table_id, user_id))
+    )
     return calls
 
 
-def test_deletes_the_cv_usage_scans_extensions_and_suggestions(monkeypatch):
+def test_deletes_everything_the_user_left_behind_but_not_payments_or_testimonials(monkeypatch):
     calls = install(monkeypatch)
 
     module.delete_user_data("user-1")
@@ -35,6 +38,9 @@ def test_deletes_the_cv_usage_scans_extensions_and_suggestions(monkeypatch):
     assert calls == [
         ("cv", "user-1"),
         ("usage", "user-1"),
+        ("credit_balances-table", "user-1"),
+        ("subscriptions-table", "user-1"),
+        ("credit_ledger-table", "user-1"),
         ("scans-table", "user-1"),
         ("extensions-table", "user-1"),
         ("suggestions-table", "user-1"),
