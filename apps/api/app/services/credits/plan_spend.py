@@ -3,7 +3,7 @@ from app.types.credit_balance import CreditBalance
 
 
 def plan_spend(balance: CreditBalance, amount: int) -> list[tuple[str, int]] | None:
-    """How to pay `amount` credits: promotional first, then subscription, then purchased.
+    """How to pay `amount` credits: monthly allowance first, then welcome bonus, then purchased.
 
     Returns None when the balance isn't enough.
     """

@@ -1,4 +1,5 @@
-SPEND_ORDER = ("promotional", "subscription", "purchased")  # the order credits are used
+SPEND_ORDER = ("subscription", "promotional", "purchased")  # promotional = the welcome bonus
+WELCOME_CREDITS = 25  # granted once per account, whatever the plan
 CREDIT_COLUMNS = {
     "promotional": "promotionalCredits",
     "subscription": "subscriptionCredits",

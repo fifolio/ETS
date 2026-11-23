@@ -13,5 +13,11 @@ export function usePlans() {
             .catch(() => setError("Could not load the plans."));
     }, []);
 
-    return { plans: data?.plans ?? [], paymentsEnabled: data?.payments_enabled ?? false, error, loaded: data !== null };
+    return {
+        plans: data?.plans ?? [],
+        topup: data?.topup ?? null,
+        paymentsEnabled: data?.payments_enabled ?? false,
+        error,
+        loaded: data !== null,
+    };
 }

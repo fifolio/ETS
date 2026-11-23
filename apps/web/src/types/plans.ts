@@ -1,4 +1,5 @@
 import type { SubscriptionPlan } from "./account";
+import { TopupConfig } from "./topup";
 
 export interface PlanInfo {
     id: SubscriptionPlan;
@@ -6,13 +7,12 @@ export interface PlanInfo {
     price_usd_per_month: number | null;
     job_board_count: number;
     monthly_credits: number; 
-    topup_credits: number; 
-    topup_price_usd: number;
 }
 
 export interface PlansResponse {
     plans: PlanInfo[];
     payments_enabled: boolean;
+    topup: TopupConfig;
 }
 
 export interface PlanCardProps {

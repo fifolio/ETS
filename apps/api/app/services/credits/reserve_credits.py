@@ -12,8 +12,9 @@ logger = logging.getLogger(__name__)
 def reserve_credits(
     user_id: str, amount: int = CREDITS_PER_SCAN, reason: str = "Job scan"
 ) -> list[tuple[str, int]] | None:
-    """Spend credits (promotional first) and return what was taken, or None if not enough.
+    """Spend credits monthly allowance first, then welcome bonus, then purchased.
 
+    Return what was taken, or None if not enough.
     Each column is decremented atomically with a minimum of 0, so simultaneous requests can
     never spend the same credit twice. If another request changed the balance in between,
     the balance is read again and we retry. Keep the result: it is what refund_credits needs.

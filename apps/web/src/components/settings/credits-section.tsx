@@ -2,6 +2,7 @@
 
 import { useCredits } from "@/hooks/use-credits";
 import { countScansLeft } from "@/lib/credits/count-scans-left";
+import { TopUpButton } from "./top-up-button";
 
 export function CreditsSection() {
   const { credits, error } = useCredits();
@@ -18,16 +19,19 @@ export function CreditsSection() {
             {countScansLeft(credits.total, credits.credits_per_scan)} scans)
           </p>
           <ul>
-            <li>Bonus: {credits.promotional}</li>
             <li>Monthly allowance: {credits.subscription}</li>
+            <li>Welcome bonus: {credits.promotional}</li>
             <li>Purchased: {credits.purchased}</li>
           </ul>
           <p>
-            Credits are used in this order: bonus, monthly allowance, purchased.
-            Bonus and purchased credits never expire. A scan costs{" "}
+            Credits are used in this order: monthly allowance, welcome bonus,
+            purchased. The monthly allowance resets each billing period and
+            doesn&apos;t roll over. The welcome bonus (25 credits, granted once per
+            account) and purchased credits don&apos;t expire. A scan costs{" "}
             {credits.credits_per_scan} credit, and a job page you already
             scanned costs nothing.
           </p>
+          <TopUpButton />
         </>
       )}
     </section>

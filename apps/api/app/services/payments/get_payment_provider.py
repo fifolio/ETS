@@ -1,10 +1,12 @@
 from app.core.config import settings
 from app.exceptions.configuration_error import ConfigurationError
 from app.services.payments.disabled_provider import DisabledProvider
+from app.services.payments.whop.whop_provider import WhopProvider
 from app.types.payment_provider import PaymentProvider
 
 PROVIDERS: dict[str, type[PaymentProvider]] = {
     "none": DisabledProvider,
+    "whop": WhopProvider,
 }
 
 

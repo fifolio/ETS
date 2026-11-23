@@ -19,7 +19,7 @@ router = APIRouter(
     "/credits",
     response_model=CreditsOut,
     summary="The logged-in user's credit balance",
-    description="Bonus credits are used first, then the monthly allowance, then purchased credits.",
+    description="Monthly allowance is used first, then the welcome bonus, then purchased credits.",
 )
 def credits(user_id: VerifiedUserId) -> CreditsOut:
     return read_user_credits(user_id)

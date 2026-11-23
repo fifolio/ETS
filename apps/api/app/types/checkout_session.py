@@ -3,5 +3,6 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class CheckoutSession:
-    url: str  # where to send the user to pay
-    reference: str  # the provider's own ID for this payment
+    checkout_id: str  # the provider's ID for this checkout
+    plan_id: str  # the provider's plan being bought
+    url: str  # the provider's hosted payment page

@@ -1,17 +1,19 @@
 import { apiFetch } from "@/lib/api/api-fetch";
 import { readApiError } from "@/lib/api/read-api-error";
-import type { SubscriptionPlan } from "@/types/account";
+import type { CheckoutProduct, CheckoutSession } from "@/types/checkout";
 
-/** Starts paying for a plan and returns the address of the payment page. */
-export async function startCheckout(plan: SubscriptionPlan): Promise<string> {
+/** Asks the API to create a checkout. The API decides the price and the top-up tier. */
+export async function startCheckout(
+    product: CheckoutProduct,
+    amountUsd?: number,
+): Promise<CheckoutSession> {
     const response = await apiFetch("/subscription/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan }),
+        body: JSON.stringify(amountUsd === undefined ? { product } : { product, amount_usd: amountUsd }),
     });
     if (!response.ok) {
         throw await readApiError(response);
     }
-    const body: { checkout_url: string } = await response.json();
-    return body.checkout_url;
+    return response.json();
 }

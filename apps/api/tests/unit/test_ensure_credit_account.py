@@ -37,6 +37,7 @@ def test_a_new_user_gets_the_explore_credits_and_then_the_row(monkeypatch):
     module.ensure_credit_account("user-1", NOW)
 
     assert calls == [
+        ("grant", ("user-1", "promotional", 25, "Welcome bonus", "welcome:user-1")),
         ("grant", ("user-1", "subscription", 15, "Explore credits", "explore-init:user-1")),
         ("row", ("user-1", "explore", NOW)),
     ]

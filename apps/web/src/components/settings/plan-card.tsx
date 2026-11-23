@@ -31,11 +31,7 @@ export function PlanCard({
         </>
       )}
       <br />
-      {describeCredits(
-        plan.monthly_credits,
-        plan.topup_credits,
-        plan.topup_price_usd,
-      )}
+      {describeCredits(plan.monthly_credits)}
     </li>
   );
 }

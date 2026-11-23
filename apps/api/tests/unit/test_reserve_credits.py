@@ -30,9 +30,9 @@ def install(monkeypatch, balances, applies, ledger_error=None):
 def test_spends_a_credit_and_records_it_in_the_history(monkeypatch):
     ledger, _, attempts = install(monkeypatch, [BALANCE], [True])
 
-    assert module.reserve_credits("user-1") == [("promotional", 1)]
-    assert attempts == [[("promotional", 1)]]
-    assert ledger == [("user-1", -1, "promotional", "Job scan")]
+    assert module.reserve_credits("user-1") == [("subscription", 1)]
+    assert attempts == [[("subscription", 1)]]
+    assert ledger == [("user-1", -1, "subscription", "Job scan")]
 
 
 def test_not_enough_credits_spends_nothing(monkeypatch):

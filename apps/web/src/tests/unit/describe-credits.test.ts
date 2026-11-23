@@ -3,11 +3,11 @@ import { describe, expect, it } from "vitest";
 import { describeCredits } from "@/lib/plans/describe-credits";
 
 describe("describeCredits", () => {
-    it("describes the monthly credits and the top-up", () => {
-        expect(describeCredits(150, 25, 2)).toBe("150 credits per month. Top-up: 25 credits for $2.");
+    it("describes the monthly credits", () => {
+        expect(describeCredits(150)).toBe("150 credits per month");
     });
 
     it("works for the free plan", () => {
-        expect(describeCredits(15, 25, 3)).toBe("15 credits per month. Top-up: 25 credits for $3.");
+        expect(describeCredits(15)).toBe("15 credits per month");
     });
 });

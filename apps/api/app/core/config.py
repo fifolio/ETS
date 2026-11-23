@@ -40,5 +40,18 @@ class Settings(BaseSettings):
 
     payment_provider: str = ""
 
+    payment_success_url: str = ""
+    whop_environment: str = ""  # sandbox or production
+    whop_sandbox_api_key: str = ""
+    whop_sandbox_webhook_secret: str = ""
+    whop_sandbox_plan_nextmove: str = ""
+    whop_sandbox_plan_urgent: str = ""
+    whop_sandbox_product_topup: str = ""
+    whop_production_api_key: str = ""
+    whop_production_webhook_secret: str = ""
+    whop_production_plan_nextmove: str = ""
+    whop_production_plan_urgent: str = ""
+    whop_production_product_topup: str = ""
+
 
 settings = Settings()

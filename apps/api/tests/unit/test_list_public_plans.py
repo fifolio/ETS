@@ -22,14 +22,9 @@ def test_each_plan_shows_how_many_job_boards_it_includes():
     assert counts == {"explore": 1, "nextmove": 3, "urgent": 4}
 
 
-def test_each_plan_shows_its_price_credits_and_top_up():
+def test_each_plan_shows_its_price_and_monthly_credits():
     plans = {plan.id: plan for plan in list_public_plans(BOARDS)}
 
-    assert plans["explore"].price_usd_per_month == 0.0
-    assert plans["urgent"].price_usd_per_month == 14.0
-    nextmove = plans["nextmove"]
-    assert (nextmove.monthly_credits, nextmove.topup_credits, nextmove.topup_price_usd) == (
-        150,
-        25,
-        2.0,
-    )
+    assert (plans["explore"].price_usd_per_month, plans["explore"].monthly_credits) == (0.0, 15)
+    assert (plans["nextmove"].price_usd_per_month, plans["nextmove"].monthly_credits) == (7.0, 150)
+    assert (plans["urgent"].price_usd_per_month, plans["urgent"].monthly_credits) == (14.0, 300)

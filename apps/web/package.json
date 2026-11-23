@@ -40,6 +40,8 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@whop/elements": "^1.10.0",
+    "@whop/elements-react": "^1.10.0",
     "appwrite": "^29.2.0",
     "next": "^16.4.6",
     "react": "19.3.0",

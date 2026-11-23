@@ -1,21 +1,43 @@
 # Payments
 
-Plans are stored as labels on the Appwrite user: `nextmove` and `urgent`. No label means
-Explore. Only the server can set labels, so users can't upgrade themselves.
+Payments run through Whop. Plans are labels on the Appwrite user (`nextmove`, `urgent`; no label
+is Explore), and credits are in `credit_balances`. Only verified payment confirmations change
+either (see the webhook, added in the next step). Starting a checkout never does.
 
-The plan catalog (names, job board limits, prices) is `apps/api/app/constants/plans.py`.
+## Products
 
-## How a payment provider plugs in
+- Next Move (plan ID `WHOP_<ENV>_PLAN_NEXTMOVE`)
+- Urgent (`WHOP_<ENV>_PLAN_URGENT`)
+- Top-ups: an inline one-time variant priced from the amount, under the product
+  `WHOP_<ENV>_PRODUCT_TOPUP`.
 
-1. Write a class in `apps/api/app/services/payments/` that follows the `PaymentProvider`
-   contract in `app/types/payment_provider.py`: start a checkout, and read the provider's
-   webhook.
-2. Add one line to `PROVIDERS` in `get_payment_provider.py`.
-3. Set `PAYMENT_PROVIDER=<name>` and the provider's keys in `.env`.
-4. After a successful payment, the webhook handler calls `set_user_plan(user_id, plan)`.
+The prices are in `docs/pricing.md`.
 
-With `PAYMENT_PROVIDER=none` (the default), the upgrade buttons are shown but disabled.
+## Sandbox and production
+
+`WHOP_ENVIRONMENT` (`sandbox` or `production`) chooses which set of `WHOP_SANDBOX_*` or
+`WHOP_PRODUCTION_*` values is used. The two share no accounts, keys, plans, or webhooks. Every
+row in `payments` records its `environment`.
+
+## Flow
+
+1. The web app opens `/subscribe?product=nextmove|urgent|topup`.
+2. `POST /subscription/checkout` builds the order on the server (price and top-up tier come
+   from the catalog and the user's plan), creates a Whop checkout, and records a pending payment.
+3. The page mounts Whop Elements' `CheckoutElement`, passing the server-created checkout
+   configuration ID to `Checkout`. The card form lives on Whop; we never see card data.
+4. A confirmed payment arrives by webhook (next step). The embed's "complete" callback only
+   updates the screen.
 
 ## Changing a plan by hand
 
     uv run --project apps/api python scripts/set_user_plan.py <user-id> <explore|nextmove|urgent>
+
+## Trying the provider
+
+    uv run --project apps/api python scripts/whop_smoke_test.py plan_nextmove
+
+## Adding another provider
+
+Write a class in `apps/api/app/services/payments/` with `name`, `environment`, and
+`create_checkout(order)`, then add it to `PROVIDERS` in `get_payment_provider.py`.
