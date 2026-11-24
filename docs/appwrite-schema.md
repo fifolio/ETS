@@ -207,7 +207,7 @@ Stores one row per checkout attempt.
 | `polarCheckoutId` | Varchar, size 64 | Yes | |
 | `polarOrderId` | Varchar, size 64 | No | |
 | `amountCents` | Integer | No | |
-| `status` | Enum: `pending`, `completed`, `failed`, `expired`, `refunded` | Yes | |
+| `status` | Enum: `pending`, `completed`, `failed`, `underpaid`, `expired`, `refunded` | Yes | |
 | `appliedAt` | Datetime | No | |
 
 Indexes:

@@ -5,7 +5,9 @@ import app.services.payments.whop.post_checkout_configuration as module
 from app.exceptions.payment_provider_error import PaymentProviderError
 from app.types.whop_settings import WhopSettings
 
-WHOP = WhopSettings("sandbox", "https://sandbox-api.whop.com/api/v1", "https://x", "secret-key", {}, "")
+WHOP = WhopSettings(
+    "sandbox", "https://sandbox-api.whop.com/api/v1", "https://x", "secret-key", {}, ""
+)
 
 
 class FakeResponse:

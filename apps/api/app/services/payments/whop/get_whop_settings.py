@@ -24,4 +24,5 @@ def get_whop_settings() -> WhopSettings:
         api_key=api_key,
         plan_ids=plan_ids,
         topup_product_id=getattr(settings, f"whop_{environment}_product_topup"),
+        webhook_secret=getattr(settings, f"whop_{environment}_webhook_secret"),
     )

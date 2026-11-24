@@ -41,3 +41,31 @@ row in `payments` records its `environment`.
 
 Write a class in `apps/api/app/services/payments/` with `name`, `environment`, and
 `create_checkout(order)`, then add it to `PROVIDERS` in `get_payment_provider.py`.
+
+## Webhook
+
+`POST /webhooks/whop` (hidden from the public docs). Whop signs each event; the API checks the
+signature and refuses requests more than 5 minutes off. It acts on `payment.succeeded` for a
+payment that is `paid`, and records `payment.failed`.
+
+- Applied once per payment ID, however many times Whop delivers it. Credit grants are also
+  protected by unique keys.
+- The amount paid (the total without added tax) must be at least what we recorded at checkout.
+  Otherwise the payment is stored as `underpaid` and nothing is granted.
+- A payment for a deleted account, in another currency, or that disagrees with our record is
+  stored as `failed` and nothing is granted.
+- A payment without our metadata is acknowledged and ignored.
+- Failures return 500 so Whop retries (for about 3 days).
+
+Events to subscribe to: `payment.succeeded`, `payment.failed`.
+
+## Development with cloudflared
+
+1. `cloudflared tunnel --url http://localhost:8000` prints a `trycloudflare.com` address. It changes every time the tunnel restarts.
+2. Create the sandbox webhook (URL `<address>/webhooks/whop`, those two events, `api_version_date` `2026-11-20`) with `POST https://sandbox-api.whop.com/api/v1/webhooks`. Keep the returned `webhook_secret` in `.env` as `WHOP_SANDBOX_WEBHOOK_SECRET`.
+3. When the address changes, update the URL with `PATCH /webhooks/{id}`.
+4. For production, create a separate webhook on the production account with the real domain and put its secret in `WHOP_PRODUCTION_WEBHOOK_SECRET`.
+
+## Testing without paying
+
+    uv run --project apps/api python scripts/send_test_webhook.py succeeded <user-id> topup 5.00

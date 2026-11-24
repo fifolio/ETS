@@ -1,8 +1,12 @@
+from datetime import UTC, datetime
+
 import pytest
 
 from app.dependencies.get_current_user import get_current_user
 from app.main import app
 from app.types.authenticated_user import AuthenticatedUser
+from app.types.payment_notice import PaymentNotice
+from app.types.payment_record import PaymentRecord
 
 TEST_USER = AuthenticatedUser(
     id="user-1", name="Jane Doe", email="jane.doe@example.com", email_verified=True
@@ -31,3 +35,35 @@ def complete_prefs():
         "workArrangements": ["remote", "hybrid"],
         "employmentTypes": ["full-time"],
     }
+
+
+def make_notice(**overrides):
+    values = {
+        "provider": "whop",
+        "environment": "sandbox",
+        "payment_id": "pay_1",
+        "checkout_id": "ch_1",
+        "user_id": "user-1",
+        "sku": "topup",
+        "paid_cents": 500,
+        "currency": "usd",
+        "membership_id": None,
+        "customer_id": "mber_1",
+        "paid_at": datetime(2026, 12, 1, 10, 0, tzinfo=UTC),
+    }
+    return PaymentNotice(**{**values, **overrides})
+
+
+def make_record(**overrides):
+    values = {
+        "row_id": "row-1",
+        "user_id": "user-1",
+        "sku": "topup",
+        "checkout_id": "ch_1",
+        "payment_id": None,
+        "amount_cents": 500,
+        "credits": 40,
+        "status": "pending",
+        "applied": False,
+    }
+    return PaymentRecord(**{**values, **overrides})

@@ -14,6 +14,7 @@ def fill(monkeypatch, environment, key):
     monkeypatch.setattr(
         settings, f"whop_{environment}_product_topup", f"{environment}-product_topup"
     )
+    monkeypatch.setattr(settings, f"whop_{environment}_webhook_secret", f"{environment}-secret")
 
 
 def test_sandbox_uses_the_sandbox_key_addresses_and_plans(monkeypatch):
@@ -27,6 +28,7 @@ def test_sandbox_uses_the_sandbox_key_addresses_and_plans(monkeypatch):
     assert result.checkout_host == "https://sandbox.whop.com"
     assert (result.environment, result.api_key) == ("sandbox", "sandbox-key")
     assert result.plan_ids["plan_nextmove"] == "sandbox-plan_nextmove"
+    assert result.webhook_secret == "sandbox-secret"
 
 
 def test_production_uses_only_the_production_values(monkeypatch):

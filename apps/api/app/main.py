@@ -19,6 +19,7 @@ from app.routers import (
     stats,
     subscription,
     testimonials,
+    webhooks,
 )
 from app.routers.catalog import industries, industry_jobs
 from app.routers.cv import delete_cv, read_cv, upload_cv
@@ -73,3 +74,4 @@ app.include_router(languages.router)
 app.include_router(preferences.router)
 app.include_router(currencies.router)
 app.include_router(credits.router)
+app.include_router(webhooks.router)

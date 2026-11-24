@@ -1,4 +1,4 @@
-from typing import TypedDict
+from typing import NotRequired, TypedDict
 
 
 class PaymentRowData(TypedDict):
@@ -6,8 +6,10 @@ class PaymentRowData(TypedDict):
     provider: str
     environment: str
     sku: str
-    providerCheckoutId: str
+    providerCheckoutId: str | None
     amountCents: int
     currency: str
-    status: str
     credits: int
+    status: str
+    providerPaymentId: NotRequired[str]
+    appliedAt: NotRequired[str]

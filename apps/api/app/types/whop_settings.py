@@ -9,3 +9,4 @@ class WhopSettings:
     api_key: str
     plan_ids: dict[str, str]  # sku -> Whop plan ID
     topup_product_id: str
+    webhook_secret: str = ""
