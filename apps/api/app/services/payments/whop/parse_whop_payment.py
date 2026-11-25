@@ -5,12 +5,19 @@ from app.services.payments.whop.net_paid_cents import net_paid_cents
 from app.types.payment_notice import PaymentNotice
 
 
-def parse_whop_payment(data: dict[str, Any], environment: str) -> PaymentNotice | None:
-    """A neutral notice from a Whop payment, or None when it isn't one of our checkouts."""
+def parse_whop_payment(
+    data: dict[str, Any], environment: str, owner: tuple[str, str] | None = None
+) -> PaymentNotice | None:
+    """A neutral notice from a Whop payment, or None when it isn't one of our checkouts.
+
+    `owner` is (user_id, sku) found another way (a renewal is matched through its membership).
+    """
     metadata = data.get("metadata")
     metadata = metadata if isinstance(metadata, dict) else {}
     user_id = metadata.get("ets_user_id")
     sku = metadata.get("ets_sku")
+    if not (isinstance(user_id, str) and user_id and isinstance(sku, str) and sku) and owner:
+        user_id, sku = owner
     payment_id = data.get("id")
     if not all(isinstance(value, str) and value for value in (user_id, sku, payment_id)):
         return None

@@ -3,6 +3,7 @@ import pytest
 import app.services.payments.whop.whop_provider as module
 from app.core.config import settings
 from app.exceptions.configuration_error import ConfigurationError
+from app.exceptions.payment_provider_error import PaymentProviderError
 from app.types.checkout_order import CheckoutOrder
 from app.types.whop_settings import WhopSettings
 
@@ -86,3 +87,29 @@ def test_reports_its_name_and_the_configured_environment(monkeypatch):
     provider = module.WhopProvider()
 
     assert (provider.name, provider.environment) == ("whop", "production")
+
+
+def test_cancelling_a_subscription_cancels_the_membership(monkeypatch):
+    cancelled = []
+    whop = WhopSettings("sandbox", "https://api", "https://sandbox.whop.com", "key", {}, "")
+    monkeypatch.setattr(module, "get_whop_settings", lambda: whop)
+    monkeypatch.setattr(
+        module, "post_cancel_membership", lambda w, membership_id: cancelled.append(membership_id)
+    )
+
+    module.WhopProvider().cancel_subscription("mem_1")
+
+    assert cancelled == ["mem_1"]
+
+
+def test_a_failed_cancellation_is_raised(monkeypatch):
+    whop = WhopSettings("sandbox", "https://api", "https://sandbox.whop.com", "key", {}, "")
+
+    def fail(w, membership_id):
+        raise PaymentProviderError("refused")
+
+    monkeypatch.setattr(module, "get_whop_settings", lambda: whop)
+    monkeypatch.setattr(module, "post_cancel_membership", fail)
+
+    with pytest.raises(PaymentProviderError):
+        module.WhopProvider().cancel_subscription("mem_1")

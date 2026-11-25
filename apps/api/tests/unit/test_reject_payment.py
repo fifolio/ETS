@@ -1,7 +1,6 @@
 from datetime import UTC, datetime
 
 import app.services.payments.reject_payment as module
-
 from app.types.payment_verdict import PaymentVerdict
 from tests.conftest import make_notice, make_record
 

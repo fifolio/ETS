@@ -7,11 +7,13 @@ import app.services.credits.apply_spend_steps as spend_module
 import app.services.credits.ensure_credit_account as ensure_module
 import app.services.credits.expire_monthly_credits as expire_module
 import app.services.credits.reserve_credits as reserve_module
+import app.services.credits.revoke_credits as revoke_module
 from app.services.credits.add_credits import add_credits
 from app.services.credits.apply_plan_credits import apply_plan_credits
 from app.services.credits.ensure_credit_account import ensure_credit_account
 from app.services.credits.grant_topup_credits import grant_topup_credits
 from app.services.credits.reserve_credits import reserve_credits
+from app.services.credits.revoke_credits import revoke_credits
 from app.types.credit_balance import CreditBalance
 
 NOW = datetime(2026, 12, 1, tzinfo=UTC)
@@ -70,6 +72,9 @@ def store(monkeypatch):
     monkeypatch.setattr(reserve_module, "write_ledger", s.write_ledger)
     monkeypatch.setattr(spend_module, "decrement_balance", s.decrement_balance)
     monkeypatch.setattr(spend_module, "increment_balance", s.increment_balance)
+    monkeypatch.setattr(revoke_module, "get_credit_balance", s.get_credit_balance)
+    monkeypatch.setattr(revoke_module, "write_ledger", s.write_ledger)
+    monkeypatch.setattr(revoke_module, "decrement_balance", s.decrement_balance)
     return s
 
 
@@ -157,3 +162,44 @@ def test_credits_are_spent_monthly_first_then_welcome_then_purchased(store):
 
     assert steps == [("subscription", 1), ("promotional", 2)]
     assert store.as_tuple() == (0, 23, 40)
+
+
+def test_ending_a_paid_plan_keeps_the_welcome_bonus_and_purchased_credits(store):
+    ensure_credit_account(USER, NOW)
+    apply_plan_credits(USER, "nextmove", "p1")
+    grant_topup_credits(USER, 500, "pay_1")
+
+    apply_plan_credits(USER, "explore", "end:mem_1")
+
+    assert store.as_tuple() == (15, 25, 40)
+
+
+def test_the_end_of_a_plan_is_applied_once_however_often_it_is_reported(store):
+    ensure_credit_account(USER, NOW)
+    apply_plan_credits(USER, "nextmove", "p1")
+    assert apply_plan_credits(USER, "explore", "end:mem_1") is True
+    balances, rows = store.as_tuple(), len(store.ledger)
+
+    assert apply_plan_credits(USER, "explore", "end:mem_1") is False
+    assert store.as_tuple() == balances and len(store.ledger) == rows
+
+
+def test_a_refund_takes_back_only_the_unspent_top_up_credits_and_only_once(store):
+    store.balances = {"subscription": 0, "promotional": 0, "purchased": 40}
+    for _ in range(10):
+        reserve_credits(USER)
+
+    assert revoke_credits(USER, "purchased", 40, "Refund", "refund:rf_1") == 30
+    assert revoke_credits(USER, "purchased", 40, "Refund", "refund:rf_1") == 0
+    assert store.as_tuple() == (0, 0, 0)
+
+
+def test_explores_monthly_reset_replaces_the_credits_instead_of_stacking(store):
+    ensure_credit_account(USER, NOW)
+    for _ in range(5):
+        reserve_credits(USER)
+    assert store.balances["subscription"] == 10
+
+    apply_plan_credits(USER, "explore", "explore:2027-01-15")
+
+    assert store.as_tuple() == (15, 25, 0)

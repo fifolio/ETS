@@ -4,8 +4,8 @@ import hmac
 import json
 
 import pytest
-from app.exceptions.webhook_verification_error import WebhookVerificationError
 
+from app.exceptions.webhook_verification_error import WebhookVerificationError
 from app.services.payments.whop.verify_webhook_signature import verify_webhook_signature
 
 SECRET = "ws_" + "ab" * 32

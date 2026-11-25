@@ -3,79 +3,93 @@ from datetime import UTC, datetime
 import app.services.payments.whop.handle_whop_event as module
 
 NOW = datetime(2026, 12, 1, tzinfo=UTC)
-DATA = {
-    "id": "pay_1",
-    "status": "paid",
-    "currency": "usd",
-    "total": {"amount": "5.00"},
-    "metadata": {"ets_user_id": "user-1", "ets_sku": "topup"},
-}
 
 
 def install(monkeypatch):
     calls = []
     monkeypatch.setattr(
         module,
-        "apply_payment",
-        lambda notice, now: calls.append(("apply", notice.payment_id)) or "applied",
+        "handle_whop_payment_event",
+        lambda t, d, e, n: calls.append(("payment", t, d["id"])) or "applied",
     )
     monkeypatch.setattr(
         module,
-        "mark_payment_failed",
-        lambda notice, now: calls.append(("failed", notice.payment_id)) or "failed",
+        "apply_membership_update",
+        lambda notice, now: calls.append(("membership", notice.membership_id)) or "updated",
+    )
+    monkeypatch.setattr(
+        module,
+        "apply_refund",
+        lambda notice, now: calls.append(("refund", notice.refund_id)) or "refunded",
     )
     return calls
 
 
-def test_a_paid_payment_is_applied(monkeypatch):
+def test_payment_events_go_to_the_payment_handler(monkeypatch):
     calls = install(monkeypatch)
 
     assert (
-        module.handle_whop_event({"type": "payment.succeeded", "data": DATA}, "sandbox", NOW)
+        module.handle_whop_event(
+            {"type": "payment.succeeded", "data": {"id": "pay_1"}}, "sandbox", NOW
+        )
         == "applied"
     )
-    assert calls == [("apply", "pay_1")]
-
-
-def test_a_succeeded_event_that_is_not_paid_is_ignored(monkeypatch):
-    calls = install(monkeypatch)
-
-    event = {"type": "payment.succeeded", "data": {**DATA, "status": "open"}}
-
-    assert module.handle_whop_event(event, "sandbox", NOW) == "ignored"
-    assert calls == []
-
-
-def test_a_payment_that_is_not_one_of_ours_is_ignored(monkeypatch):
-    calls = install(monkeypatch)
-
-    event = {"type": "payment.succeeded", "data": {**DATA, "metadata": {}}}
-
-    assert module.handle_whop_event(event, "sandbox", NOW) == "ignored"
-    assert calls == []
-
-
-def test_a_failed_payment_is_recorded(monkeypatch):
-    calls = install(monkeypatch)
-
     assert (
-        module.handle_whop_event({"type": "payment.failed", "data": DATA}, "sandbox", NOW)
-        == "failed"
+        module.handle_whop_event(
+            {"type": "payment.failed", "data": {"id": "pay_2"}}, "sandbox", NOW
+        )
+        == "applied"
     )
-    assert calls == [("failed", "pay_1")]
+    assert calls == [
+        ("payment", "payment.succeeded", "pay_1"),
+        ("payment", "payment.failed", "pay_2"),
+    ]
 
 
-def test_other_event_types_are_ignored(monkeypatch):
+def test_a_membership_update_is_applied(monkeypatch):
+    calls = install(monkeypatch)
+
+    event = {"type": "membership.updated", "data": {"id": "mem_1", "status": "canceled"}}
+
+    assert module.handle_whop_event(event, "sandbox", NOW) == "updated"
+    assert calls == [("membership", "mem_1")]
+
+
+def test_refund_events_are_applied(monkeypatch):
+    calls = install(monkeypatch)
+    data = {"id": "rf_1", "payment": {"id": "pay_1"}}
+
+    assert (
+        module.handle_whop_event({"type": "refund.created", "data": data}, "sandbox", NOW)
+        == "refunded"
+    )
+    assert (
+        module.handle_whop_event({"type": "refund.updated", "data": data}, "sandbox", NOW)
+        == "refunded"
+    )
+    assert calls == [("refund", "rf_1"), ("refund", "rf_1")]
+
+
+def test_unreadable_membership_or_refund_data_is_ignored(monkeypatch):
     calls = install(monkeypatch)
 
     assert (
-        module.handle_whop_event({"type": "membership.activated", "data": DATA}, "sandbox", NOW)
+        module.handle_whop_event({"type": "membership.updated", "data": {}}, "sandbox", NOW)
+        == "ignored"
+    )
+    assert (
+        module.handle_whop_event({"type": "refund.created", "data": {}}, "sandbox", NOW)
         == "ignored"
     )
     assert calls == []
 
 
-def test_an_event_without_data_is_ignored(monkeypatch):
-    install(monkeypatch)
+def test_other_event_types_and_missing_data_are_ignored(monkeypatch):
+    calls = install(monkeypatch)
 
+    assert (
+        module.handle_whop_event({"type": "member.created", "data": {"id": "x"}}, "sandbox", NOW)
+        == "ignored"
+    )
     assert module.handle_whop_event({"type": "payment.succeeded"}, "sandbox", NOW) == "ignored"
+    assert calls == []

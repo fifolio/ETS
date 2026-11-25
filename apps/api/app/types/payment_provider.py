@@ -11,3 +11,7 @@ class PaymentProvider(Protocol):
     def create_checkout(self, order: CheckoutOrder) -> CheckoutSession:
         """Start a payment for the order and return the provider's checkout."""
         ...
+
+    def cancel_subscription(self, subscription_id: str) -> None:
+        """Stop billing a subscription at the end of its current period."""
+        ...

@@ -7,6 +7,7 @@ from app.main import app
 from app.types.authenticated_user import AuthenticatedUser
 from app.types.payment_notice import PaymentNotice
 from app.types.payment_record import PaymentRecord
+from app.types.subscription_record import SubscriptionRecord
 
 TEST_USER = AuthenticatedUser(
     id="user-1", name="Jane Doe", email="jane.doe@example.com", email_verified=True
@@ -67,3 +68,17 @@ def make_record(**overrides):
         "applied": False,
     }
     return PaymentRecord(**{**values, **overrides})
+
+
+def make_subscription(**overrides):
+    values = {
+        "user_id": "user-1",
+        "plan": "nextmove",
+        "status": "active",
+        "membership_id": "mem_1",
+        "cancel_at_period_end": False,
+        "period_end": datetime(2026, 12, 31, tzinfo=UTC),
+        "credits_renewed_at": datetime(2026, 12, 1, tzinfo=UTC),
+        "reminder_sent_at": None,
+    }
+    return SubscriptionRecord(**{**values, **overrides})

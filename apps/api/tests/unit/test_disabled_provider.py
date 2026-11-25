@@ -16,3 +16,8 @@ def test_it_reports_no_provider_and_no_environment():
     provider = DisabledProvider()
 
     assert (provider.name, provider.environment) == ("none", "none")
+
+
+def test_it_cannot_cancel_a_subscription():
+    with pytest.raises(PaymentsUnavailableError):
+        DisabledProvider().cancel_subscription("mem_1")

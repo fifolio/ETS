@@ -32,9 +32,29 @@ def test_a_payment_without_our_metadata_is_not_ours():
     assert parse_whop_payment({**DATA, "metadata": {"order_ref": "x"}}, "sandbox") is None
 
 
+def test_a_payment_can_use_its_membership_owner_when_metadata_is_missing():
+    notice = parse_whop_payment({**DATA, "metadata": {}}, "sandbox", ("user-2", "nextmove"))
+
+    assert (notice.user_id, notice.sku) == ("user-2", "nextmove")
+
+
+def test_payment_metadata_takes_precedence_over_its_membership_owner():
+    notice = parse_whop_payment(DATA, "sandbox", ("user-2", "nextmove"))
+
+    assert (notice.user_id, notice.sku) == ("user-1", "topup")
+
+
 def test_a_payment_without_an_id_is_refused():
     assert parse_whop_payment({**DATA, "id": None}, "sandbox") is None
 
 
 def test_an_unreadable_total_gives_no_amount():
     assert parse_whop_payment({**DATA, "total": None}, "sandbox").paid_cents is None
+
+
+def test_the_owner_found_another_way_stands_in_for_missing_metadata():
+    notice = parse_whop_payment(
+        {**DATA, "metadata": {}}, "sandbox", owner=("user-9", "plan_urgent")
+    )
+
+    assert (notice.user_id, notice.sku) == ("user-9", "plan_urgent")

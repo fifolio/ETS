@@ -1,5 +1,4 @@
 import app.services.payments.resolve_payment_rows as module
-
 from tests.conftest import make_notice, make_record
 
 

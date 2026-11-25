@@ -11,3 +11,6 @@ class DisabledProvider:
 
     def create_checkout(self, order: CheckoutOrder) -> CheckoutSession:
         raise PaymentsUnavailableError("No payment provider is configured")
+
+    def cancel_subscription(self, subscription_id: str) -> None:
+        raise PaymentsUnavailableError("No payment provider is configured")

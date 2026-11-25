@@ -1,10 +1,12 @@
 import logging
 from collections.abc import Callable, Iterable
+from typing import TypeVar
 
 logger = logging.getLogger(__name__)
+T = TypeVar("T")
 
 
-def apply_to_each(items: Iterable[str], action: Callable[[str], None]) -> tuple[int, int]:
+def apply_to_each(items: Iterable[T], action: Callable[[T], object]) -> tuple[int, int]:
     """Run `action` on every item. A failure is logged and counted, and doesn't stop the rest."""
     done = 0
     failed = 0

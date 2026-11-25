@@ -11,6 +11,7 @@ Credits are used in this order: monthly allowance, welcome bonus (kind `promotio
 - The welcome bonus is 25 credits, granted once per account.
 - A grant is applied once per `idempotencyKey` (unique index), so a repeated payment
   notification can't grant twice.
+- A refund takes back unspent purchased credits (`revoke_credits`).
 - Spending decrements a column atomically with a minimum of 0, so simultaneous requests can't
   spend the same credit twice.
 - A new user gets an Explore subscription row and 15 credits the first time credits are needed.

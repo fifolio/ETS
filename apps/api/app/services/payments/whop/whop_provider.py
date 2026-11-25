@@ -6,6 +6,7 @@ from app.exceptions.configuration_error import ConfigurationError
 from app.services.payments.whop.get_whop_settings import get_whop_settings
 from app.services.payments.whop.parse_checkout_configuration import parse_checkout_configuration
 from app.services.payments.whop.post_checkout_configuration import post_checkout_configuration
+from app.services.payments.whop.post_cancel_membership import post_cancel_membership
 from app.types.checkout_order import CheckoutOrder
 from app.types.checkout_session import CheckoutSession
 
@@ -45,3 +46,6 @@ class WhopProvider:
         data = post_checkout_configuration(whop, body)
         checkout_id, url, resolved_plan_id = parse_checkout_configuration(data, whop, plan_id)
         return CheckoutSession(checkout_id=checkout_id, plan_id=resolved_plan_id, url=url)
+
+    def cancel_subscription(self, subscription_id: str) -> None:
+        post_cancel_membership(get_whop_settings(), subscription_id)

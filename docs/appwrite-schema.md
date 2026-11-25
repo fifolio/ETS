@@ -149,7 +149,7 @@ Stores one subscription row per user. Use the user's Appwrite account ID as the 
 | `plan` | Enum: `explore`, `nextmove`, `urgent` | Yes | |
 | `status` | Enum: `active`, `expired` | Yes | |
 | `cancelAtPeriodEnd` | Boolean | No | Default `false` |
-| `polarSubscriptionId` | Varchar, size 64 | No | |
+| `providerSubscriptionId` | Varchar, size 64 | No | Whop membership ID |
 | `polarCustomerId` | Varchar, size 64 | No | |
 | `startedAt` | Datetime | No | |
 | `currentPeriodEnd` | Datetime | No | |
@@ -161,8 +161,10 @@ Indexes:
 | Index | Type | Columns |
 |---|---|---|
 | `status_currentPeriodEnd` | Key | `status`, `currentPeriodEnd` |
+| `providerSubscriptionId_key` | Key | `providerSubscriptionId` |
+| `plan_creditsRenewedAt` | Key | `plan`, `creditsRenewedAt` |
 
-The index supports the subscription expiry job.
+The indexes support subscription lookups, the expiry job, and monthly Explore credit renewals.
 
 ### Table `credit_balances`
 

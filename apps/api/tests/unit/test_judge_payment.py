@@ -1,6 +1,6 @@
 import pytest
-from app.services.payments.judge_payment import judge_payment
 
+from app.services.payments.judge_payment import judge_payment
 from tests.conftest import make_notice, make_record
 
 

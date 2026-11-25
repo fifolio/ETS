@@ -1,7 +1,6 @@
 from datetime import UTC, datetime
 
 import app.services.payments.save_payment_result as module
-
 from app.types.payment_result import PaymentResult
 from tests.conftest import make_notice, make_record
 
