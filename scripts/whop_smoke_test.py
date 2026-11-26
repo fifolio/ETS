@@ -4,9 +4,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "apps" / "api"))
 
-from app.services.payments.whop.whop_provider import WhopProvider  
-from app.types.checkout_order import CheckoutOrder 
-from app.services.topups.credits_for_cents import credits_for_cents  # noqa: E402
+from app.services.payments.whop.whop_provider import WhopProvider
+from app.services.topups.credits_for_cents import credits_for_cents
+from app.types.checkout_order import CheckoutOrder
 
 
 def main() -> None:

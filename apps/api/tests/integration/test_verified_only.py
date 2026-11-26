@@ -20,6 +20,11 @@ UNVERIFIED = AuthenticatedUser("user-2", "Jane Doe", "jane.doe@example.com", Fal
         ("delete", "/extensions/ext-1"),
         ("get", "/job-boards/mine"),
         ("get", "/credits"),
+        ("get", "/subscription"),
+        ("post", "/subscription/cancel"),
+        ("get", "/subscription/manage-url"),
+        ("get", "/credits/history"),
+        ("get", "/payments"),
     ],
 )
 def test_unverified_users_are_blocked(logged_in, method, path):

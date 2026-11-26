@@ -70,7 +70,7 @@ Events to subscribe to: `payment.succeeded`, `payment.failed`, `membership.updat
 - A full refund of a top-up takes back its unspent credits (the history says how many were
   already used). A full refund of a plan payment ends the subscription. Partial refunds of a plan
   change nothing.
-- An upgrade cancels the replaced membership at its period end (needs the `membership:cancel`
+- An upgrade immediately cancels the replaced membership (needs the `membership:cancel`
   permission on the Whop key).
 - `POST /internal/subscription-maintenance` (same token as the cleanup, dry run by default)
   resets Explore's monthly credits every 30 days, ends paid plans 7 days after their period end
@@ -88,3 +88,12 @@ Events to subscribe to: `payment.succeeded`, `payment.failed`, `membership.updat
 ## Testing without paying
 
     uv run --project apps/api python scripts/send_test_webhook.py succeeded <user-id> topup 5.00
+
+## What users see (Settings)
+
+- Subscription: the plan, "Renews on ..." or "Cancelled: your plan ends on ...", Manage billing
+  (the provider's billing page, read on click), and Cancel subscription (ends access immediately;
+  no prorated refund is issued).
+- Credits and credit history (latest 20), and payments (latest 10, abandoned checkouts hidden).
+- After paying, a message confirms the payment by watching our own payment history (the
+  webhook records it), on the checkout page and on Settings when the provider redirects back.

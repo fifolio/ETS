@@ -1,12 +1,14 @@
 from typing import Any
+from urllib.parse import quote
 
 from app.constants.topups import TOPUP_SKU
 from app.core.config import settings
 from app.exceptions.configuration_error import ConfigurationError
+from app.services.payments.whop.get_whop_json import get_whop_json
 from app.services.payments.whop.get_whop_settings import get_whop_settings
 from app.services.payments.whop.parse_checkout_configuration import parse_checkout_configuration
-from app.services.payments.whop.post_checkout_configuration import post_checkout_configuration
 from app.services.payments.whop.post_cancel_membership import post_cancel_membership
+from app.services.payments.whop.post_checkout_configuration import post_checkout_configuration
 from app.types.checkout_order import CheckoutOrder
 from app.types.checkout_session import CheckoutSession
 
@@ -49,3 +51,8 @@ class WhopProvider:
 
     def cancel_subscription(self, subscription_id: str) -> None:
         post_cancel_membership(get_whop_settings(), subscription_id)
+
+    def get_manage_url(self, subscription_id: str) -> str | None:
+        data = get_whop_json(get_whop_settings(), f"/memberships/{quote(subscription_id, safe='')}")
+        url = data.get("manage_url")
+        return url if isinstance(url, str) and url.startswith("https://") else None

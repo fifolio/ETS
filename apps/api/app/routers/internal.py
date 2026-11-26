@@ -1,14 +1,14 @@
 from datetime import UTC, datetime
 
-from app.schemas.maintenance_result import MaintenanceResult
-from app.services.subscriptions.run_subscription_maintenance import (
-    run_subscription_maintenance,
-)
 from fastapi import APIRouter, Depends
 
 from app.dependencies.require_cleanup_token import require_cleanup_token
 from app.schemas.cleanup_result import CleanupResult
+from app.schemas.maintenance_result import MaintenanceResult
 from app.services.cleanup.run_cleanup import run_cleanup
+from app.services.subscriptions.run_subscription_maintenance import (
+    run_subscription_maintenance,
+)
 
 router = APIRouter(prefix="/internal", include_in_schema=False)
 

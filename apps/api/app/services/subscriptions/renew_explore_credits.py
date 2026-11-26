@@ -6,6 +6,6 @@ from app.types.subscription_record import SubscriptionRecord
 
 
 def renew_explore_credits(record: SubscriptionRecord, now: datetime) -> None:
-    """Explore's monthly reset: the leftover expires and the 15 credits are back, once per day-key."""
+    """Reset Explore's 15 credits once for the current day key."""
     apply_plan_credits(record.user_id, "explore", f"explore:{now.date().isoformat()}")
     update_subscription_row(record.user_id, {"creditsRenewedAt": now.isoformat()})

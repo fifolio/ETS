@@ -29,14 +29,14 @@ def install(monkeypatch, response=None, error=None):
     return calls
 
 
-def test_cancels_the_membership_at_the_end_of_its_period(monkeypatch):
+def test_cancels_the_membership_immediately(monkeypatch):
     calls = install(monkeypatch, FakeResponse(200))
 
     module.post_cancel_membership(WHOP, "mem_1")
 
     url, body, headers = calls[0]
     assert url == "https://sandbox-api.whop.com/api/v1/memberships/mem_1/cancel"
-    assert body == {"cancellation_mode": "at_period_end"}
+    assert body == {"cancel_at_period_end": False}
     assert headers["Authorization"] == "Bearer secret-key"
 
 

@@ -10,7 +10,7 @@ describe("applyTextInput", () => {
     });
 
     it("explains an amount below the minimum", () => {
-        expect(applyTextInput("1.00", limits)).toEqual({
+        expect(applyTextInput("0.99", limits)).toEqual({
             cents: null,
             error: "Choose an amount between $1.00 and $50.00.",
         });

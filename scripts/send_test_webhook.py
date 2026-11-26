@@ -14,7 +14,7 @@ import httpx
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "apps" / "api"))
 
-from app.services.payments.whop.get_whop_settings import get_whop_settings  # noqa: E402
+from app.services.payments.whop.get_whop_settings import get_whop_settings
 
 USAGE = """Usage: send_test_webhook.py <kind> <args>
   succeeded  <user-id> <sku> <amount-usd> [payment-id] [checkout-id] [membership-id]
@@ -45,7 +45,9 @@ def build(kind: str, a: list[str]) -> tuple[str, dict]:
     pay_id = f"pay_test_{uuid.uuid4().hex[:12]}"
     if kind in ("succeeded", "failed") and len(a) >= 3:
         user_id, sku, amount = a[:3]
-        membership = (a[5] if len(a) > 5 else "mem_test") if sku.startswith("plan_") else None
+        membership = (
+            (a[5] if len(a) > 5 else "mem_test") if sku.startswith("plan_") else None
+        )
         data = payment(
             a[3] if len(a) > 3 else pay_id,
             amount,
@@ -55,7 +57,9 @@ def build(kind: str, a: list[str]) -> tuple[str, dict]:
         )
         return f"payment.{kind}", data
     if kind == "renewal" and len(a) >= 2:
-        return "payment.succeeded", payment(a[2] if len(a) > 2 else pay_id, a[1], {}, None, a[0])
+        return "payment.succeeded", payment(
+            a[2] if len(a) > 2 else pay_id, a[1], {}, None, a[0]
+        )
     if kind == "membership" and len(a) >= 2:
         data = {
             "id": a[0],

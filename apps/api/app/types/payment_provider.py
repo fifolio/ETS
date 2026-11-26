@@ -13,5 +13,9 @@ class PaymentProvider(Protocol):
         ...
 
     def cancel_subscription(self, subscription_id: str) -> None:
-        """Stop billing a subscription at the end of its current period."""
+        """Immediately end a subscription and stop billing."""
+        ...
+
+    def get_manage_url(self, subscription_id: str) -> str | None:
+        """The provider's billing page for a subscription, or None."""
         ...

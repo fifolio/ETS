@@ -1,3 +1,7 @@
 export function formatHours(value: number): string {
-    return new Intl.NumberFormat("en-US", { maximumFractionDigits: 1 }).format(value);
+    const totalMinutes = Math.max(0, Math.round(value * 60));
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    return `${hours}h ${minutes}m`;
 }

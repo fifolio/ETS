@@ -1,22 +1,19 @@
-
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "apps" / "api"))
 
+from app.core.config import settings
+from app.schemas.job_row import JobRow
+from app.services.appwrite.get_tables_db import get_tables_db
 from appwrite.query import Query
-
-from app.core.config import settings 
-from app.schemas.job_row import JobRow 
-from app.services.appwrite.get_tables_db import get_tables_db  
 
 
 def main() -> None:
     if len(sys.argv) != 4:
         sys.exit(
-            'Usage: update_job_rate.py <industry-slug> '
-            '"<job name>" <hourly-rate-usd>'
+            'Usage: update_job_rate.py <industry-slug> "<job name>" <hourly-rate-usd>'
         )
 
     industry, job_name, rate_arg = sys.argv[1], sys.argv[2], sys.argv[3]
@@ -52,10 +49,7 @@ def main() -> None:
         data={"hourlyRateUsd": rate},
     )
 
-    print(
-        f'Updated "{job_name}" in "{industry}" '
-        f'to ${rate:.2f} per hour.'
-    )
+    print(f'Updated "{job_name}" in "{industry}" to ${rate:.2f} per hour.')
 
 
 if __name__ == "__main__":

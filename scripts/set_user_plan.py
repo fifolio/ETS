@@ -4,8 +4,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "apps" / "api"))
 
-from app.constants.account import SUBSCRIPTION_PLANS 
-from app.services.account.set_user_plan import set_user_plan  
+from app.constants.account import SUBSCRIPTION_PLANS
+from app.services.account.set_user_plan import set_user_plan
 
 
 def main() -> None:

@@ -113,3 +113,28 @@ def test_a_failed_cancellation_is_raised(monkeypatch):
 
     with pytest.raises(PaymentProviderError):
         module.WhopProvider().cancel_subscription("mem_1")
+
+
+def test_the_billing_page_is_read_from_the_membership(monkeypatch):
+    asked = []
+    whop = WhopSettings("sandbox", "https://api", "https://sandbox.whop.com", "key", {}, "")
+    monkeypatch.setattr(module, "get_whop_settings", lambda: whop)
+    monkeypatch.setattr(
+        module,
+        "get_whop_json",
+        lambda w, path: (
+            asked.append(path) or {"manage_url": "https://whop.com/billing/manage/mem_1"}
+        ),
+    )
+
+    assert module.WhopProvider().get_manage_url("mem_1") == "https://whop.com/billing/manage/mem_1"
+    assert asked == ["/memberships/mem_1"]
+
+
+def test_a_missing_or_unsafe_billing_page_gives_none(monkeypatch):
+    whop = WhopSettings("sandbox", "https://api", "https://sandbox.whop.com", "key", {}, "")
+    monkeypatch.setattr(module, "get_whop_settings", lambda: whop)
+
+    for data in ({}, {"manage_url": None}, {"manage_url": "javascript:alert(1)"}):
+        monkeypatch.setattr(module, "get_whop_json", lambda w, path, data=data: data)
+        assert module.WhopProvider().get_manage_url("mem_1") is None

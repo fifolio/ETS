@@ -4,8 +4,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "apps" / "api"))
 
-from app.core.config import settings 
+from app.core.config import settings
 from app.services.appwrite.get_tables_db import get_tables_db
+from appwrite.exception import AppwriteException
 
 ROWS = [
     ("usd", "US Dollar", "$", 1.0),
@@ -38,7 +39,6 @@ ROWS = [
     ("dkk", "Danish Krone", "kr", 6.78),
     ("sgd", "Singapore Dollar", "S$", 1.29),
     ("hkd", "Hong Kong Dollar", "HK$", 7.80),
-
     # North America and Caribbean
     ("gtq", "Guatemalan Quetzal", "Q", 7.65),
     ("hnl", "Honduran Lempira", "L", 26.50),
@@ -56,7 +56,6 @@ ROWS = [
     ("awg", "Aruban Florin", "ƒ", 1.79),
     ("ang", "Netherlands Antillean Guilder", "ƒ", 1.79),
     ("cup", "Cuban Peso", "$", 24.0),
-
     # South America
     ("ars", "Argentine Peso", "$", 1450.0),
     ("clp", "Chilean Peso", "$", 930.0),
@@ -68,7 +67,6 @@ ROWS = [
     ("ves", "Venezuelan Bolívar", "Bs.", 200.0),
     ("gyd", "Guyanese Dollar", "G$", 209.0),
     ("srd", "Surinamese Dollar", "$", 38.0),
-
     # Europe
     ("czk", "Czech Koruna", "Kč", 21.0),
     ("huf", "Hungarian Forint", "Ft", 335.0),
@@ -86,7 +84,6 @@ ROWS = [
     ("gel", "Georgian Lari", "₾", 2.70),
     ("amd", "Armenian Dram", "֏", 385.0),
     ("azn", "Azerbaijani Manat", "₼", 1.70),
-
     # Middle East and Africa
     ("lyd", "Libyan Dinar", "LD", 5.40),
     ("sdg", "Sudanese Pound", "ج.س", 600.0),
@@ -133,7 +130,6 @@ ROWS = [
     ("gmd", "Gambian Dalasi", "D", 72.0),
     ("sll", "Sierra Leonean Leone", "Le", 23000.0),
     ("lrd", "Liberian Dollar", "L$", 180.0),
-
     # Asia
     ("npr", "Nepalese Rupee", "रू", 150.0),
     ("lkr", "Sri Lankan Rupee", "Rs", 300.0),
@@ -156,7 +152,6 @@ ROWS = [
     ("kgs", "Kyrgyzstani Som", "сом", 87.0),
     ("tjs", "Tajikistani Somoni", "SM", 10.0),
     ("tmt", "Turkmenistani Manat", "m", 3.5),
-
     # Oceania
     ("nzd", "New Zealand Dollar", "NZ$", 1.75),
     ("fjd", "Fijian Dollar", "FJ$", 2.25),
@@ -166,7 +161,6 @@ ROWS = [
     ("vuv", "Vanuatu Vatu", "VT", 120.0),
     ("sbd", "Solomon Islands Dollar", "SI$", 8.5),
     ("xpf", "CFP Franc", "₣", 109.0),
-
     # Additional currencies
     ("bmd", "Bermudian Dollar", "BD$", 1.0),
     ("kyd", "Cayman Islands Dollar", "CI$", 1.20),
@@ -177,6 +171,7 @@ ROWS = [
     ("ggp", "Guernsey Pound", "£", 0.758255),
     ("imp", "Manx Pound", "£", 0.758255),
 ]
+
 
 def main() -> None:
     tables = get_tables_db()
@@ -191,7 +186,9 @@ def main() -> None:
                 data=data,
             )
             created += 1
-        except Exception:
+        except AppwriteException as exc:
+            if exc.code != 409:
+                raise
             tables.update_row(
                 database_id=settings.appwrite_database_id,
                 table_id=settings.appwrite_currencies_table_id,

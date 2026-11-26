@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { PaymentResultMessage } from "@/components/settings/payment-result-message";
 import { useCheckout } from "@/hooks/use-checkout";
+import { usePaymentResult } from "@/hooks/use-payment-result";
 import { formatUsd } from "@/lib/topup/format-usd";
 import type { CheckoutPanelProps } from "@/types/checkout";
 
@@ -12,15 +14,13 @@ import { WhopCheckout } from "./whop-checkout";
 export function CheckoutPanel({ product, amountUsd }: CheckoutPanelProps) {
   const { session, error } = useCheckout(product, amountUsd);
   const [paid, setPaid] = useState(false);
+  const paymentResult = usePaymentResult(paid);
 
   if (paid) {
     return (
       <div>
         <h2>Payment received</h2>
-        <p>
-          Your plan and credits update as soon as the payment is confirmed,
-          usually within a minute.
-        </p>
+        <PaymentResultMessage state={paymentResult} />
         <Link href="/settings">Back to Settings</Link>
       </div>
     );

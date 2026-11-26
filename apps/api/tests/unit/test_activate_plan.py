@@ -95,9 +95,7 @@ def test_an_old_membership_cancellation_arrives_after_the_new_membership_is_curr
 
     def cancel_replaced(membership_id):
         events.append(membership_id)
-        events.append(
-            module.find_subscription_row("providerSubscriptionId", membership_id)
-        )
+        events.append(module.find_subscription_row("providerSubscriptionId", membership_id))
 
     monkeypatch.setattr(module, "cancel_replaced_membership", cancel_replaced)
 

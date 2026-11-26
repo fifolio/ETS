@@ -10,7 +10,7 @@ export function SiteTotalsSection({ totals }: SiteTotalsProps) {
             <ul>
                 <li>{formatCount(totals.total_users)} users</li>
                 <li>{formatCount(totals.total_scans)} jobs scanned</li>
-                <li>{formatHours(totals.total_hours_saved)} hours saved</li>
+                <li>{formatHours(totals.total_hours_saved)} saved</li>
                 <li>{formatCash(totals.total_cash_saved_usd)} saved</li>
             </ul>
         </section>

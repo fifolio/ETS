@@ -21,3 +21,8 @@ def test_it_reports_no_provider_and_no_environment():
 def test_it_cannot_cancel_a_subscription():
     with pytest.raises(PaymentsUnavailableError):
         DisabledProvider().cancel_subscription("mem_1")
+
+
+def test_it_has_no_billing_page():
+    with pytest.raises(PaymentsUnavailableError):
+        DisabledProvider().get_manage_url("mem_1")

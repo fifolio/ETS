@@ -25,7 +25,6 @@ def main():
         "credit_balances": settings.appwrite_credit_balances_table_id,
         "credit_ledger": settings.appwrite_credit_ledger_table_id,
         "payments": settings.appwrite_payments_table_id,
-
     }
     for name, table_id in checks.items():
         tables.list_rows(database_id=settings.appwrite_database_id, table_id=table_id)

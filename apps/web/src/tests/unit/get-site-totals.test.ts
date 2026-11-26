@@ -28,6 +28,7 @@ describe("getSiteTotals", () => {
 
         expect(await getSiteTotals()).toEqual(totals);
         expect(fetchMock.mock.calls[0][0]).toBe("http://api.test/stats/totals");
+        expect(fetchMock.mock.calls[0][1]).toEqual({ cache: "no-store" });
     });
 
     it("returns null when the API answers with an error", async () => {

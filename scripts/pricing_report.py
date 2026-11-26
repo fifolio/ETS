@@ -4,9 +4,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "apps" / "api"))
 
-from app.constants.plans import PLANS  
-from app.constants.topups import TOPUP_MAX_CENTS, TOPUP_MIN_CENTS  
-from app.services.topups.credits_for_cents import credits_for_cents  
+from app.constants.plans import PLANS
+from app.constants.topups import TOPUP_MAX_CENTS, TOPUP_MIN_CENTS
+from app.services.topups.credits_for_cents import credits_for_cents
 
 # Assumptions
 FEE_PERCENT = 0.027  # Whop domestic card fee

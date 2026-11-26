@@ -7,6 +7,7 @@ from app.handlers.register_exception_handlers import register_exception_handlers
 from app.routers import (
     account,
     analyze,
+    credit_history,
     credits,
     currencies,
     health,
@@ -14,10 +15,12 @@ from app.routers import (
     job_board_suggestions,
     languages,
     onboarding,
+    payments,
     plans,
     preferences,
     stats,
     subscription,
+    subscription_status,
     testimonials,
     webhooks,
 )
@@ -75,3 +78,6 @@ app.include_router(preferences.router)
 app.include_router(currencies.router)
 app.include_router(credits.router)
 app.include_router(webhooks.router)
+app.include_router(credit_history.router)
+app.include_router(payments.router)
+app.include_router(subscription_status.router)

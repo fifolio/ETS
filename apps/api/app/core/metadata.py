@@ -69,4 +69,5 @@ TAGS_METADATA = [
         "description": "Theme and language, for the web app and the extension.",
     },
     {"name": "credits", "description": "The user's credit balance."},
+    {"name": "payments", "description": "Your payment history."},
 ]

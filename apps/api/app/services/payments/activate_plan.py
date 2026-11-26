@@ -7,7 +7,8 @@ from app.services.subscriptions.find_subscription_row import find_subscription_r
 from app.services.subscriptions.update_subscription_row import update_subscription_row
 from app.types.payment_notice import PaymentNotice
 
-PROVISIONAL_PERIOD_DAYS = 30  # a new plan is provisionally active for this long, until the provider confirms the first payment
+# A new plan remains provisional until the provider confirms the first payment.
+PROVISIONAL_PERIOD_DAYS = 30
 
 
 def activate_plan(notice: PaymentNotice, plan_id: str, now: datetime) -> None:

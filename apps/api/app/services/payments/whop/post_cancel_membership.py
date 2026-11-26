@@ -11,12 +11,12 @@ logger = logging.getLogger(__name__)
 
 
 def post_cancel_membership(whop: WhopSettings, membership_id: str) -> None:
-    """Cancel a Whop membership at the end of its period. Raises PaymentProviderError."""
+    """Cancel a Whop membership immediately. Raises PaymentProviderError."""
     url = f"{whop.api_base}/memberships/{quote(membership_id, safe='')}/cancel"
     try:
         response = httpx.post(
             url,
-            json={"cancellation_mode": "at_period_end"},
+            json={"cancel_at_period_end": False},
             headers={"Authorization": f"Bearer {whop.api_key}"},
             timeout=WHOP_TIMEOUT_SECONDS,
         )

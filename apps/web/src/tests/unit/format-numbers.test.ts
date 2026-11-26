@@ -9,8 +9,8 @@ describe("number formatting", () => {
         expect(formatCount(1234567)).toBe("1,234,567");
     });
 
-    it("keeps one decimal for hours", () => {
-        expect(formatHours(1234.56)).toBe("1,234.6");
+    it("formats hours and remaining minutes", () => {
+        expect(formatHours(1234.56)).toBe("1234h 34m");
     });
 
     it("shows cash in whole dollars", () => {

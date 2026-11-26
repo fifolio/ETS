@@ -17,7 +17,9 @@ def main():
         job = (DATA / case["job"]).read_text()
         result = analyze(cv, job)
         mark = "OK " if result.verdict == case["expected"] else "BAD"
-        print(f"[{mark}] {case['job']}: {result.verdict} ({result.score}), expected {case['expected']}")
+        print(
+            f"[{mark}] {case['job']}: {result.verdict} ({result.score}), expected {case['expected']}"
+        )
         print(f"      {result.summary}")
         if result.red_flags:
             print(f"      red flags: {result.red_flags}")
