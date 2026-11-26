@@ -1,0 +1,27 @@
+name: Scheduled maintenance
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Only report what would be done"
+        default: "true"
+
+jobs:
+  maintenance:
+    # Off until the repository variable API_URL is set (Settings, Secrets and variables, Variables).
+    if: ${{ vars.API_URL != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete unfinished accounts and their leftovers
+        run: |
+          curl --fail-with-body -sS -X POST \
+            "${{ vars.API_URL }}/internal/cleanup-unactivated-accounts?dry_run=${{ github.event.inputs.dry_run || 'false' }}" \
+            -H "X-Cleanup-Token: ${{ secrets.CLEANUP_TOKEN }}"
+      - name: Subscription maintenance
+        run: |
+          curl --fail-with-body -sS -X POST \
+            "${{ vars.API_URL }}/internal/subscription-maintenance?dry_run=${{ github.event.inputs.dry_run || 'false' }}" \
+            -H "X-Cleanup-Token: ${{ secrets.CLEANUP_TOKEN }}"

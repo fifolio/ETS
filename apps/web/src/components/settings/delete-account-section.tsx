@@ -12,8 +12,9 @@ export function DeleteAccountSection() {
         <section>
             <h2>Delete account</h2>
             <p>
-                This deletes your CV, scans, usage totals, and extensions, then your account. It can not be
-                undone. A testimonial you already sent is kept.
+                This deletes your CV, scans, usage totals, and extensions, then your account. If you have a
+                paid subscription, cancel it first (Subscription, above). It can not be undone. A
+                testimonial you already sent is kept.
             </p>
             <label>
                 Type your email ({email}) to confirm{" "}

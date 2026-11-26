@@ -41,6 +41,7 @@ export function useSubscriptionActions(canManage: boolean) {
     setError("");
     try {
       await cancelSubscription();
+      window.history.replaceState(window.history.state, "", window.location.pathname);
       window.location.reload();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not cancel the subscription.");
