@@ -2,6 +2,7 @@
 
 import { useCredits } from "@/hooks/use-credits";
 import { countScansLeft } from "@/lib/credits/count-scans-left";
+import { TimeSavedLine } from "../billing/time-saved-line";
 import { TopUpButton } from "./top-up-button";
 
 export function CreditsSection() {
@@ -17,6 +18,8 @@ export function CreditsSection() {
           <p>
             {credits.total} credits (about{" "}
             {countScansLeft(credits.total, credits.credits_per_scan)} scans)
+            <br />
+            <TimeSavedLine credits={credits.total} />
           </p>
           <ul>
             <li>Monthly allowance: {credits.subscription}</li>

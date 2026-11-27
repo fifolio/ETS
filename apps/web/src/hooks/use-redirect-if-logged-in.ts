@@ -12,7 +12,7 @@ export function useRedirectIfLoggedIn(): void {
 
     useEffect(() => {
         if (!loading && user && status) {
-            router.replace(status.complete ? "/dashboard" : "/setup");
+            router.replace(status.complete ? "/" : "/setup");
         }
     }, [loading, user, status, router]);
 }

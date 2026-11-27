@@ -4,6 +4,7 @@ from app.schemas.plans_response import PlansResponse
 from app.services.job_boards.list_active_job_boards import list_active_job_boards
 from app.services.payments.are_payments_enabled import are_payments_enabled
 from app.services.plans.list_public_plans import list_public_plans
+from app.services.time_saved.get_time_saved_config import get_time_saved_config
 from app.services.topups.get_topup_config import get_topup_config
 
 router = APIRouter(tags=["plans"])
@@ -21,4 +22,5 @@ def plans(response: Response) -> PlansResponse:
         plans=list_public_plans(list_active_job_boards()),
         topup=get_topup_config(),
         payments_enabled=are_payments_enabled(),
+        time_saved=get_time_saved_config(),
     )

@@ -50,3 +50,12 @@ def test_the_plans_can_be_cached(monkeypatch):
     monkeypatch.setattr("app.routers.plans.list_active_job_boards", lambda: BOARDS)
 
     assert "max-age=60" in client.get("/plans").headers["cache-control"]
+
+
+def test_the_time_saved_rules_come_from_the_server(monkeypatch):
+    monkeypatch.setattr("app.routers.plans.list_active_job_boards", lambda: BOARDS)
+
+    assert client.get("/plans").json()["time_saved"] == {
+        "minutes_per_scan": 5.0,
+        "credits_per_scan": 1,
+    }

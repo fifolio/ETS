@@ -34,3 +34,10 @@ AI cost, margin, and the AI break-even cost for every product. The assumptions a
 the script are Whop's card fee (2.7% + $0.30, plus $0.03 for 3D Secure and $0.07 for Radar)
 and an AI cost of $0.002 per credit. A subscription credit costs $0.047, a top-up credit
 $0.125 (2.7x). The $3 minimum loses about 16% to fees (`TOPUP_MIN_CENTS`).
+
+## Time saved (an estimate)
+
+One scan saves, on average, 5 minutes of reading: a 600-word posting at 0.5 seconds per word
+(`apps/api/app/constants/time_saved.py`). Time saved = credits / credits per scan x minutes per
+scan. The API serves the numbers in `GET /plans` (`time_saved`); the web app only multiplies.
+Plan cards show it per month, and the top-up page shows it for the selected credits.

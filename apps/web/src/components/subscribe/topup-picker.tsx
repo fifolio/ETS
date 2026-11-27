@@ -8,6 +8,7 @@ import { getTopupLimits } from "@/lib/topup/get-topup-limits";
 import type { TopupPickerProps } from "@/types/topup";
 
 import { TopupPresets } from "./topup-presets";
+import { TimeSavedLine } from "../billing/time-saved-line";
 
 export function TopupPicker({ config, onContinue }: TopupPickerProps) {
   const limits = getTopupLimits(config);
@@ -48,6 +49,9 @@ export function TopupPicker({ config, onContinue }: TopupPickerProps) {
       {amount.error && <p role="alert">{amount.error}</p>}
       <p>
         You will pay {formatUsd(amount.cents)} for {amount.credits} credits.
+      </p>
+      <p>
+        <TimeSavedLine credits={amount.credits} />
       </p>
       <button
         type="button"

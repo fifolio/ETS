@@ -2,6 +2,7 @@ import { describeCredits } from "@/lib/plans/describe-credits";
 import { describeJobBoards } from "@/lib/plans/describe-job-boards";
 import { formatPlanPrice } from "@/lib/plans/format-plan-price";
 import type { PlanCardProps } from "@/types/plans";
+import { TimeSavedLine } from "../billing/time-saved-line";
 
 export function PlanCard({
   plan,
@@ -32,6 +33,8 @@ export function PlanCard({
       )}
       <br />
       {describeCredits(plan.monthly_credits)}
+      <br />
+      <TimeSavedLine credits={plan.monthly_credits} perMonth />
     </li>
   );
 }

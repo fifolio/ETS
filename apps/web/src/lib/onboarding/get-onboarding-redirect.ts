@@ -12,5 +12,5 @@ export function getOnboardingRedirect(
     if (!setupComplete) {
         return PAGES_OPEN_DURING_SETUP.includes(pathname) ? null : "/setup";
     }
-    return pathname === "/setup" ? "/dashboard" : null;
+    return pathname === "/setup" ? "/" : null;
 }
