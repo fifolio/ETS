@@ -1,10 +1,12 @@
 import { Suspense } from "react";
+import { connection } from "next/server";
 import { SiteTotalsSection } from "@/components/stats/site-totals-section";
 import { TestimonialList } from "@/components/testimonials/testimonial-list";
 import { getSiteTotals } from "@/services/stats/get-site-totals";
 import { getPublicTestimonials } from "@/services/testimonials/get-public-testimonials";
 
 async function HomePageContent() {
+  await connection();
   const [testimonials, totals] = await Promise.all([getPublicTestimonials(), getSiteTotals()]);
 
   return (

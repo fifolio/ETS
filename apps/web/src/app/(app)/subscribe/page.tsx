@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 
 import { CheckoutPanel } from "@/components/subscribe/checkout-panel";
 import { TopupPicker } from "@/components/subscribe/topup-picker";
@@ -14,8 +14,15 @@ import { parseAmountText } from "@/lib/topup/parse-amount-text";
 function SubscribeContent() {
   const router = useRouter();
   const params = useSearchParams();
+  const paymentSucceeded = params.get("payment") === "success";
   const product = parseProduct(params.get("product"));
   const { topup, error } = usePlans();
+
+  useEffect(() => {
+    if (paymentSucceeded) {
+      router.replace("/settings?payment=success");
+    }
+  }, [paymentSucceeded, router]);
 
   if (!product) {
     return (
