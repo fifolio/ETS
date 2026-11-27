@@ -14,15 +14,24 @@ import { parseAmountText } from "@/lib/topup/parse-amount-text";
 function SubscribeContent() {
   const router = useRouter();
   const params = useSearchParams();
-  const paymentSucceeded = params.get("payment") === "success";
+  const paymentSucceeded =
+    params.get("payment_result") === "success" || params.get("payment") === "success";
   const product = parseProduct(params.get("product"));
   const { topup, error } = usePlans();
 
   useEffect(() => {
     if (paymentSucceeded) {
-      router.replace("/settings?payment=success");
+      router.replace("/settings?payment_result=success");
     }
   }, [paymentSucceeded, router]);
+
+  if (paymentSucceeded) {
+    return (
+      <main>
+        <p>Loading...</p>
+      </main>
+    );
+  }
 
   if (!product) {
     return (

@@ -9,7 +9,6 @@ import type { WhopCheckoutProps } from "@/types/checkout";
 export function WhopCheckout({
   session,
   returnUrl,
-  onComplete,
 }: WhopCheckoutProps) {
   return (
     <WhopElements
@@ -19,7 +18,6 @@ export function WhopCheckout({
       <Checkout
         checkoutConfiguration={session.checkout_id}
         returnUrl={returnUrl}
-        onComplete={onComplete}
       >
         <CheckoutElement />
       </Checkout>

@@ -1,11 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 
-import { PaymentResultMessage } from "@/components/settings/payment-result-message";
 import { useCheckout } from "@/hooks/use-checkout";
-import { usePaymentResult } from "@/hooks/use-payment-result";
 import { formatUsd } from "@/lib/topup/format-usd";
 import type { CheckoutPanelProps } from "@/types/checkout";
 
@@ -13,18 +10,6 @@ import { WhopCheckout } from "./whop-checkout";
 
 export function CheckoutPanel({ product, amountUsd }: CheckoutPanelProps) {
   const { session, error } = useCheckout(product, amountUsd);
-  const [paid, setPaid] = useState(false);
-  const paymentResult = usePaymentResult(paid);
-
-  if (paid) {
-    return (
-      <div>
-        <h2>Payment received</h2>
-        <PaymentResultMessage state={paymentResult} />
-        <Link href="/settings">Back to Settings</Link>
-      </div>
-    );
-  }
   return (
     <div>
       {error && <p role="alert">{error}</p>}
@@ -37,8 +22,7 @@ export function CheckoutPanel({ product, amountUsd }: CheckoutPanelProps) {
           </p>
           <WhopCheckout
             session={session}
-            returnUrl={`${window.location.origin}/settings?payment=success`}
-            onComplete={() => setPaid(true)}
+            returnUrl={`${window.location.origin}/settings?payment_result=success`}
           />
           <p>
             Trouble with the form?{" "}

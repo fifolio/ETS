@@ -18,5 +18,4 @@ export interface CheckoutPanelProps {
 export interface WhopCheckoutProps {
     session: CheckoutSession;
     returnUrl: string;
-    onComplete: () => void;
 }

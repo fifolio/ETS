@@ -15,7 +15,7 @@ Do this only after `docs/payments-testing.md` passes in the sandbox.
    purpose): `WHOP_PRODUCTION_API_KEY`, `WHOP_PRODUCTION_PLAN_NEXTMOVE`,
    `WHOP_PRODUCTION_PLAN_URGENT`, `WHOP_PRODUCTION_PRODUCT_TOPUP`. Then
    `PAYMENT_PROVIDER=whop`, `WHOP_ENVIRONMENT=production`,
-   `PAYMENT_SUCCESS_URL=https://<your domain>/settings?payment=success`, a long random
+   `PAYMENT_SUCCESS_URL=https://<your domain>/settings?payment_result=success`, a long random
    `CLEANUP_TOKEN`, and CORS for your domain. In the web app: `NEXT_PUBLIC_API_URL` and
    `NEXT_PUBLIC_DEV_TOOLS=false`.
 6. **Create the production webhook** with the real domain (not a tunnel):

@@ -9,7 +9,7 @@ from app.types.whop_settings import WhopSettings
 
 PLAN_ORDER = CheckoutOrder("user-1", "jane@example.com", "plan_nextmove", 700, 150)
 TOPUP_ORDER = CheckoutOrder("user-1", "jane@example.com", "topup", 525, 42)
-REDIRECT = "http://localhost:3000/settings?payment=success"
+REDIRECT = "http://localhost:3000/settings?payment_result=success"
 
 
 def install(monkeypatch, plan_ids=None, topup_product="prod_topup"):
