@@ -94,6 +94,6 @@ Events to subscribe to: `payment.succeeded`, `payment.failed`, `membership.updat
 - Subscription: the plan, "Renews on ..." or "Cancelled: your plan ends on ...", Manage billing
   (the provider's billing page, read on click), and Cancel subscription (ends access immediately;
   no prorated refund is issued).
-- Credits and credit history (latest 20), and payments (latest 10, abandoned checkouts hidden).
+- Credit history and payments: 10 per page, with filters (type and direction for credits, status and product for payments).
 - After paying, a message confirms the payment by watching our own payment history (the
   webhook records it), on the checkout page and on Settings when the provider redirects back.

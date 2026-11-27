@@ -191,9 +191,11 @@ Stores credit history. Every change adds a row; a negative `amount` means credit
 
 Indexes:
 
-| Index | Type | Column |
+| Index | Type | Columns |
 |---|---|---|
 | `userId_key` | Key | `userId` |
+| `userId_kind` | Key | `userId`, `kind` |
+| `userId_amount` | Key | `userId`, `amount` |
 | `idempotencyKey_unique` | Unique | `idempotencyKey` |
 
 The unique idempotency key prevents the same payment from granting credits twice.
@@ -214,9 +216,11 @@ Stores one row per checkout attempt.
 
 Indexes:
 
-| Index | Type | Column |
+| Index | Type | Columns |
 |---|---|---|
 | `userId_key` | Key | `userId` |
+| `userId_status` | Key | `userId`, `status` |
+| `userId_sku` | Key | `userId`, `sku` |
 | `polarCheckoutId_unique` | Unique | `polarCheckoutId` |
 | `polarOrderId_unique` | Unique | `polarOrderId` |
 

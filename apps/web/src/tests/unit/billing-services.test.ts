@@ -4,6 +4,7 @@ const { apiFetch } = vi.hoisted(() => ({ apiFetch: vi.fn() }));
 
 vi.mock("@/lib/api/api-fetch", () => ({ apiFetch }));
 
+import { DEFAULT_CREDIT_FILTERS, DEFAULT_PAYMENT_FILTERS } from "@/lib/billing/history-filter-options";
 import { cancelSubscription } from "@/services/billing/cancel-subscription";
 import { getCreditHistory } from "@/services/billing/get-credit-history";
 import { getManageUrl } from "@/services/billing/get-manage-url";
@@ -11,6 +12,7 @@ import { getPaymentHistory } from "@/services/billing/get-payment-history";
 import { getSubscriptionStatus } from "@/services/billing/get-subscription-status";
 
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status });
+const emptyPage = { items: [], page: 1, page_size: 10, total: 0, total_pages: 1 };
 
 beforeEach(() => {
   apiFetch.mockReset();
@@ -74,31 +76,47 @@ describe("getManageUrl", () => {
 });
 
 describe("getCreditHistory", () => {
-  it("asks the API for the credit history", async () => {
-    apiFetch.mockResolvedValue(json([{ amount: -1, kind: "subscription", reason: "Job scan", created_at: null }]));
+  it("asks for the first page without filters", async () => {
+    apiFetch.mockResolvedValue(json(emptyPage));
 
-    expect(await getCreditHistory()).toHaveLength(1);
-    expect(apiFetch).toHaveBeenCalledWith("/credits/history");
+    expect(await getCreditHistory(1, DEFAULT_CREDIT_FILTERS)).toEqual(emptyPage);
+    expect(apiFetch).toHaveBeenCalledWith("/credits/history?page=1");
+  });
+
+  it("sends the page and the filters", async () => {
+    apiFetch.mockResolvedValue(json(emptyPage));
+
+    await getCreditHistory(2, { kind: "purchased", change: "used" });
+
+    expect(apiFetch).toHaveBeenCalledWith("/credits/history?page=2&kind=purchased&change=used");
   });
 
   it("throws the API's message", async () => {
     apiFetch.mockResolvedValue(json({ detail: "Verify your email first." }, 403));
 
-    await expect(getCreditHistory()).rejects.toThrow("Verify your email first.");
+    await expect(getCreditHistory(1, DEFAULT_CREDIT_FILTERS)).rejects.toThrow("Verify your email first.");
   });
 });
 
 describe("getPaymentHistory", () => {
-  it("asks the API for the payments", async () => {
-    apiFetch.mockResolvedValue(json([]));
+  it("asks for the first page without filters", async () => {
+    apiFetch.mockResolvedValue(json(emptyPage));
 
-    expect(await getPaymentHistory()).toEqual([]);
-    expect(apiFetch).toHaveBeenCalledWith("/payments");
+    expect(await getPaymentHistory(1, DEFAULT_PAYMENT_FILTERS)).toEqual(emptyPage);
+    expect(apiFetch).toHaveBeenCalledWith("/payments?page=1");
+  });
+
+  it("sends the page and the filters", async () => {
+    apiFetch.mockResolvedValue(json(emptyPage));
+
+    await getPaymentHistory(3, { status: "failed", product: "topup" });
+
+    expect(apiFetch).toHaveBeenCalledWith("/payments?page=3&status=failed&product=topup");
   });
 
   it("throws the API's message", async () => {
     apiFetch.mockResolvedValue(json({ detail: "Verify your email first." }, 403));
 
-    await expect(getPaymentHistory()).rejects.toThrow("Verify your email first.");
+    await expect(getPaymentHistory(1, DEFAULT_PAYMENT_FILTERS)).rejects.toThrow("Verify your email first.");
   });
 });

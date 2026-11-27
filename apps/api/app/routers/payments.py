@@ -1,8 +1,9 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 
 from app.schemas.error_response import ErrorResponse
-from app.schemas.payment_entry_out import PaymentEntryOut
+from app.schemas.payment_history_page import PaymentHistoryPage
 from app.services.payments.list_payment_history import list_payment_history
+from app.types.history_filters import PaymentProductFilter, PaymentStatusFilter
 from app.types.verified_user import VerifiedUserId
 
 router = APIRouter(
@@ -14,6 +15,16 @@ router = APIRouter(
 )
 
 
-@router.get("/payments", response_model=list[PaymentEntryOut], summary="Your latest payments")
-def payments(user_id: VerifiedUserId) -> list[PaymentEntryOut]:
-    return list_payment_history(user_id)
+@router.get(
+    "/payments",
+    response_model=PaymentHistoryPage,
+    summary="Your payments, newest first, 10 per page",
+    description="Abandoned checkouts (pending) are only listed when you filter for them.",
+)
+def payments(
+    user_id: VerifiedUserId,
+    page: int = Query(1, ge=1, le=1000),
+    status: PaymentStatusFilter = "all",
+    product: PaymentProductFilter = "all",
+) -> PaymentHistoryPage:
+    return list_payment_history(user_id, page, status, product)

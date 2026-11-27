@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { findRecentPayment } from "@/lib/billing/find-recent-payment";
+import { DEFAULT_PAYMENT_FILTERS } from "@/lib/billing/history-filter-options";
 import { getPaymentHistory } from "@/services/billing/get-payment-history";
 import { useAuthStore } from "@/stores/auth/auth-store";
 import { useBillingStore } from "@/stores/billing/billing-store";
@@ -25,7 +26,8 @@ export function usePaymentResult(enabled: boolean): PaymentResultState {
     const timer = setInterval(async () => {
       tries += 1;
       try {
-        const payment = findRecentPayment(await getPaymentHistory(), Date.now(), RECENT_PAYMENT_MS);
+        const firstPage = await getPaymentHistory(1, DEFAULT_PAYMENT_FILTERS);
+        const payment = findRecentPayment(firstPage.items, Date.now(), RECENT_PAYMENT_MS);
         if (cancelled) {
           return;
         }

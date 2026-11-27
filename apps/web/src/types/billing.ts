@@ -1,4 +1,5 @@
 import type { SubscriptionPlan } from "@/types/account";
+import type { PageInfo } from "@/types/pagination";
 
 export interface SubscriptionStatus {
   plan: SubscriptionPlan;
@@ -41,4 +42,12 @@ export interface PaymentHistoryTableProps {
 
 export interface PaymentResultMessageProps {
   state: PaymentResultState;
+}
+
+export interface CreditHistoryPage extends PageInfo {
+  items: CreditEntry[];
+}
+
+export interface PaymentHistoryPage extends PageInfo {
+  items: PaymentEntry[];
 }
